@@ -252,9 +252,9 @@ const Gifts = () => {
         className="relative z-10 flex-1 flex justify-center overflow-hidden"
         style={{ height: 'calc(100dvh - var(--bottom-nav-h) - env(safe-area-inset-bottom, 0px))' }}
       >
-        <div className="container mx-auto px-3 sm:px-4 py-2 max-w-2xl flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col justify-between" style={{ maxWidth: 'clamp(576px, 90vw, 672px)', margin: '0 auto', padding: 'clamp(0.375rem, 1vh, 0.5rem) clamp(0.75rem, 2vw, 1rem)' }}>
           {/* Header with Back and Play buttons */}
-          <div className="flex items-center justify-between mb-2 gap-2">
+          <div className="flex items-center justify-between gap-2" style={{ marginBottom: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
             {/* Back Button - Left */}
             <button
               onClick={() => navigate('/dashboard')}
@@ -297,8 +297,8 @@ const Gifts = () => {
                 {t('gifts.title')}
               </h1>
               <p 
-                className="text-yellow-300/80 text-center mt-1"
-                style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.85rem)' }}
+                className="text-yellow-300/80 text-center"
+                style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.85rem)', marginTop: 'clamp(0.125rem, 0.5vh, 0.25rem)' }}
               >
                 {t('lootbox.open_cost')}
               </p>
@@ -360,9 +360,10 @@ const Gifts = () => {
                 Array.from({ length: 10 }).map((_, index) => (
                   <div
                     key={`skeleton-${index}`}
-                    className="relative aspect-square rounded-lg bg-black/40 border border-yellow-500/30 flex items-center justify-center backdrop-blur-sm opacity-40 animate-pulse"
+                    className="relative aspect-square bg-black/40 border border-yellow-500/30 flex items-center justify-center backdrop-blur-sm opacity-40 animate-pulse"
+                    style={{ borderRadius: 'clamp(6px, 1.5vw, 8px)' }}
                   >
-                    <div className="w-3/4 h-3/4 bg-yellow-500/20 rounded" />
+                    <div className="bg-yellow-500/20" style={{ width: '75%', height: '75%', borderRadius: 'clamp(4px, 1vw, 6px)' }} />
                   </div>
                 ))
               ) : (
@@ -373,7 +374,7 @@ const Gifts = () => {
 
                   const boxContent = (
                     <>
-                      <img src={boxGold} alt="Gift box" className="w-3/4 h-3/4 object-contain" />
+                      <img src={boxGold} alt="Gift box" className="object-contain" style={{ width: '75%', height: '75%' }} />
                       
                       {!isActive && (
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -387,13 +388,13 @@ const Gifts = () => {
                       )}
 
                       {isActive && (
-                        <div className="absolute inset-x-0 bottom-0 flex justify-center pb-1">
+                        <div className="absolute inset-x-0 bottom-0 flex justify-center" style={{ paddingBottom: 'clamp(2px, 0.5vh, 4px)' }}>
                           <span
-                            className="px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded text-black font-bold shadow-lg"
-                            style={{ fontSize: 'clamp(7px, 1.8vw, 9px)' }}
+                            className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold shadow-lg"
+                            style={{ fontSize: 'clamp(7px, 1.8vw, 9px)', padding: 'clamp(1px, 0.3vh, 2px) clamp(4px, 1vw, 8px)', borderRadius: 'clamp(2px, 0.5vw, 3px)' }}
                           >
                             {openingId === lootbox.id ? (
-                              <Loader2 className="w-3 h-3 animate-spin" />
+                              <Loader2 style={{ width: 'clamp(10px, 2.5vw, 12px)', height: 'clamp(10px, 2.5vw, 12px)' }} className="animate-spin" />
                             ) : (
                               t('lootbox.open')
                             )}
@@ -405,12 +406,13 @@ const Gifts = () => {
 
                   if (isActive) {
                     return (
-                      <button
-                        key={lootbox.id}
-                        onClick={() => handleOpenLootbox(lootbox.id)}
-                        disabled={!!openingId}
-                        className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm bg-black/60 border-yellow-500/60 opacity-100 transition-all hover:bg-black/70 hover:border-yellow-400/80 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
-                      >
+                    <button
+                      key={lootbox.id}
+                      onClick={() => handleOpenLootbox(lootbox.id)}
+                      disabled={!!openingId}
+                      className={`relative aspect-square border flex items-center justify-center backdrop-blur-sm bg-black/60 border-yellow-500/60 opacity-100 transition-all hover:bg-black/70 hover:border-yellow-400/80 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+                      style={{ borderRadius: 'clamp(6px, 1.5vw, 8px)' }}
+                    >
                         {boxContent}
                       </button>
                     );
@@ -419,7 +421,8 @@ const Gifts = () => {
                   return (
                     <div
                       key={`empty-${index}`}
-                      className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm bg-black/40 border-yellow-500/30 opacity-40`}
+                      className={`relative aspect-square border flex items-center justify-center backdrop-blur-sm bg-black/40 border-yellow-500/30 opacity-40`}
+                      style={{ borderRadius: 'clamp(6px, 1.5vw, 8px)' }}
                     >
                       {boxContent}
                     </div>
@@ -448,13 +451,13 @@ const Gifts = () => {
                 <div
                   key={index}
                   className="relative rounded-xl backdrop-blur-sm transform-gpu hover:scale-105 transition-transform cursor-pointer"
-                  style={{ padding: 'clamp(7px, 1.8vw, 14px)' }}
+                  style={{ padding: 'clamp(7px, 1.8vw, 14px)', borderRadius: 'clamp(10px, 2.5vw, 12px)' }}
                 >
                   {/* 3D Frame Effects */}
-                  <div className="absolute rounded-xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700/40 via-yellow-600/30 to-yellow-900/40 border-2 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.4),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-                  <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-yellow-800/30" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
-                  <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+                  <div className="absolute rounded-xl bg-black/35 blur-md" style={{ top: 'clamp(2px, 0.5vw, 3px)', left: 'clamp(2px, 0.5vw, 3px)', right: 'clamp(-2px, -0.5vw, -3px)', bottom: 'clamp(-2px, -0.5vw, -3px)', borderRadius: 'clamp(10px, 2.5vw, 12px)' }} aria-hidden />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700/40 via-yellow-600/30 to-yellow-900/40 border-2 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.4),0_8px_25px_rgba(0,0,0,0.5)]" style={{ borderRadius: 'clamp(10px, 2.5vw, 12px)' }} aria-hidden />
+                  <div className="absolute rounded-xl bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-yellow-800/30" style={{ top: 'clamp(2px, 0.5vw, 3px)', left: 'clamp(2px, 0.5vw, 3px)', right: 'clamp(2px, 0.5vw, 3px)', bottom: 'clamp(2px, 0.5vw, 3px)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)', borderRadius: 'clamp(10px, 2.5vw, 12px)' }} aria-hidden />
+                  <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: 'clamp(4px, 1vw, 5px)', left: 'clamp(4px, 1vw, 5px)', right: 'clamp(4px, 1vw, 5px)', bottom: 'clamp(4px, 1vw, 5px)', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)', borderRadius: 'clamp(8px, 2vw, 10px)' }} aria-hidden />
 
                   {/* Content */}
                   <div className="relative z-10 flex flex-col items-center">
@@ -497,10 +500,11 @@ const Gifts = () => {
                     </p>
                     <button 
                       onClick={() => handlePurchase(pkg)}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 rounded-lg font-bold text-black shadow-lg transition-all"
+                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 font-bold text-black shadow-lg transition-all"
                       style={{ 
                         padding: 'clamp(3px, 0.9vh, 7px) clamp(7px, 1.8vw, 14px)',
-                        fontSize: 'clamp(0.72rem, 2.8vw, 0.95rem)'
+                        fontSize: 'clamp(0.72rem, 2.8vw, 0.95rem)',
+                        borderRadius: 'clamp(6px, 1.5vw, 8px)'
                       }}
                     >
                       {t('gifts.acquire')}
