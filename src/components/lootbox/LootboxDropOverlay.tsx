@@ -22,7 +22,6 @@ export const LootboxDropOverlay = () => {
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [showIntroBanner, setShowIntroBanner] = useState(false);
   const [introCountdown, setIntroCountdown] = useState(3);
-  const [lootboxExpiresAt, setLootboxExpiresAt] = useState<string | null>(null);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -80,16 +79,10 @@ export const LootboxDropOverlay = () => {
       setIntroCountdown(3);
       setIsVisible(false);
       setIsAnimating(false);
-      
-      // Set expiration time (60 seconds from now if not already set)
-      const expiresAt = activeLootbox.expires_at || 
-        new Date(Date.now() + 60000).toISOString();
-      setLootboxExpiresAt(expiresAt);
     } else {
       setShowIntroBanner(false);
       setIsVisible(false);
       setIsAnimating(false);
-      setLootboxExpiresAt(null);
     }
   }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes]);
   
@@ -131,7 +124,6 @@ export const LootboxDropOverlay = () => {
 
   const handleExpired = () => {
     setIsVisible(false);
-    setLootboxExpiresAt(null);
     refetch();
   };
 
@@ -190,9 +182,9 @@ export const LootboxDropOverlay = () => {
             <GoldLootboxIcon className="w-16 h-auto md:w-20 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
 
             {/* 3D Countdown Timer - same style as life timer */}
-            {!isAnimating && lootboxExpiresAt && (
+            {!isAnimating && (
               <LootboxCountdownTimer 
-                expiresAt={lootboxExpiresAt}
+                key={activeLootbox.id}
                 onExpired={handleExpired}
               />
             )}

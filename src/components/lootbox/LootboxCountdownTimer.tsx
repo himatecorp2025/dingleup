@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 
 interface LootboxCountdownTimerProps {
-  expiresAt: string | null;
+  durationMs?: number; // default 60000 ms
   onExpired?: () => void;
 }
 
 /**
  * Countdown timer for active lootbox - modeled after NextLifeTimer
- * Displays remaining seconds until lootbox expires
+ * Displays remaining seconds starting from durationMs (default 60s)
  */
 export const LootboxCountdownTimer = ({ 
-  expiresAt, 
+  durationMs = 60000,
   onExpired 
 }: LootboxCountdownTimerProps) => {
   const [remainingMs, setRemainingMs] = useState(0);
@@ -19,19 +19,20 @@ export const LootboxCountdownTimer = ({
   // Reset expiry flag when a new timer starts
   useEffect(() => {
     hasExpiredRef.current = false;
-  }, [expiresAt]);
+  }, [durationMs]);
 
   useEffect(() => {
-    if (!expiresAt) {
+    if (!durationMs || durationMs <= 0) {
       setRemainingMs(0);
       return;
     }
 
-    const targetTime = new Date(expiresAt).getTime();
+    const startTime = Date.now();
+    const endTime = startTime + durationMs;
 
     const updateRemaining = () => {
       const now = Date.now();
-      const diff = Math.max(0, targetTime - now);
+      const diff = Math.max(0, endTime - now);
       setRemainingMs(diff);
       
       // When timer reaches 0, trigger expiry ONCE
@@ -45,7 +46,7 @@ export const LootboxCountdownTimer = ({
     const intervalId = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(intervalId);
-  }, [expiresAt, onExpired]);
+  }, [durationMs, onExpired]);
 
   // Hide timer when expired
   if (remainingMs === 0) {
