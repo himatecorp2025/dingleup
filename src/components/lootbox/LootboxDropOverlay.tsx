@@ -20,6 +20,9 @@ export const LootboxDropOverlay = () => {
   const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [countdownActive, setCountdownActive] = useState(false);
+  const [showIntroBanner, setShowIntroBanner] = useState(false);
+  const [introCountdown, setIntroCountdown] = useState(3);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -64,7 +67,7 @@ export const LootboxDropOverlay = () => {
     }
   }, [activeLootbox, user]);
 
-  // Handle drop animation
+  // Handle drop lifecycle: intro banner + drop animation
   useEffect(() => {
     if (activeLootbox && !loading && !isAdminPage && !isAuthPage && user) {
       // Check if this lootbox was already dismissed
@@ -72,30 +75,70 @@ export const LootboxDropOverlay = () => {
         return;
       }
 
-      // Show box and start countdown immediately
-      setIsAnimating(true);
-      setIsVisible(true);
-      setCountdownActive(true);
-      
-      // End animation after 2.25 seconds (50% slower)
-      const timer = setTimeout(() => {
-        setIsAnimating(false);
-      }, 2250);
-
-      return () => clearTimeout(timer);
-    } else if (!activeLootbox || !user) {
+      // Reset state for new drop
+      setShowIntroBanner(true);
+      setIntroCountdown(3);
       setIsVisible(false);
       setIsAnimating(false);
       setCountdownActive(false);
+      setIsFadingOut(false);
+      setRemainingSeconds(null);
+    } else {
+      setShowIntroBanner(false);
+      setIsVisible(false);
+      setIsAnimating(false);
+      setCountdownActive(false);
+      setIsFadingOut(false);
+      setRemainingSeconds(null);
     }
   }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes]);
+  
+  // Intro banner 3-2-1 countdown
+  useEffect(() => {
+    if (!showIntroBanner) return;
 
-  // Handle countdown - only start when animation is complete
+    const interval = window.setInterval(() => {
+      setIntroCountdown(prev => {
+        if (prev <= 1) {
+          window.clearInterval(interval);
+          setShowIntroBanner(false);
+
+          // Start box drop + main countdown
+          setIsVisible(true);
+          setIsAnimating(true);
+          setCountdownActive(true);
+
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [showIntroBanner]);
+
+  // End drop animation after 2.25s
+  useEffect(() => {
+    if (!isAnimating) return;
+
+    const timer = window.setTimeout(() => {
+      setIsAnimating(false);
+    }, 2250);
+
+    return () => window.clearTimeout(timer);
+  }, [isAnimating]);
+
+  // Handle countdown - only start when animation intro is complete and box is visible
   useEffect(() => {
     if (!activeLootbox || !countdownActive) {
       setRemainingSeconds(null);
       return;
     }
+
+    let interval: number | undefined;
+    let timeout: number | undefined;
 
     // If expires_at is set, use it; otherwise count down from 60 seconds locally
     if (activeLootbox.expires_at) {
@@ -108,36 +151,50 @@ export const LootboxDropOverlay = () => {
 
       setRemainingSeconds(calculateRemaining());
 
-      const interval = setInterval(() => {
+      interval = window.setInterval(() => {
         const remaining = calculateRemaining();
         setRemainingSeconds(remaining);
         
         if (remaining <= 0) {
-          clearInterval(interval);
-          setIsVisible(false);
-          refetch();
+          if (interval) window.clearInterval(interval);
+          setCountdownActive(false);
+          setIsFadingOut(true);
+
+          timeout = window.setTimeout(() => {
+            setIsVisible(false);
+            setIsFadingOut(false);
+            refetch();
+          }, 400);
         }
       }, 1000);
-
-      return () => clearInterval(interval);
     } else {
       // No expires_at - count down from 60 seconds locally (after animation)
       setRemainingSeconds(60);
 
-      const interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setRemainingSeconds(prev => {
           if (prev === null || prev <= 1) {
-            clearInterval(interval);
-            setIsVisible(false);
-            refetch();
+            if (interval) window.clearInterval(interval);
+            setCountdownActive(false);
+            setIsFadingOut(true);
+
+            timeout = window.setTimeout(() => {
+              setIsVisible(false);
+              setIsFadingOut(false);
+              refetch();
+            }, 400);
+
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
-
-      return () => clearInterval(interval);
     }
+
+    return () => {
+      if (interval) window.clearInterval(interval);
+      if (timeout) window.clearTimeout(timeout);
+    };
   }, [activeLootbox, refetch, countdownActive]);
 
   const handleSuccess = (decision: 'open_now' | 'store') => {
@@ -163,6 +220,18 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
+      {/* Intro Banner - appears before lootbox drop */}
+      {showIntroBanner && (
+        <div className="fixed z-40 right-4 top-4 px-4 py-2 rounded-full bg-primary text-primary-foreground shadow-lg hover-scale">
+          <div className="text-xs font-semibold whitespace-nowrap">
+            Ajándékod érkezett, fogadd el, mielőtt elvész!
+          </div>
+          <div className="mt-1 text-center text-xs font-bold">
+            {introCountdown > 0 ? `${introCountdown}…` : ''}
+          </div>
+        </div>
+      )}
+
       {/* Global Fixed Overlay - Right Side, Drop from top (below profile hexagon) */}
       <div
         className="fixed z-50 cursor-pointer right-4"
@@ -170,7 +239,8 @@ export const LootboxDropOverlay = () => {
         style={{
           top: isAnimating ? '80px' : '50%',
           transform: isAnimating ? 'translateY(0)' : 'translateY(-50%)',
-          transition: 'top 2.25s ease-out, transform 2.25s ease-out',
+          transition: 'top 2.25s ease-out, transform 2.25s ease-out, opacity 0.4s ease-out',
+          opacity: isFadingOut ? 0 : 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
