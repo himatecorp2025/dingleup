@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -62,7 +61,6 @@ const Index = () => {
         <div data-tutorial="features">
           <Features />
         </div>
-        <DevelopmentStatus />
         <Newsletter />
         
         <Footer />
