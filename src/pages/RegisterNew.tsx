@@ -207,8 +207,8 @@ const RegisterNew = () => {
         }}
       />
 
-      <div className="w-[90vw] max-w-[500px] relative z-10 flex items-center justify-center" style={{ maxHeight: isStandalone ? 'calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-[3vh] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full max-h-full overflow-y-auto"
+      <div className="w-[90vw] max-w-[500px] relative z-10" style={{ height: isStandalone ? 'calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-[3vh] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full h-full overflow-y-auto"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
