@@ -195,15 +195,15 @@ const RegisterNew = () => {
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
       }}
     >
-      {/* Background image with 75% opacity - fixed both horizontally and vertically */}
+      {/* Background image with 75% opacity - optimized for mobile performance */}
       <div 
-        className="fixed inset-0 z-0" 
+        className="fixed inset-0 z-0 will-change-transform" 
         style={{
           backgroundImage: `url(${gameBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center center',
-          backgroundAttachment: 'fixed',
           opacity: 0.75,
+          transform: 'translateZ(0)',
         }}
       />
 
