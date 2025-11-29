@@ -86,7 +86,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('country_code, username')
+        .select('country_code, username, user_timezone')
         .eq('id', user.id)
         .single();
 
@@ -99,12 +99,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }
 
       const userCountry = profileData.country_code;
+      const userTimezone = profileData.user_timezone || 'Europe/Budapest';
 
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayDate = yesterday.toISOString().split('T')[0];
+      // Calculate "yesterday" in user's local timezone
+      const nowUtc = new Date();
+      const localNow = new Date(nowUtc.toLocaleString('en-US', { timeZone: userTimezone }));
+      const localYesterday = new Date(localNow);
+      localYesterday.setDate(localYesterday.getDate() - 1);
+      
+      const yesterdayDate = localYesterday.toLocaleDateString('en-CA'); // YYYY-MM-DD format
 
-      console.log('[DAILY-WINNERS] Fetching yesterday TOP 10 from daily_leaderboard_snapshot, country:', userCountry, 'date:', yesterdayDate);
+      console.log('[DAILY-WINNERS] Fetching yesterday TOP 10 from daily_leaderboard_snapshot, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
 
       const { data: players, error } = await supabase
         .from('daily_leaderboard_snapshot')
