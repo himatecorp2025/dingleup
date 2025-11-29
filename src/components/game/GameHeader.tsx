@@ -26,7 +26,11 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
       <button
         onClick={onExit}
         className="relative rounded-full hover:scale-110 transition-all"
-        style={{ padding: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
+        style={{
+          padding: 'clamp(8px, 2vw, 12px)',
+          minWidth: 'clamp(40px, 10vw, 56px)',
+          minHeight: 'clamp(40px, 10vw, 56px)'
+        }}
         title={t('game.exit_title')}
         aria-label={t('game.exit_aria')}
         role="button"
@@ -57,13 +61,13 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
         <LogOut 
           className="text-white relative z-10 -scale-x-100" 
           style={{ 
-            width: 'clamp(1.25rem, 3vw, 1.5rem)',
-            height: 'clamp(1.25rem, 3vw, 1.5rem)'
+            width: 'clamp(20px, 5vw, 24px)',
+            height: 'clamp(20px, 5vw, 24px)'
           }}
         />
       </button>
 
-      <div className="flex" style={{ gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
+      <div className="flex" style={{ gap: 'clamp(8px, 2vw, 12px)' }}>
         <DiamondHexagon
           type="lives"
           value={`${lives}/${maxLives}`}
