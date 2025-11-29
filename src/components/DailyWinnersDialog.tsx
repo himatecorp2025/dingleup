@@ -109,15 +109,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       
       const yesterdayDate = localYesterday.toLocaleDateString('en-CA'); // YYYY-MM-DD format
 
-      console.log('[DAILY-WINNERS] Fetching yesterday TOP 10 from daily_leaderboard_snapshot, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
+      console.log('[DAILY-WINNERS] Fetching yesterday winners from daily_leaderboard_snapshot, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
 
+      // Fetch ALL players from yesterday's snapshot (not just TOP 10)
+      // Display whoever is there, even if it's just 1-2 people
       const { data: players, error } = await supabase
         .from('daily_leaderboard_snapshot')
         .select('user_id, rank, username, avatar_url, total_correct_answers')
         .eq('country_code', userCountry)
         .eq('snapshot_date', yesterdayDate)
         .order('rank', { ascending: true })
-        .limit(10);
+        .limit(25); // Show up to TOP 25 (Sunday jackpot max)
 
       if (!isMountedRef.current) return;
 
@@ -137,20 +139,20 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }
 
       setTopPlayers(players as TopPlayer[]);
-      console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
+      console.log('[DAILY-WINNERS] Loaded yesterday winners from snapshot:', players.length, 'players');
       
-      // Fetch total rewards for yesterday's TOP 10 players
+      // Fetch total rewards for ALL yesterday's players (not just TOP 10)
       const { data: rewards, error: rewardsError } = await supabase
         .from('daily_winner_awarded')
         .select('gold_awarded, lives_awarded')
         .eq('day_date', yesterdayDate)
-        .lte('rank', 10);
+        .lte('rank', 25); // Include all possible winners (Sunday jackpot max)
       
       if (!rewardsError && rewards && isMountedRef.current) {
         const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
         const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
         setTotalRewards({ totalGold, totalLives });
-        console.log('[DAILY-WINNERS] Total rewards yesterday TOP 10:', { totalGold, totalLives });
+        console.log('[DAILY-WINNERS] Total rewards yesterday winners:', { totalGold, totalLives });
       }
     } catch (error) {
       if (isMountedRef.current) {
