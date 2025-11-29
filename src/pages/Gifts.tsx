@@ -260,26 +260,26 @@ const Gifts = () => {
               onClick={() => navigate('/dashboard')}
               className="relative rounded-full hover:scale-110 transition-all flex-shrink-0"
               style={{ 
-                padding: 'clamp(0.5rem, 2vw, 0.75rem)',
+                padding: 'clamp(8px, 2vw, 12px)',
                 minWidth: 'clamp(40px, 10vw, 56px)',
                 minHeight: 'clamp(40px, 10vw, 56px)'
               }}
               title={t('profile.back_to_dashboard')}
             >
               {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(clamp(2px, 0.6vw, 3px), clamp(2px, 0.6vh, 3px))', filter: 'blur(clamp(3px, 0.8vw, 4px))' }} aria-hidden />
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" style={{ inset: 0 }} aria-hidden />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ inset: 'clamp(2px, 0.6vw, 3px)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ inset: 'clamp(3px, 0.8vw, 5px)', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute rounded-full pointer-events-none" style={{ inset: 'clamp(3px, 0.8vw, 5px)', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
               
               {/* Icon */}
               <LogOut 
@@ -309,26 +309,26 @@ const Gifts = () => {
               onClick={() => navigate('/game')}
               className="relative rounded-full hover:scale-110 transition-all flex-shrink-0"
               style={{ 
-                padding: 'clamp(0.5rem, 2vw, 0.75rem)',
+                padding: 'clamp(8px, 2vw, 12px)',
                 minWidth: 'clamp(40px, 10vw, 56px)',
                 minHeight: 'clamp(40px, 10vw, 56px)'
               }}
               title="Play Game"
             >
               {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(clamp(2px, 0.6vw, 3px), clamp(2px, 0.6vh, 3px))', filter: 'blur(clamp(3px, 0.8vw, 4px))' }} aria-hidden />
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
               
               {/* OUTER FRAME - Green */}
-              <div className="absolute rounded-full bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-400/50 shadow-lg" style={{ inset: 0 }} aria-hidden />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-400/50 shadow-lg" aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute rounded-full bg-gradient-to-b from-green-600 via-green-500 to-green-800" style={{ inset: 'clamp(2px, 0.6vw, 3px)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-green-600 via-green-500 to-green-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute rounded-full bg-gradient-to-b from-green-500 via-green-600 to-green-700" style={{ inset: 'clamp(3px, 0.8vw, 5px)', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-green-500 via-green-600 to-green-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute rounded-full pointer-events-none" style={{ inset: 'clamp(3px, 0.8vw, 5px)', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
               
               {/* Icon */}
               <Play 
