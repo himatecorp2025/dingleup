@@ -140,7 +140,7 @@ const LoginNew = () => {
 
   return (
     <div 
-      className="h-screen w-screen fixed inset-0 overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8 animate-fade-in"
+      className="h-screen w-screen fixed inset-0 overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] animate-fade-in"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
@@ -158,8 +158,8 @@ const LoginNew = () => {
         }}
       />
 
-      <div className="w-full max-w-md relative z-10 flex items-center justify-center">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full">
+      <div className="w-full h-full flex items-center justify-center px-4 sm:px-6 md:px-8 relative z-10">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full max-w-md">
           <button 
             onClick={() => navigate('/')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 

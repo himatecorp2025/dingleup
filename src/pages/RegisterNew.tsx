@@ -192,7 +192,8 @@ const RegisterNew = () => {
       className="h-screen w-screen fixed inset-0 overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center animate-fade-in"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
-        paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
+        paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0',
+        padding: '0'
       }}
     >
       {/* Background image with 75% opacity - optimized for mobile performance */}
@@ -207,75 +208,88 @@ const RegisterNew = () => {
         }}
       />
 
-      <div className="w-[90vw] max-w-[500px] relative z-10 flex items-center justify-center" style={{ height: isStandalone ? 'calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-[3vh] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full max-h-full overflow-y-auto"
+      <div className="w-[90vw] max-w-[500px] relative z-10" style={{ height: isStandalone ? 'calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full h-full flex flex-col"
           style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
+            padding: 'clamp(1rem, 2vh, 2rem)'
           }}
         >
-          <style>
-            {`
-              .backdrop-blur-xl::-webkit-scrollbar {
-                display: none;
-              }
-            `}
-          </style>
           <button 
             onClick={() => navigate('/')} 
-            className="absolute left-[2vh] top-[2vh] p-[1.5vh] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[5vh] min-h-[5vh] flex items-center justify-center" 
+            className="absolute rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 flex items-center justify-center" 
             aria-label={t('auth.register.backButton')}
+            style={{
+              left: 'clamp(0.75rem, 2vh, 1rem)',
+              top: 'clamp(0.75rem, 2vh, 1rem)',
+              padding: 'clamp(0.5rem, 1.5vh, 0.75rem)',
+              minWidth: 'clamp(40px, 5vh, 48px)',
+              minHeight: 'clamp(40px, 5vh, 48px)'
+            }}
           >
-            <ArrowLeft className="w-[2.5vh] h-[2.5vh] text-white/70 group-hover:text-white transition-colors" />
+            <ArrowLeft className="text-white/70 group-hover:text-white transition-colors" style={{ width: 'clamp(20px, 3vh, 24px)', height: 'clamp(20px, 3vh, 24px)' }} />
           </button>
 
           {/* Logo */}
-          <div className="flex justify-center mb-[1.5vh] mt-[1vh]">
+          <div className="flex justify-center" style={{ marginBottom: 'clamp(0.5rem, 1.5vh, 1rem)', marginTop: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
             <img 
               src={loadingLogo} 
               alt="DingleUP! Logo" 
-              className="h-[8vh] w-auto object-contain" 
+              className="object-contain" 
+              style={{
+                width: 'clamp(50px, 8vh, 80px)',
+                height: 'clamp(50px, 8vh, 80px)'
+              }}
             />
           </div>
 
-          <h1 className="font-black text-center mb-[1vh] bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto"
-            style={{ fontSize: 'clamp(1.25rem, 4vh, 2.5rem)' }}
+          <h1 
+            className="font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto"
+            style={{
+              fontSize: 'clamp(1.5rem, 4vh, 2.5rem)',
+              marginBottom: 'clamp(0.25rem, 0.8vh, 0.5rem)',
+              lineHeight: '1.2'
+            }}
           >
             {t('auth.register.title')}
           </h1>
-          <p className="text-center text-white/70 mb-[2vh] font-medium break-words"
-            style={{ fontSize: 'clamp(0.75rem, 1.8vh, 1rem)' }}
+          <p 
+            className="text-center text-white/70 font-medium break-words"
+            style={{
+              fontSize: 'clamp(0.7rem, 1.6vh, 0.85rem)',
+              marginBottom: 'clamp(0.75rem, 1.8vh, 1.25rem)',
+              lineHeight: '1.3'
+            }}
           >
             {t('auth.register.subtitle')}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-[2vh]">
-            <div className="space-y-[0.5vh]">
-              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}>{t('auth.register.usernameLabel')}</Label>
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col" style={{ gap: 'clamp(0.5rem, 1.5vh, 1rem)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.25rem, 0.6vh, 0.4rem)' }}>
+              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.7rem, 1.5vh, 0.8rem)' }}>{t('auth.register.usernameLabel')}</Label>
               <div className="relative group">
-                <User className="absolute left-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} />
+                <User className="absolute text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ left: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)', width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} />
                 <Input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20"
                   style={{ 
-                    height: 'clamp(2.5rem, 5.5vh, 3.5rem)',
-                    paddingLeft: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    fontSize: 'clamp(0.875rem, 1.8vh, 1rem)'
+                    height: 'clamp(36px, 5vh, 48px)',
+                    paddingLeft: 'clamp(32px, 4vh, 40px)',
+                    fontSize: 'clamp(0.8rem, 1.7vh, 0.9rem)'
                   }}
                   placeholder={t('auth.register.usernamePlaceholder')}
                   disabled={isLoading}
                   maxLength={30}
                 />
               </div>
-              {errors.username && <p className="text-red-400" style={{ fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)' }}>{errors.username}</p>}
+              {errors.username && <p className="text-red-400" style={{ fontSize: 'clamp(0.65rem, 1.3vh, 0.75rem)' }}>{errors.username}</p>}
             </div>
 
-            <div className="space-y-[0.5vh]">
-              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}>{t('auth.register.pinLabel')}</Label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.25rem, 0.6vh, 0.4rem)' }}>
+              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.7rem, 1.5vh, 0.8rem)' }}>{t('auth.register.pinLabel')}</Label>
               <div className="relative group">
-                <Lock className="absolute left-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} />
+                <Lock className="absolute text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ left: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)', width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} />
                 <Input
                   type={showPin ? "text" : "password"}
                   inputMode="numeric"
@@ -284,10 +298,10 @@ const RegisterNew = () => {
                   onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20"
                   style={{ 
-                    height: 'clamp(2.5rem, 5.5vh, 3.5rem)',
-                    paddingLeft: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    paddingRight: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    fontSize: 'clamp(0.875rem, 1.8vh, 1rem)'
+                    height: 'clamp(36px, 5vh, 48px)',
+                    paddingLeft: 'clamp(32px, 4vh, 40px)',
+                    paddingRight: 'clamp(32px, 4vh, 40px)',
+                    fontSize: 'clamp(0.8rem, 1.7vh, 0.9rem)'
                   }}
                   placeholder={t('auth.register.pinPlaceholder')}
                   disabled={isLoading}
@@ -296,19 +310,20 @@ const RegisterNew = () => {
                 <button
                   type="button"
                   onClick={() => setShowPin(!showPin)}
-                  className="absolute right-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
+                  className="absolute text-white/40 hover:text-white/60 transition-colors"
+                  style={{ right: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)' }}
                   aria-label={showPin ? t('auth.register.hidePin') : t('auth.register.showPin')}
                 >
-                  {showPin ? <EyeOff style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} /> : <Eye style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} />}
+                  {showPin ? <EyeOff style={{ width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} /> : <Eye style={{ width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} />}
                 </button>
               </div>
-              {errors.pin && <p className="text-red-400" style={{ fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)' }}>{errors.pin}</p>}
+              {errors.pin && <p className="text-red-400" style={{ fontSize: 'clamp(0.65rem, 1.3vh, 0.75rem)' }}>{errors.pin}</p>}
             </div>
 
-            <div className="space-y-[0.5vh]">
-              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}>{t('auth.register.pinConfirmLabel')}</Label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.25rem, 0.6vh, 0.4rem)' }}>
+              <Label className="font-medium text-white/80" style={{ fontSize: 'clamp(0.7rem, 1.5vh, 0.8rem)' }}>{t('auth.register.pinConfirmLabel')}</Label>
               <div className="relative group">
-                <Lock className="absolute left-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} />
+                <Lock className="absolute text-white/40 group-focus-within:text-yellow-400 transition-colors" style={{ left: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)', width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} />
                 <Input
                   type={showPinConfirm ? "text" : "password"}
                   inputMode="numeric"
@@ -317,10 +332,10 @@ const RegisterNew = () => {
                   onChange={(e) => setFormData({ ...formData, pinConfirm: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20"
                   style={{ 
-                    height: 'clamp(2.5rem, 5.5vh, 3.5rem)',
-                    paddingLeft: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    paddingRight: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    fontSize: 'clamp(0.875rem, 1.8vh, 1rem)'
+                    height: 'clamp(36px, 5vh, 48px)',
+                    paddingLeft: 'clamp(32px, 4vh, 40px)',
+                    paddingRight: 'clamp(32px, 4vh, 40px)',
+                    fontSize: 'clamp(0.8rem, 1.7vh, 0.9rem)'
                   }}
                   placeholder={t('auth.register.pinPlaceholder')}
                   disabled={isLoading}
@@ -329,23 +344,24 @@ const RegisterNew = () => {
                 <button
                   type="button"
                   onClick={() => setShowPinConfirm(!showPinConfirm)}
-                  className="absolute right-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
+                  className="absolute text-white/40 hover:text-white/60 transition-colors"
+                  style={{ right: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)' }}
                   aria-label={showPinConfirm ? t('auth.register.hidePin') : t('auth.register.showPin')}
                 >
-                  {showPinConfirm ? <EyeOff style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} /> : <Eye style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }} />}
+                  {showPinConfirm ? <EyeOff style={{ width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} /> : <Eye style={{ width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }} />}
                 </button>
               </div>
-              {errors.pinConfirm && <p className="text-red-400" style={{ fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)' }}>{errors.pinConfirm}</p>}
+              {errors.pinConfirm && <p className="text-red-400" style={{ fontSize: 'clamp(0.65rem, 1.3vh, 0.75rem)' }}>{errors.pinConfirm}</p>}
             </div>
 
             {/* Invitation Code (Optional) */}
-            <div className="space-y-[0.5vh]">
-              <Label className="font-medium text-white/80 flex items-center gap-[1vh]" style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.25rem, 0.6vh, 0.4rem)' }}>
+              <Label className="font-medium text-white/80 flex items-center" style={{ fontSize: 'clamp(0.7rem, 1.5vh, 0.8rem)', gap: 'clamp(0.25rem, 0.8vh, 0.5rem)' }}>
                 <span>{t('auth.register.invitationCodeLabel')}</span>
-                <span className="text-white/50" style={{ fontSize: 'clamp(0.625rem, 1.4vh, 0.75rem)' }}>({t('auth.register.optional')})</span>
+                <span className="text-white/50" style={{ fontSize: 'clamp(0.6rem, 1.3vh, 0.7rem)' }}>({t('auth.register.optional')})</span>
               </Label>
               <div className="relative group">
-                <svg className="absolute left-[1.5vh] top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: 'clamp(1rem, 2.2vh, 1.25rem)', height: 'clamp(1rem, 2.2vh, 1.25rem)' }}>
+                <svg className="absolute text-white/40 group-focus-within:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ left: 'clamp(8px, 1.2vh, 12px)', top: '50%', transform: 'translateY(-50%)', width: 'clamp(16px, 2vh, 20px)', height: 'clamp(16px, 2vh, 20px)' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
                 <Input
@@ -354,19 +370,19 @@ const RegisterNew = () => {
                   onChange={(e) => setFormData({ ...formData, invitationCode: e.target.value.toUpperCase().trim() })}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 uppercase"
                   style={{ 
-                    height: 'clamp(2.5rem, 5.5vh, 3.5rem)',
-                    paddingLeft: 'clamp(2rem, 4.5vh, 2.75rem)',
-                    fontSize: 'clamp(0.875rem, 1.8vh, 1rem)'
+                    height: 'clamp(36px, 5vh, 48px)',
+                    paddingLeft: 'clamp(32px, 4vh, 40px)',
+                    fontSize: 'clamp(0.8rem, 1.7vh, 0.9rem)'
                   }}
                   placeholder={t('auth.register.invitationCodePlaceholder')}
                   disabled={isLoading}
                   maxLength={8}
                 />
               </div>
-              <p className="text-white/50" style={{ fontSize: 'clamp(0.625rem, 1.4vh, 0.75rem)' }}>{t('auth.register.invitationCodeHint')}</p>
+              <p className="text-white/50" style={{ fontSize: 'clamp(0.6rem, 1.3vh, 0.7rem)' }}>{t('auth.register.invitationCodeHint')}</p>
             </div>
 
-            <p className="text-center text-white/60 mb-[1.5vh]" style={{ fontSize: 'clamp(0.625rem, 1.5vh, 0.875rem)' }}>
+            <p className="text-center text-white/60" style={{ fontSize: 'clamp(0.6rem, 1.4vh, 0.75rem)', marginBottom: 'clamp(0.5rem, 1.2vh, 0.75rem)', lineHeight: '1.3' }}>
               {t('auth.register.termsPrefix')}{' '}
               <a 
                 href="/aszf" 
@@ -416,7 +432,7 @@ const RegisterNew = () => {
               <button
                 onClick={() => navigate('/')}
                 className="text-white/60 hover:text-white/90 transition-colors underline"
-                style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}
+                style={{ fontSize: 'clamp(0.65rem, 1.4vh, 0.75rem)' }}
               >
                 {t('auth.choice.back')}
               </button>
