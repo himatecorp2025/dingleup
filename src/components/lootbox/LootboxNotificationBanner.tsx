@@ -25,6 +25,7 @@ export const LootboxNotificationBanner: React.FC<LootboxNotificationBannerProps>
       {/* Red hex button SVG - inline for maximum quality */}
       <svg 
         xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
         viewBox="22.53058 -47.5814116 672.82399 167.3667432"
         fill="none"
         shapeRendering="geometricPrecision"
