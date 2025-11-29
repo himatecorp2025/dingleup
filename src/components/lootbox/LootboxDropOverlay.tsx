@@ -163,14 +163,14 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
-      {/* Global Fixed Overlay - Right Side, Drop from top */}
+      {/* Global Fixed Overlay - Right Side, Drop from top (below profile hexagon) */}
       <div
         className="fixed z-50 cursor-pointer right-4"
         onClick={() => setShowDialog(true)}
         style={{
-          top: '50%',
-          transform: `translateY(${isAnimating ? '-150%' : '-50%'})`,
-          transition: 'transform 1.5s ease-out',
+          top: isAnimating ? '80px' : '50%',
+          transform: isAnimating ? 'translateY(0)' : 'translateY(-50%)',
+          transition: 'top 1.5s ease-out, transform 1.5s ease-out',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
@@ -180,10 +180,10 @@ export const LootboxDropOverlay = () => {
         <div className="relative">
           <GoldLootboxIcon className="w-16 h-auto md:w-20" />
           
-          {/* 60s Countdown Badge - only show when countdown is active */}
+          {/* 60s Countdown Badge - only show when countdown is active - positioned at bottom */}
           {countdownActive && remainingSeconds !== null && remainingSeconds > 0 && (
             <div
-              className="absolute top-2 right-2 px-3 py-1 rounded-full bg-black/80 text-white text-sm font-semibold"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2 px-3 py-1 rounded-full bg-black/80 text-white text-sm font-semibold"
               style={{
                 boxShadow: '0 0 12px rgba(0,0,0,0.6)'
               }}
