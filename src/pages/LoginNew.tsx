@@ -139,10 +139,10 @@ const LoginNew = () => {
 
   return (
     <div 
-      className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8"
+      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
-        paddingBottom: 'env(safe-area-inset-bottom)'
+        paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
       }}
     >
       {/* Background decorations */}
@@ -152,8 +152,8 @@ const LoginNew = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative">
+      <div className="w-full max-w-md relative z-10 flex items-center justify-center" style={{ maxHeight: isStandalone ? 'calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative overflow-y-auto max-h-full w-full">
           <button 
             onClick={() => navigate('/auth/choice')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 
