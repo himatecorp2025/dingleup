@@ -22,9 +22,21 @@ export const QuestionLikePromptPopup = ({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-[90%] max-w-md mx-4">
+      <div 
+        className="relative max-w-md"
+        style={{
+          width: 'clamp(18rem, 90vw, 28rem)',
+          margin: '0 clamp(1rem, 2vw, 1.5rem)'
+        }}
+      >
         {/* 3D Card Container with Enhanced Casino Aesthetic */}
-        <div className="relative bg-gradient-to-br from-purple-900/98 via-purple-800/98 to-indigo-900/98 rounded-3xl p-8 shadow-[0_0_80px_rgba(168,85,247,0.6),0_0_120px_rgba(99,102,241,0.5),0_20px_50px_rgba(0,0,0,0.8)] border-2 border-purple-400/40">
+        <div 
+          className="relative bg-gradient-to-br from-purple-900/98 via-purple-800/98 to-indigo-900/98 shadow-[0_0_80px_rgba(168,85,247,0.6),0_0_120px_rgba(99,102,241,0.5),0_20px_50px_rgba(0,0,0,0.8)] border-2 border-purple-400/40"
+          style={{
+            padding: 'clamp(1.5rem, 4vw, 2rem)',
+            borderRadius: 'clamp(1.5rem, 3vw, 2rem)'
+          }}
+        >
           {/* Enhanced Glow Effects */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-purple-500/30 to-transparent pointer-events-none" />
           <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 opacity-30 blur-2xl animate-pulse" />
@@ -33,14 +45,28 @@ export const QuestionLikePromptPopup = ({
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-110"
+            className="absolute z-10 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-110"
+            style={{
+              top: 'clamp(1rem, 2vw, 1.5rem)',
+              right: 'clamp(1rem, 2vw, 1.5rem)',
+              padding: 'clamp(0.5rem, 1vw, 0.75rem)'
+            }}
             aria-label={t('common.close')}
           >
-            <X className="w-5 h-5 text-white" />
+            <X 
+              className="text-white" 
+              style={{
+                width: 'clamp(1rem, 2.5vw, 1.25rem)',
+                height: 'clamp(1rem, 2.5vw, 1.25rem)'
+              }}
+            />
           </button>
 
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+          <div 
+            className="relative z-10 flex flex-col items-center text-center"
+            style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}
+          >
             {/* Animated Coin Icon with 3D Effects */}
             <div className="relative">
               <div className="absolute inset-0 animate-pulse">
@@ -55,11 +81,20 @@ export const QuestionLikePromptPopup = ({
             </div>
 
             {/* Title Text with Coin and Life Reward */}
-            <div className="space-y-2">
-              <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-[0_4px_15px_rgba(0,0,0,0.7)]">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1vw, 1rem)' }}>
+              <h2 
+                className="font-bold text-white drop-shadow-[0_4px_15px_rgba(0,0,0,0.7)]"
+                style={{ fontSize: 'clamp(1.5rem, 4vw, 1.875rem)' }}
+              >
                 {t('game.like_prompt_title')}
               </h2>
-              <div className="flex items-center justify-center gap-4 text-xl font-bold">
+              <div 
+                className="flex items-center justify-center font-bold"
+                style={{ 
+                  gap: 'clamp(1rem, 2vw, 1.5rem)',
+                  fontSize: 'clamp(1.125rem, 3vw, 1.25rem)'
+                }}
+              >
                 <div className="flex items-center gap-2 text-yellow-400 animate-pulse">
                   <CoinIcon3D size={32} />
                   <span className="drop-shadow-[0_2px_10px_rgba(234,179,8,0.9)]">
@@ -77,7 +112,10 @@ export const QuestionLikePromptPopup = ({
             </div>
 
             {/* Description */}
-            <p className="text-lg text-purple-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] leading-relaxed">
+            <p 
+              className="text-purple-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] leading-relaxed"
+              style={{ fontSize: 'clamp(1rem, 2.5vw, 1.125rem)' }}
+            >
               {t('game.like_prompt_description')}
             </p>
 
@@ -89,7 +127,7 @@ export const QuestionLikePromptPopup = ({
               }}
               disabled={isLiked}
               className={`
-                relative group px-8 py-4 rounded-2xl font-bold text-lg
+                relative group font-bold
                 transition-all duration-300 transform
                 ${isLiked 
                   ? 'bg-gray-600 cursor-not-allowed opacity-60' 
@@ -97,6 +135,9 @@ export const QuestionLikePromptPopup = ({
                 }
               `}
               style={{
+                padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem)',
+                borderRadius: 'clamp(1rem, 2vw, 1.5rem)',
+                fontSize: 'clamp(1rem, 2.5vw, 1.125rem)',
                 textShadow: '0 3px 15px rgba(0,0,0,0.8)',
                 boxShadow: isLiked ? 'none' : '0 0 40px rgba(236,72,153,0.8), inset 0 3px 15px rgba(255,255,255,0.3), inset 0 -3px 10px rgba(0,0,0,0.3)',
               }}
@@ -109,9 +150,16 @@ export const QuestionLikePromptPopup = ({
                 </>
               )}
               
-              <span className="relative flex items-center gap-2 text-white">
+              <span 
+                className="relative flex items-center text-white"
+                style={{ gap: 'clamp(0.5rem, 1vw, 0.75rem)' }}
+              >
                 <Heart 
-                  className="w-6 h-6" 
+                  className="" 
+                  style={{
+                    width: 'clamp(1.25rem, 3vw, 1.5rem)',
+                    height: 'clamp(1.25rem, 3vw, 1.5rem)'
+                  }}
                   fill={isLiked ? "currentColor" : "none"}
                 />
                 {isLiked ? t('game.already_liked') : t('game.like_button')}
@@ -119,7 +167,10 @@ export const QuestionLikePromptPopup = ({
             </button>
 
             {/* Skip hint */}
-            <p className="text-sm text-purple-200/60 italic">
+            <p 
+              className="text-purple-200/60 italic"
+              style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}
+            >
               {t('game.like_prompt_skip_hint')}
             </p>
           </div>

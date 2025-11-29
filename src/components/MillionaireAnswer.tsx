@@ -174,12 +174,16 @@ export const MillionaireAnswer = ({
         </svg>
         
         {/* Content wrapper - flexbox centered like PlayNowButton */}
-        <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5">
-          <div className="flex items-center justify-center w-full gap-2 sm:gap-3 translate-y-[19px]">
-            <div 
-              className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
-              style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
-            >
+        <div className="absolute inset-0 flex items-center justify-center" style={{ padding: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+          <div className="flex items-center justify-center w-full translate-y-[19px]" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
+          <div 
+            className="relative flex-shrink-0 flex items-center justify-center"
+            style={{ 
+              width: 'clamp(3rem, 7vw, 4rem)',
+              height: 'clamp(2rem, 5vw, 2.5rem)',
+              clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)'
+            }}
+          >
               {/* Letter hexagon with same 3D effect as question number */}
               <div
                 className="absolute"
@@ -256,18 +260,25 @@ export const MillionaireAnswer = ({
                 aria-hidden
               />
 
-              <span className="relative z-10 text-primary-foreground font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
+              <span 
+                className="relative z-10 text-primary-foreground font-bold leading-none drop-shadow-lg font-poppins" 
+                style={{ 
+                  fontSize: 'clamp(0.9375rem, 3vw, 1.125rem)',
+                  textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' 
+                }}
+              >
+                {letter}:
+              </span>
             </div>
             <p 
               ref={textRef}
-              className={`font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground ${
-                typeof children === 'string' && children.length > 35 
-                  ? 'text-base sm:text-lg md:text-xl' 
-                  : typeof children === 'string' && children.length > 25
-                  ? 'text-lg sm:text-xl md:text-2xl'
-                  : 'text-xl sm:text-2xl md:text-3xl'
-              }`}
+              className="font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground"
               style={{ 
+                fontSize: typeof children === 'string' && children.length > 35 
+                  ? 'clamp(1rem, 3.5vw, 1.25rem)' 
+                  : typeof children === 'string' && children.length > 25
+                  ? 'clamp(1.125rem, 4vw, 1.5rem)'
+                  : 'clamp(1.25rem, 4.5vw, 1.875rem)',
                 textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)',
                 transform: isMultiLine ? 'scale(0.85)' : 'scale(1)',
                 transformOrigin: 'center'
@@ -275,7 +286,7 @@ export const MillionaireAnswer = ({
             >
               {children}
             </p>
-            <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
+            <div className="flex-shrink-0" style={{ width: 'clamp(3rem, 7vw, 4rem)' }} aria-hidden />
           </div>
         </div>
       </button>

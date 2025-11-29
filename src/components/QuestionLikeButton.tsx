@@ -25,11 +25,12 @@ export const QuestionLikeButton = ({ questionId }: QuestionLikeButtonProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-1 relative">
+    <div className="flex flex-col items-center relative" style={{ gap: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>
       {/* Like button */}
       <button
         onClick={handleLike}
-        className="relative p-3 rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
+        className="relative rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
+        style={{ padding: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
         aria-label={liked ? t('aria.unlike_question') : t('aria.like_question')}
       >
         {/* Shadow base */}
@@ -49,25 +50,39 @@ export const QuestionLikeButton = ({ questionId }: QuestionLikeButtonProps) => {
         
         {/* Heart icon */}
         <Heart
-          className={`w-7 h-7 relative z-10 transition-all duration-300 ${
+          className={`relative z-10 transition-all duration-300 ${
             liked 
               ? 'fill-red-500 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' 
               : 'fill-none text-white/80 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]'
           }`}
+          style={{
+            width: 'clamp(1.5rem, 3vw, 1.75rem)',
+            height: 'clamp(1.5rem, 3vw, 1.75rem)'
+          }}
           strokeWidth={liked ? 0 : 2.5}
         />
         
         {/* Pop animation on like */}
         {isAnimating && (
           <Heart
-            className="absolute inset-0 m-auto w-7 h-7 fill-red-500 text-red-500 animate-ping opacity-75 pointer-events-none"
+            className="absolute inset-0 m-auto fill-red-500 text-red-500 animate-ping opacity-75 pointer-events-none"
+            style={{
+              width: 'clamp(1.5rem, 3vw, 1.75rem)',
+              height: 'clamp(1.5rem, 3vw, 1.75rem)'
+            }}
             aria-hidden
           />
         )}
       </button>
 
       {/* Like count */}
-      <div className="text-white text-sm font-semibold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] min-w-[2.5rem] text-center">
+      <div 
+        className="text-white font-semibold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-center"
+        style={{ 
+          fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+          minWidth: 'clamp(2rem, 4vw, 2.5rem)'
+        }}
+      >
         {likeCount > 0 ? (
           likeCount >= 1000 
             ? `${(likeCount / 1000).toFixed(1)}k` 

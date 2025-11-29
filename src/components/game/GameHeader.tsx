@@ -14,11 +14,19 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-between items-center mb-2 px-2 sm:px-3 md:px-4">
+    <div 
+      className="flex justify-between items-center"
+      style={{
+        marginBottom: 'clamp(0.5rem, 1vw, 1rem)',
+        paddingLeft: 'clamp(0.5rem, 1.5vw, 1rem)',
+        paddingRight: 'clamp(0.5rem, 1.5vw, 1rem)'
+      }}
+    >
       {/* Exit button with 3D Box Style matching Leaderboard back button */}
       <button
         onClick={onExit}
-        className="relative p-3 rounded-full hover:scale-110 transition-all"
+        className="relative rounded-full hover:scale-110 transition-all"
+        style={{ padding: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
         title={t('game.exit_title')}
         aria-label={t('game.exit_aria')}
         role="button"
@@ -46,10 +54,16 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
         <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
         
         {/* Icon */}
-        <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+        <LogOut 
+          className="text-white relative z-10 -scale-x-100" 
+          style={{ 
+            width: 'clamp(1.25rem, 3vw, 1.5rem)',
+            height: 'clamp(1.25rem, 3vw, 1.5rem)'
+          }}
+        />
       </button>
 
-      <div className="flex gap-2 sm:gap-3 md:gap-4">
+      <div className="flex" style={{ gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
         <DiamondHexagon
           type="lives"
           value={`${lives}/${maxLives}`}

@@ -90,8 +90,8 @@ const Lifeline3DButton = ({
       disabled={disabled}
       className={`relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'} transition-transform duration-200`}
       style={{ 
-        width: '56px', 
-        height: '56px',
+        width: 'clamp(3rem, 8vw, 4.5rem)',
+        height: 'clamp(3rem, 8vw, 4.5rem)',
         perspective: '1000px', 
         transformStyle: 'preserve-3d' 
       }}
@@ -154,18 +154,29 @@ const Lifeline3DButton = ({
       />
       
       {/* ICON AND LABEL */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5" style={{ transform: 'translateZ(32px)' }}>
+      <div 
+        className="absolute inset-0 flex flex-col items-center justify-center" 
+        style={{ 
+          gap: 'clamp(0.125rem, 0.5vw, 0.25rem)',
+          transform: 'translateZ(32px)' 
+        }}
+      >
         <Icon 
-          className="w-5 h-5 transition-all duration-300" 
+          className="transition-all duration-300" 
           style={{ 
+            width: 'clamp(1rem, 3vw, 1.25rem)',
+            height: 'clamp(1rem, 3vw, 1.25rem)',
             color: disabled ? "hsl(var(--muted-foreground))" : "#FFFFFF",
             filter: `drop-shadow(0 0 8px ${glowColor}) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`,
             opacity: disabled ? 0.5 : 1
           }} 
         />
         <span 
-          className="text-[10px] font-bold transition-all duration-300 max-w-full px-1 truncate" 
+          className="font-bold transition-all duration-300 max-w-full truncate"
           style={{ 
+            fontSize: 'clamp(0.5rem, 1.5vw, 0.625rem)',
+            paddingLeft: 'clamp(0.125rem, 0.5vw, 0.25rem)',
+            paddingRight: 'clamp(0.125rem, 0.5vw, 0.25rem)',
             color: disabled ? "hsl(var(--muted-foreground))" : "#FFFFFF",
             textShadow: `0 0 10px ${glowColor}, 0 2px 4px rgba(0,0,0,0.8)`,
             opacity: disabled ? 0.5 : 1
@@ -235,7 +246,13 @@ export const GameLifelines = ({
   };
   
   return (
-    <div className="flex justify-center items-center gap-[5%] mb-2">
+    <div 
+      className="flex justify-center items-center"
+      style={{
+        gap: 'clamp(0.5rem, 2vw, 1rem)',
+        marginBottom: 'clamp(0.5rem, 1vw, 1rem)'
+      }}
+    >
       <Lifeline3DButton
         onClick={async () => {
           await trackLifelineUsage('50_50', help5050UsageCount === 1 ? 15 : 0);

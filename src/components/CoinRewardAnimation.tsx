@@ -26,7 +26,7 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
   const successGreen = "88, 80%, 60%";
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center" style={{ gap: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>
       {/* Neon glow container */}
       <div className="relative">
         {/* Multiple glow layers for intense neon effect */}
@@ -44,8 +44,13 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
         />
         
         {/* Main content with casino-style animation */}
-        <div className="relative flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg min-w-[80px]"
+        <div 
+          className="relative flex items-center justify-center"
           style={{
+            gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+            padding: 'clamp(0.25rem, 1vw, 0.375rem) clamp(0.5rem, 2vw, 0.75rem)',
+            borderRadius: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+            minWidth: 'clamp(4rem, 10vw, 5rem)',
             background: `linear-gradient(135deg, hsl(88, 80%, 35%) 0%, hsl(88, 80%, 45%) 100%)`,
             boxShadow: `
               0 0 20px hsl(${successGreen}),
@@ -58,8 +63,9 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
         >
           {/* Amount text with extra glow - NO ICON */}
           <span 
-            className="font-bold text-lg tracking-wider"
-            style={{
+            className="font-bold tracking-wider"
+            style={{ 
+              fontSize: 'clamp(1rem, 3vw, 1.125rem)',
               color: "hsl(88, 100%, 95%)",
               textShadow: `
                 0 0 10px hsl(88, 80%, 70%),
