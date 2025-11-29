@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { LogOut } from "lucide-react";
 import { DiamondHexagon } from "@/components/DiamondHexagon";
+import { LootboxNotificationBanner } from "@/components/lootbox/LootboxNotificationBanner";
 import { useI18n } from "@/i18n";
 
 interface GameHeaderProps {
@@ -67,15 +68,21 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
         />
       </button>
 
-      <div className="flex" style={{ gap: 'clamp(8px, 2vw, 12px)' }}>
-        <DiamondHexagon
-          type="lives"
-          value={`${lives}/${maxLives}`}
-        />
-        <DiamondHexagon
-          type="coins"
-          value={coins}
-        />
+      <div className="flex flex-col items-center" style={{ gap: 'clamp(8px, 2vw, 12px)' }}>
+        <div className="flex" style={{ gap: 'clamp(8px, 2vw, 12px)' }}>
+          <DiamondHexagon
+            type="lives"
+            value={`${lives}/${maxLives}`}
+          />
+          <DiamondHexagon
+            type="coins"
+            value={coins}
+          />
+        </div>
+        {/* Debug: notification SVG always visible under the hexagons */}
+        <div style={{ marginTop: 'clamp(4px, 1vw, 8px)' }}>
+          <LootboxNotificationBanner countdown={3} />
+        </div>
       </div>
     </div>
   );
