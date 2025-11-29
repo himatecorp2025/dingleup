@@ -72,10 +72,7 @@ const Leaderboard = () => {
   const userUsername = profile?.username || null;
 
   return (
-    <div className="h-dvh w-screen overflow-hidden flex flex-col relative" style={{
-      maxWidth: '100vw',
-      maxHeight: '100vh'
-    }}>
+    <div className="h-dvh w-screen overflow-hidden flex flex-col relative">
       {/* Pull-to-refresh indicator */}
       {isPulling && (
         <div 
@@ -113,17 +110,23 @@ const Leaderboard = () => {
       />
       
       <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
-        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)',
         width: '90vw',
         maxWidth: '90vw',
-        margin: '0 auto'
+        margin: '0 auto',
+        paddingTop: 'clamp(8px, 2vh, 16px)',
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)'
       }}>
-        <div className="w-full flex flex-col" style={{ padding: 'clamp(8px, 2vh, 16px)' }}>
+        <div className="w-full flex flex-col">
           {/* Header with Back Button - 3D Box Style */}
-          <div className="flex items-center mb-2">
+          <div className="flex items-center" style={{ marginBottom: 'clamp(8px, 1.5vh, 12px)' }}>
             <button
               onClick={() => navigate('/dashboard')}
-              className="relative p-4 rounded-full hover:scale-110 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+              className="relative rounded-full hover:scale-110 transition-all flex items-center justify-center"
+              style={{
+                padding: 'clamp(10px, 2vh, 16px)',
+                minWidth: 'clamp(44px, 8vh, 56px)',
+                minHeight: 'clamp(44px, 8vh, 56px)'
+              }}
               title={t('leaderboard.back_aria')}
               aria-label={t('leaderboard.back_aria')}
             >
@@ -143,7 +146,10 @@ const Leaderboard = () => {
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
               
               {/* Icon */}
-              <LogOut className="w-7 h-7 text-white relative z-10 -scale-x-100" />
+              <LogOut 
+                className="text-white relative z-10 -scale-x-100" 
+                style={{ width: 'clamp(24px, 4vh, 28px)', height: 'clamp(24px, 4vh, 28px)' }}
+              />
             </button>
           </div>
 
@@ -165,7 +171,7 @@ const Leaderboard = () => {
         </h1>
 
         {/* Countdown Timer - below title */}
-        <div className="flex justify-center mb-2 px-2">
+        <div className="flex justify-center" style={{ marginBottom: 'clamp(8px, 1.5vh, 12px)' }}>
           <DailyRankingsCountdown compact={false} userTimezone={profile?.user_timezone || 'Europe/Budapest'} />
         </div>
 
