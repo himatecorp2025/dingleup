@@ -109,27 +109,19 @@ const Leaderboard = () => {
         }}
       />
       
-      <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
-        width: '90vw',
-        maxWidth: '90vw',
-        margin: '0 auto',
-        paddingTop: 'clamp(8px, 2vh, 16px)',
-        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)'
-      }}>
-        <div className="w-full flex flex-col">
-          {/* Header with Back Button - 3D Box Style */}
-          <div className="flex items-center" style={{ marginBottom: 'clamp(8px, 1.5vh, 12px)' }}>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="relative rounded-full hover:scale-110 transition-all flex items-center justify-center"
-              style={{
-                padding: 'clamp(10px, 2vh, 16px)',
-                minWidth: 'clamp(44px, 8vh, 56px)',
-                minHeight: 'clamp(44px, 8vh, 56px)'
-              }}
-              title={t('leaderboard.back_aria')}
-              aria-label={t('leaderboard.back_aria')}
-            >
+      {/* Back Button - Fixed position like Invitation page */}
+      <div className="fixed left-4 z-50 pt-safe" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="relative rounded-full hover:scale-110 transition-all"
+          style={{
+            padding: 'clamp(8px, 2vw, 12px)',
+            minWidth: 'clamp(40px, 10vw, 56px)',
+            minHeight: 'clamp(40px, 10vw, 56px)'
+          }}
+          title={t('leaderboard.back_aria')}
+          aria-label={t('leaderboard.back_aria')}
+        >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
               
@@ -145,15 +137,22 @@ const Leaderboard = () => {
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
               
-              {/* Icon */}
-              <LogOut 
-                className="text-white relative z-10 -scale-x-100" 
-                style={{ width: 'clamp(24px, 4vh, 28px)', height: 'clamp(24px, 4vh, 28px)' }}
-              />
-            </button>
-          </div>
+          {/* Icon */}
+          <LogOut 
+            className="text-white relative z-10 -scale-x-100" 
+            style={{ width: 'clamp(20px, 5vw, 24px)', height: 'clamp(20px, 5vw, 24px)' }}
+          />
+        </button>
+      </div>
 
-        <div className="max-w-4xl mx-auto w-full">
+      <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto',
+        paddingTop: 'clamp(60px, 10vh, 80px)',
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)'
+      }}>
+        <div className="w-full flex flex-col">
 
         {/* Title */}
         <h1 
@@ -193,7 +192,6 @@ const Leaderboard = () => {
 
         </div>
       </div>
-    </div>
 
     <BottomNav />
   </div>

@@ -135,10 +135,15 @@ const Invitation = () => {
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Back Button - 3D Round Style */}
-      <div className="fixed top-4 left-4 z-50 pt-safe">
+      <div className="fixed left-4 z-50 pt-safe" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
         <button
           onClick={() => navigate('/dashboard')}
-          className="relative p-3 rounded-full hover:scale-110 transition-all"
+          className="relative rounded-full hover:scale-110 transition-all"
+          style={{
+            padding: 'clamp(8px, 2vw, 12px)',
+            minWidth: 'clamp(40px, 10vw, 56px)',
+            minHeight: 'clamp(40px, 10vw, 56px)'
+          }}
           title={t('invitation.back_to_dashboard')}
         >
           {/* BASE SHADOW */}
@@ -157,7 +162,10 @@ const Invitation = () => {
           <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
           
           {/* Icon */}
-          <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+          <LogOut 
+            className="text-white relative z-10 -scale-x-100" 
+            style={{ width: 'clamp(20px, 5vw, 24px)', height: 'clamp(20px, 5vw, 24px)' }}
+          />
         </button>
       </div>
 
