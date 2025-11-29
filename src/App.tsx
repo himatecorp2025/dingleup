@@ -29,7 +29,6 @@ import Index from "./pages/Index";
 
 // Lazy load all other pages for optimal bundle splitting
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const AuthChoice = lazy(() => import("./pages/AuthChoice"));
 const RegisterNew = lazy(() => import("./pages/RegisterNew"));
 const LoginNew = lazy(() => import("./pages/LoginNew"));
 const Game = lazy(() => import("./pages/Game"));
@@ -143,10 +142,9 @@ const AppCore = () => {
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
               
-              {/* New simplified auth routes */}
-              <Route path="/auth/choice" element={<AuthChoice />} />
-              <Route path="/auth/register" element={<RegisterNew />} />
+              {/* New simplified auth routes - choice removed, direct login */}
               <Route path="/auth/login" element={<LoginNew />} />
+              <Route path="/auth/register" element={<RegisterNew />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}
               <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />

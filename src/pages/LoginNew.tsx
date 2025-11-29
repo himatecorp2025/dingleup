@@ -140,7 +140,7 @@ const LoginNew = () => {
 
   return (
     <div 
-      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8"
+      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8 animate-fade-in"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
@@ -167,7 +167,7 @@ const LoginNew = () => {
       <div className="w-full max-w-md relative z-10 flex items-center justify-center" style={{ maxHeight: isStandalone ? 'calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative overflow-y-auto max-h-full w-full">
           <button 
-            onClick={() => navigate('/auth/choice')} 
+            onClick={() => navigate('/')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 
             aria-label={t('auth.login.backButton')}
           >
@@ -243,15 +243,26 @@ const LoginNew = () => {
             </Button>
           </form>
 
-          <p className="text-center text-white/60 mt-6 text-xs xs:text-sm break-words px-2">
-            {t('auth.login.noAccountYet')}{' '}
-            <button
-              onClick={() => navigate('/auth/register')}
-              className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
-            >
-              {t('auth.login.registerLink')}
-            </button>
-          </p>
+          <div className="mt-6 space-y-3">
+            <p className="text-center text-white/60 text-xs xs:text-sm break-words px-2">
+              {t('auth.login.noAccountYet')}{' '}
+              <button
+                onClick={() => navigate('/auth/register')}
+                className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
+              >
+                {t('auth.login.registerLink')}
+              </button>
+            </p>
+            
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/')}
+                className="text-white/60 hover:text-white/90 text-sm transition-colors underline"
+              >
+                {t('auth.choice.back')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

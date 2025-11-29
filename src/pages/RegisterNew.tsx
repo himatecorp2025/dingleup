@@ -189,7 +189,7 @@ const RegisterNew = () => {
 
   return (
     <div 
-      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center"
+      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center animate-fade-in"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
@@ -221,7 +221,7 @@ const RegisterNew = () => {
           }}
         >
           <button 
-            onClick={() => navigate('/auth/choice')} 
+            onClick={() => navigate('/')} 
             className="absolute left-[2vh] top-[2vh] p-[1.5vh] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[5vh] min-h-[5vh] flex items-center justify-center" 
             aria-label={t('auth.register.backButton')}
           >
@@ -400,15 +400,27 @@ const RegisterNew = () => {
             </Button>
           </form>
 
-          <p className="text-center text-white/60 mt-[2vh] break-words" style={{ fontSize: 'clamp(0.625rem, 1.5vh, 0.875rem)' }}>
-            {t('auth.register.alreadyHaveAccount')}{' '}
-            <button
-              onClick={() => navigate('/auth/login')}
-              className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
-            >
-              {t('auth.register.loginLink')}
-            </button>
-          </p>
+          <div className="mt-[2vh] space-y-[1vh]">
+            <p className="text-center text-white/60 break-words" style={{ fontSize: 'clamp(0.625rem, 1.5vh, 0.875rem)' }}>
+              {t('auth.register.alreadyHaveAccount')}{' '}
+              <button
+                onClick={() => navigate('/auth/login')}
+                className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
+              >
+                {t('auth.register.loginLink')}
+              </button>
+            </p>
+            
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/')}
+                className="text-white/60 hover:text-white/90 transition-colors underline"
+                style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}
+              >
+                {t('auth.choice.back')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
