@@ -374,8 +374,9 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       });
     }
     
-    // Start new game with PREFETCH MODE (uses prefetched questions if available)
-    await startGame(true, true);
+    // CRITICAL: Start new game with FULL BACKEND MODE (always requests next pool)
+    // Do NOT use prefetch mode - we need fresh questions from next pool
+    await startGame(true, false);
     
     // Instant transition to new game (no 300ms delay!)
     setTimeout(() => {
