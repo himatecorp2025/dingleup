@@ -67,7 +67,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Use same heart icon as lives hexagon (full visual copy)
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
+            className="drop-shadow-lg"
+            style={{ width: 'clamp(12px, 2vh, 20px)', height: 'clamp(12px, 2vh, 20px)' }}
             viewBox="0 0 24 24"
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +84,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Coin SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
+            className="drop-shadow-lg"
+            style={{ width: 'clamp(12px, 2vh, 20px)', height: 'clamp(12px, 2vh, 20px)' }}
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +99,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Heart SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
+            className="drop-shadow-lg"
+            style={{ width: 'clamp(12px, 2vh, 20px)', height: 'clamp(12px, 2vh, 20px)' }}
             viewBox="0 0 24 24"
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +167,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       />
 
       {/* 3D Hexagon Container */}
-      <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-21 md:h-21 lg:w-25 lg:h-25">
+      <div className="relative" style={{ width: 'clamp(48px, 8vh, 80px)', height: 'clamp(48px, 8vh, 80px)' }}>
         {/* BASE SHADOW (3D depth) */}
         <div
           className="absolute clip-hexagon"
@@ -233,23 +236,28 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         />
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ gap: 'clamp(2px, 0.5vh, 4px)' }}>
           {type === 'avatar' ? (
             avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt={String(value)}
-                className="w-9 h-9 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full object-cover"
+                className="rounded-full object-cover"
+                style={{ width: 'clamp(36px, 6vh, 64px)', height: 'clamp(36px, 6vh, 64px)' }}
               />
             ) : (
-              <span className="text-white text-xl sm:text-2xl md:text-3xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+                style={{ fontSize: 'clamp(1.25rem, 3vh, 1.875rem)' }}
+              >
                 {getInitials(String(value))}
               </span>
             )
           ) : (
             <>
               {renderIcon()}
-              <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+                style={{ fontSize: 'clamp(0.625rem, 1.5vh, 1rem)' }}
+              >
                 {value}
               </span>
             </>

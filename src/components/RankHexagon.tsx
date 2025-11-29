@@ -42,7 +42,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
       />
 
       {/* 3D Hexagon konténer */}
-      <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-21 md:h-21 lg:w-25 lg:h-25">
+      <div className="relative" style={{ width: 'clamp(48px, 8vh, 80px)', height: 'clamp(48px, 8vh, 80px)' }}>
         {/* Alap árnyék */}
         <div
           className="absolute clip-hexagon"
@@ -112,9 +112,10 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
         />
 
         {/* Tartalom: serleg ikon + rang szám, együtt 4px-lel feljebb tolva */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10" style={{ transform: 'translateY(-4px)' }}>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
+            className="drop-shadow-lg"
+            style={{ width: 'clamp(12px, 2vh, 20px)', height: 'clamp(12px, 2vh, 20px)' }}
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +127,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             <rect x="9" y="16" width="6" height="4.5" rx="1" fill="white" stroke="white" strokeWidth="2"/>
             <line x1="7" y1="21" x2="17" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
-          <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
+          <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ fontSize: 'clamp(0.625rem, 1.5vh, 1rem)', marginTop: 'clamp(4px, 1vh, 8px)' }}>
             {value}
           </span>
         </div>

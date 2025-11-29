@@ -32,7 +32,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         border: 'none',
         padding: 0,
         width: '100%',
-        height: '80px',
+        height: 'clamp(60px, 10vh, 90px)',
         animation: 'pulse-button 1.5s ease-in-out infinite',
       }}
     >
@@ -118,7 +118,9 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
 
       {/* Content (Text + Icon) - Absolutely centered with fully transparent background */}
       <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0">
-        <div className="flex items-center justify-center m-0 p-0 gap-3 text-foreground font-black leading-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] translate-y-[6px]">
+        <div className="flex items-center justify-center m-0 p-0 text-foreground font-black leading-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] translate-y-[6px]"
+          style={{ gap: 'clamp(0.5rem, 1.5vh, 0.75rem)', fontSize: 'clamp(1rem, 2.5vh, 1.5rem)' }}
+        >
           {children}
         </div>
       </div>
