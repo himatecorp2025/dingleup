@@ -243,16 +243,34 @@ const Gifts = () => {
         />
       )}
 
-      <div className="h-[100dvh] bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white relative overflow-hidden flex flex-col">
+      <div 
+        className="w-screen fixed inset-0 overflow-y-auto overflow-x-hidden flex flex-col bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white"
+        style={{
+          paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
+          paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px))',
+          width: '100vw',
+          maxWidth: '100vw',
+          maxHeight: '100vh',
+          touchAction: 'pan-y',
+          overscrollBehaviorX: 'none'
+        }}
+      >
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[url('/game-background.png')] bg-cover bg-center opacity-10 pointer-events-none" />
 
-      <div
-        className="relative z-10 flex-1 flex justify-center overflow-hidden"
-        style={{ height: 'calc(100dvh - var(--bottom-nav-h) - env(safe-area-inset-bottom, 0px))' }}
-      >
-        <div className="flex-1 flex flex-col justify-between" style={{ maxWidth: 'clamp(576px, 90vw, 672px)', margin: '0 auto', padding: 'clamp(0.375rem, 1vh, 0.5rem) clamp(0.75rem, 2vw, 1rem)' }}>
+      <div className="flex-1 flex flex-col relative z-10 overflow-y-auto overflow-x-hidden" style={{ 
+        width: '100%',
+        maxWidth: '100%'
+      }}>
+        <div style={{ 
+          width: '90vw',
+          maxWidth: '90vw',
+          margin: '0 auto',
+          paddingTop: 'clamp(0.375rem, 1vh, 0.5rem)',
+          paddingBottom: 'clamp(0.375rem, 1vh, 0.5rem)'
+        }}>
+        <div className="flex flex-col justify-between" style={{ padding: '0 clamp(0.75rem, 2vw, 1rem)' }}>
           {/* Header with Back and Play buttons */}
           <div className="flex items-center justify-between gap-2" style={{ marginBottom: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
             {/* Back Button - Left */}
@@ -514,6 +532,7 @@ const Gifts = () => {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
 
