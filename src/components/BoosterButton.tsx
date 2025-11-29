@@ -31,7 +31,8 @@ export const BoosterButton: React.FC<BoosterButtonProps> = ({
         background: 'transparent',
         border: 'none',
         padding: 0,
-        height: '80px',
+        width: '100%',
+        height: 'clamp(60px, 10vh, 90px)',
       }}
     >
       {/* Inline SVG Background - Golden Hexagon */}
