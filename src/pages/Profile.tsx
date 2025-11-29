@@ -68,6 +68,23 @@ const Profile = () => {
   // Auto logout on inactivity
   useAutoLogout();
 
+  // Disable horizontal scrolling while on the profile page
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    const prevRootOverflowX = root.style.overflowX;
+    const prevBodyOverflowX = body.style.overflowX;
+
+    root.style.overflowX = 'hidden';
+    body.style.overflowX = 'hidden';
+
+    return () => {
+      root.style.overflowX = prevRootOverflowX;
+      body.style.overflowX = prevBodyOverflowX;
+    };
+  }, []);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -292,7 +309,7 @@ const Profile = () => {
   // Skeleton loading state
   if (loading || !profile) {
     return (
-      <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto" style={{
+      <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto overflow-x-hidden" style={{
         background: 'linear-gradient(135deg, #0a0a2e 0%, #16213e 50%, #0f0f3d 100%)',
         paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
       }}>
@@ -376,7 +393,9 @@ const Profile = () => {
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)',
       maxWidth: '100vw',
-      maxHeight: '100vh'
+      maxHeight: '100vh',
+      touchAction: 'pan-y',
+      overscrollBehaviorX: 'none'
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
