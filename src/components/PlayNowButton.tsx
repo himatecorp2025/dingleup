@@ -31,8 +31,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         background: 'transparent',
         border: 'none',
         padding: 0,
-        width: '100%',
-        height: 'clamp(60px, 10vh, 90px)',
+        height: '80px',
         animation: 'pulse-button 1.5s ease-in-out infinite',
       }}
     >
