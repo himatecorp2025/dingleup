@@ -405,7 +405,12 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-2">
           <button
             onClick={() => navigate('/dashboard')}
-            className="relative p-3 rounded-full hover:scale-110 transition-all"
+            className="relative rounded-full hover:scale-110 transition-all"
+            style={{
+              padding: 'clamp(8px, 2vw, 12px)',
+              minWidth: 'clamp(40px, 10vw, 56px)',
+              minHeight: 'clamp(40px, 10vw, 56px)'
+            }}
             title={t('profile.back_to_dashboard')}
           >
             {/* BASE SHADOW */}
@@ -424,7 +429,10 @@ const Profile = () => {
             <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
             
             {/* Icon */}
-            <LogOut className="w-6 h-6 text-foreground relative z-10 -scale-x-100" />
+            <LogOut 
+              className="text-white relative z-10 -scale-x-100" 
+              style={{ width: 'clamp(20px, 5vw, 24px)', height: 'clamp(20px, 5vw, 24px)' }}
+            />
           </button>
 
           {/* Avatar on the same line as back button */}
