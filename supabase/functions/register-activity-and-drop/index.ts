@@ -176,7 +176,7 @@ serve(async (req) => {
       }
 
       // Grant guaranteed drop for this login (1st, 2nd, or 3rd)
-      const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds
+      // Note: expires_at set to NULL - frontend handles countdown after animation
       const dailySequence = todayDropCount + 1;
 
       const { data: newDrop, error: insertError } = await supabaseAdmin
@@ -184,7 +184,7 @@ serve(async (req) => {
           p_user_id: user.id,
           p_source: 'daily_first_login',
           p_open_cost_gold: 150,
-          p_expires_at: expiresAt.toISOString(),
+          p_expires_at: null,
           p_metadata: {
             activity_type,
             daily_sequence: dailySequence,
@@ -226,7 +226,7 @@ serve(async (req) => {
     }
 
     // Grant random activity drop
-    const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds
+    // Note: expires_at set to NULL - frontend handles countdown after animation
     const dailySequence = todayDropCount + 1;
 
     const { data: newDrop, error: insertError } = await supabaseAdmin
@@ -234,7 +234,7 @@ serve(async (req) => {
         p_user_id: user.id,
         p_source: 'activity_random',
         p_open_cost_gold: 150,
-        p_expires_at: expiresAt.toISOString(),
+        p_expires_at: null,
         p_metadata: {
           activity_type,
           daily_sequence: dailySequence,

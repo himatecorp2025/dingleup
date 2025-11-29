@@ -92,32 +92,52 @@ export const LootboxDropOverlay = () => {
 
   // Handle countdown - only start when animation is complete
   useEffect(() => {
-    if (!activeLootbox?.expires_at || !countdownActive) {
+    if (!activeLootbox || !countdownActive) {
       setRemainingSeconds(null);
       return;
     }
 
-    const calculateRemaining = () => {
-      const now = new Date().getTime();
-      const expires = new Date(activeLootbox.expires_at!).getTime();
-      const diffMs = expires - now;
-      return Math.max(0, Math.floor(diffMs / 1000));
-    };
+    // If expires_at is set, use it; otherwise count down from 60 seconds locally
+    if (activeLootbox.expires_at) {
+      const calculateRemaining = () => {
+        const now = new Date().getTime();
+        const expires = new Date(activeLootbox.expires_at!).getTime();
+        const diffMs = expires - now;
+        return Math.max(0, Math.floor(diffMs / 1000));
+      };
 
-    setRemainingSeconds(calculateRemaining());
+      setRemainingSeconds(calculateRemaining());
 
-    const interval = setInterval(() => {
-      const remaining = calculateRemaining();
-      setRemainingSeconds(remaining);
-      
-      if (remaining <= 0) {
-        clearInterval(interval);
-        setIsVisible(false);
-        refetch();
-      }
-    }, 1000);
+      const interval = setInterval(() => {
+        const remaining = calculateRemaining();
+        setRemainingSeconds(remaining);
+        
+        if (remaining <= 0) {
+          clearInterval(interval);
+          setIsVisible(false);
+          refetch();
+        }
+      }, 1000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    } else {
+      // No expires_at - count down from 60 seconds locally (after animation)
+      setRemainingSeconds(60);
+
+      const interval = setInterval(() => {
+        setRemainingSeconds(prev => {
+          if (prev === null || prev <= 1) {
+            clearInterval(interval);
+            setIsVisible(false);
+            refetch();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
   }, [activeLootbox, refetch, countdownActive]);
 
   const handleSuccess = (decision: 'open_now' | 'store') => {
