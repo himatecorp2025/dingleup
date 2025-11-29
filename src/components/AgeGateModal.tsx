@@ -143,39 +143,52 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
   return (
     <Dialog open={open} modal>
       <DialogContent 
-        className="max-w-md w-[90vw] h-[90vh] mx-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-400/30 shadow-2xl rounded-lg p-6 overflow-y-auto"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
+        className="w-[90vw] mx-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-400/30 shadow-2xl rounded-lg overflow-y-auto"
         style={{
+          maxWidth: 'clamp(320px, 90vw, 450px)',
+          height: 'clamp(400px, 70vh, 600px)',
+          padding: 'clamp(1rem, 3vh, 1.5rem)',
           position: 'fixed',
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)'
         }}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
       >
-        <div className="flex flex-col gap-6 py-4">
+        <div className="flex flex-col py-4" style={{ gap: 'clamp(1rem, 3vh, 1.5rem)' }}>
           {/* Title */}
           <div className="text-center">
-            <h2 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-2">
+            <h2 className="font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400"
+              style={{ fontSize: 'clamp(1.25rem, 3.5vh, 1.5rem)', marginBottom: 'clamp(0.5rem, 1vh, 0.5rem)' }}
+            >
               {t('ageGate.title')}
             </h2>
-            <p className="text-sm text-gray-300">
+            <p className="text-gray-300"
+              style={{ fontSize: 'clamp(0.75rem, 1.6vh, 0.875rem)' }}
+            >
               {t('ageGate.description')}
             </p>
           </div>
 
           {/* Date selectors */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3" style={{ gap: 'clamp(0.5rem, 1.5vh, 0.75rem)' }}>
             {/* Year */}
-            <div className="flex flex-col gap-2">
-              <label className="text-xs text-yellow-400 font-semibold">
+            <div className="flex flex-col" style={{ gap: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
+              <label className="text-yellow-400 font-semibold"
+                style={{ fontSize: 'clamp(0.7rem, 1.4vh, 0.75rem)' }}
+              >
                 {t('ageGate.yearLabel')}
               </label>
               <select
                 value={year || ''}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="w-full px-2 py-2 bg-[#1a1a3e] border border-yellow-400/30 rounded text-white text-sm focus:outline-none focus:border-yellow-400"
+                className="w-full bg-[#1a1a3e] border border-yellow-400/30 rounded text-white focus:outline-none focus:border-yellow-400"
+                style={{
+                  padding: 'clamp(0.25rem, 1vh, 0.5rem) clamp(0.25rem, 0.8vh, 0.5rem)',
+                  fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)'
+                }}
               >
                 <option value="">-</option>
                 {years.map((y) => (
@@ -185,14 +198,20 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
             </div>
 
             {/* Month */}
-            <div className="flex flex-col gap-2">
-              <label className="text-xs text-yellow-400 font-semibold">
+            <div className="flex flex-col" style={{ gap: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
+              <label className="text-yellow-400 font-semibold"
+                style={{ fontSize: 'clamp(0.7rem, 1.4vh, 0.75rem)' }}
+              >
                 {t('ageGate.monthLabel')}
               </label>
               <select
                 value={month || ''}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="w-full px-2 py-2 bg-[#1a1a3e] border border-yellow-400/30 rounded text-white text-sm focus:outline-none focus:border-yellow-400"
+                className="w-full bg-[#1a1a3e] border border-yellow-400/30 rounded text-white focus:outline-none focus:border-yellow-400"
+                style={{
+                  padding: 'clamp(0.25rem, 1vh, 0.5rem) clamp(0.25rem, 0.8vh, 0.5rem)',
+                  fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)'
+                }}
               >
                 <option value="">-</option>
                 {months.map((m) => (
@@ -202,14 +221,20 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
             </div>
 
             {/* Day */}
-            <div className="flex flex-col gap-2">
-              <label className="text-xs text-yellow-400 font-semibold">
+            <div className="flex flex-col" style={{ gap: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
+              <label className="text-yellow-400 font-semibold"
+                style={{ fontSize: 'clamp(0.7rem, 1.4vh, 0.75rem)' }}
+              >
                 {t('ageGate.dayLabel')}
               </label>
               <select
                 value={day || ''}
                 onChange={(e) => setDay(Number(e.target.value))}
-                className="w-full px-2 py-2 bg-[#1a1a3e] border border-yellow-400/30 rounded text-white text-sm focus:outline-none focus:border-yellow-400"
+                className="w-full bg-[#1a1a3e] border border-yellow-400/30 rounded text-white focus:outline-none focus:border-yellow-400"
+                style={{
+                  padding: 'clamp(0.25rem, 1vh, 0.5rem) clamp(0.25rem, 0.8vh, 0.5rem)',
+                  fontSize: 'clamp(0.75rem, 1.5vh, 0.875rem)'
+                }}
                 disabled={!month || !year}
               >
                 <option value="">-</option>
@@ -221,7 +246,9 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
           </div>
 
           {/* Consent checkbox */}
-          <div className="flex items-start gap-3 p-4 bg-[#1a1a3e] border border-yellow-400/20 rounded">
+          <div className="flex items-start bg-[#1a1a3e] border border-yellow-400/20 rounded"
+            style={{ gap: 'clamp(0.5rem, 1.5vh, 0.75rem)', padding: 'clamp(0.75rem, 2vh, 1rem)' }}
+          >
             <Checkbox
               id="age-consent"
               checked={consent}
@@ -230,7 +257,8 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
             />
             <label
               htmlFor="age-consent"
-              className="text-xs text-gray-200 leading-relaxed cursor-pointer"
+              className="text-gray-200 leading-relaxed cursor-pointer"
+              style={{ fontSize: 'clamp(0.7rem, 1.4vh, 0.75rem)' }}
             >
               {t('ageGate.consentLabel')}{' '}
               <a
@@ -256,7 +284,8 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
           <Button
             onClick={handleSubmit}
             disabled={!year || !month || !day || !consent || submitting}
-            className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold py-3 hover:from-yellow-500 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold hover:from-yellow-500 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ padding: 'clamp(0.5rem, 1.5vh, 0.75rem)', fontSize: 'clamp(0.8rem, 1.8vh, 1rem)' }}
           >
             {submitting ? t('common.loading') : t('ageGate.submitButton')}
           </Button>
