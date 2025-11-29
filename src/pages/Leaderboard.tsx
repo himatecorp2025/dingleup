@@ -72,7 +72,10 @@ const Leaderboard = () => {
   const userUsername = profile?.username || null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col relative">
+    <div className="h-dvh w-screen overflow-hidden flex flex-col relative" style={{
+      maxWidth: '100vw',
+      maxHeight: '100vh'
+    }}>
       {/* Pull-to-refresh indicator */}
       {isPulling && (
         <div 
@@ -109,8 +112,13 @@ const Leaderboard = () => {
         }}
       />
       
-      <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
-        <div className="max-w-6xl mx-auto p-4 w-full">
+      <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)',
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto'
+      }}>
+        <div className="w-full flex flex-col" style={{ padding: 'clamp(8px, 2vh, 16px)' }}>
           {/* Header with Back Button - 3D Box Style */}
           <div className="flex items-center mb-2">
             <button
@@ -143,8 +151,10 @@ const Leaderboard = () => {
 
         {/* Title */}
         <h1 
-          className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-2 px-2"
+          className="font-black text-center"
           style={{
+            fontSize: 'clamp(1.125rem, 4vh, 1.875rem)',
+            marginBottom: 'clamp(8px, 1.5vh, 12px)',
             background: 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 60%), hsl(45 95% 55%))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',

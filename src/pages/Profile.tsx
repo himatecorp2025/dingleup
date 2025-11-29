@@ -372,9 +372,11 @@ const Profile = () => {
   if (!profile) return null; // Don't render anything until profile loads
 
   return (
-    <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto" style={{
+    <div className="profile-container h-dvh w-screen fixed inset-0 overflow-y-auto flex flex-col" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
+      paddingBottom: 'env(safe-area-inset-bottom)',
+      maxWidth: '100vw',
+      maxHeight: '100vh'
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
@@ -392,7 +394,13 @@ const Profile = () => {
       
       {/* Casino lights removed per user requirement */}
       
-      <div className="w-full flex flex-col px-3 py-2 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="flex-1 flex flex-col relative z-10 overflow-y-auto" style={{ 
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto',
+        paddingTop: 'clamp(8px, 2vh, 16px)',
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' 
+      }}>
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
         <div className="flex items-center justify-between mb-2">
           <button

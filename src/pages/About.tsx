@@ -67,9 +67,11 @@ const About = () => {
   }
 
   return (
-    <div className="h-dvh h-svh w-screen overflow-hidden fixed inset-0" style={{
+    <div className="h-dvh w-screen overflow-hidden fixed inset-0 flex flex-col" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
+      paddingBottom: 'env(safe-area-inset-bottom)',
+      maxWidth: '100vw',
+      maxHeight: '100vh'
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
@@ -85,7 +87,13 @@ const About = () => {
         }}
       />
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 max-w-4xl mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
+      <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto',
+        padding: 'clamp(12px, 2.5vh, 24px)',
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' 
+      }}>
       {/* Header */}
       <div className="text-center mb-4">
         {/* Admin Access Button - Top Left (only for DingleUP! admin) */}
