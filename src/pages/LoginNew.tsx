@@ -158,8 +158,8 @@ const LoginNew = () => {
         }}
       />
 
-      <div className="w-full max-w-md relative z-10 flex items-center justify-center" style={{ maxHeight: isStandalone ? 'calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative overflow-y-auto max-h-full w-full">
+      <div className="w-full max-w-md relative z-10">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full">
           <button 
             onClick={() => navigate('/')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 
