@@ -9,7 +9,31 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const Index = () => {
-  // Show landing page on all devices (mobile, tablet, desktop)
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
+    // Immediate check on first render
+    return window.innerWidth <= 1024;
+  });
+
+  useEffect(() => {
+    // Check device type
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobileOrTablet(width <= 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Mobile/tablet: redirect to login directly
+  if (isMobileOrTablet) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
+  // Desktop/laptop: show landing page
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
       {/* Full-screen deep purple/blue background extending behind status bar */}
