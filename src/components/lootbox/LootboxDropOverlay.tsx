@@ -22,6 +22,7 @@ export const LootboxDropOverlay = () => {
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [showIntroBanner, setShowIntroBanner] = useState(false);
   const [introCountdown, setIntroCountdown] = useState(3);
+  const [lastShownLootboxId, setLastShownLootboxId] = useState<string | null>(null);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -69,12 +70,16 @@ export const LootboxDropOverlay = () => {
   // Handle drop lifecycle: intro banner + drop animation
   useEffect(() => {
     if (activeLootbox && !loading && !isAdminPage && !isAuthPage && user) {
-      // Check if this lootbox was already dismissed
+      // Skip if this lootbox was already handled or is currently active
       if (dismissedLootboxes.has(activeLootbox.id)) {
         return;
       }
+      if (lastShownLootboxId === activeLootbox.id) {
+        return;
+      }
 
-      // Reset for new drop
+      // Mark this lootbox as started and reset for new drop
+      setLastShownLootboxId(activeLootbox.id);
       setShowIntroBanner(true);
       setIntroCountdown(3);
       setIsVisible(false);
@@ -83,8 +88,9 @@ export const LootboxDropOverlay = () => {
       setShowIntroBanner(false);
       setIsVisible(false);
       setIsAnimating(false);
+      setLastShownLootboxId(null);
     }
-  }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes]);
+  }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes, lastShownLootboxId]);
   
   // Intro banner 3-2-1 countdown
   useEffect(() => {
@@ -124,6 +130,11 @@ export const LootboxDropOverlay = () => {
 
   const handleExpired = () => {
     setIsVisible(false);
+
+    if (activeLootbox) {
+      setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
+    }
+
     refetch();
   };
 

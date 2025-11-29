@@ -70,26 +70,26 @@ export const LootboxNotificationBanner: React.FC<LootboxNotificationBannerProps>
 
           <mask id="maskOuterOnly_red" maskUnits="userSpaceOnUse">
             <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-            <use href="#HEX_RED" stroke="white" strokeWidth="2" fill="none"/>
-            <use href="#HEX_RED" stroke="black" strokeWidth="25" fill="none"/>
+            <use xlinkHref="#HEX_RED" stroke="white" strokeWidth="2" fill="none"/>
+            <use xlinkHref="#HEX_RED" stroke="black" strokeWidth="25" fill="none"/>
           </mask>
         </defs>
 
         <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
         <g transform="scale(1,1.2)">
-          <use href="#HEX_RED" fill="black" fillOpacity="0.5"/>
+          <use xlinkHref="#HEX_RED" fill="black" fillOpacity="0.5"/>
 
-          <use href="#HEX_RED" fill="none" stroke="url(#band20_red)" strokeWidth="20"
+          <use xlinkHref="#HEX_RED" fill="none" stroke="url(#band20_red)" strokeWidth="20"
                strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_red)"
                vectorEffect="non-scaling-stroke"/>
 
-          <use href="#HEX_RED" fill="none" stroke="url(#band5_red)" strokeWidth="5"
+          <use xlinkHref="#HEX_RED" fill="none" stroke="url(#band5_red)" strokeWidth="5"
                strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_red)"
                vectorEffect="non-scaling-stroke"/>
 
           <g mask="url(#maskOuterOnly_red)">
-            <use href="#HEX_RED" fill="none" stroke="url(#chromeGrad_red)" strokeWidth="2"
+            <use xlinkHref="#HEX_RED" fill="none" stroke="url(#chromeGrad_red)" strokeWidth="2"
                  strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
           </g>
         </g>
