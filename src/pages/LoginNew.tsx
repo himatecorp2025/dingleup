@@ -11,6 +11,7 @@ import { useI18n } from "@/i18n";
 import { getCountryFromTimezone } from "@/lib/utils";
 import type { LangCode } from "@/i18n/types";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
+import gameBackground from '@/assets/game-background.png';
 
 const createLoginSchema = (t: (key: string) => string) => z.object({
   username: z.string().trim().min(1, t('auth.login.validationUsernameRequired')).regex(/^[^\s]+$/, t('auth.login.validationUsernameNoSpaces')),
@@ -145,12 +146,23 @@ const LoginNew = () => {
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
       }}
     >
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+      {/* Background image with 75% opacity */}
+      <div 
+        className="absolute z-0" 
+        style={{
+          backgroundImage: `url(${gameBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: '50% 50%',
+          backgroundAttachment: 'fixed',
+          opacity: 0.75,
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+          height: 'calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
+        }}
+      />
 
       <div className="w-full max-w-md relative z-10 flex items-center justify-center" style={{ maxHeight: isStandalone ? 'calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative overflow-y-auto max-h-full w-full">
