@@ -166,8 +166,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         style={{ background: colors.glowColor }}
       />
 
-      {/* 3D Hexagon Container */}
-      <div className="relative" style={{ width: 'clamp(48px, 8vh, 80px)', height: 'clamp(48px, 8vh, 80px)' }}>
+      {/* 3D Hexagon Container - max height limited to Leaderboard back button size */}
+      <div className="relative" style={{ width: 'clamp(48px, 7vh, 56px)', height: 'clamp(48px, 7vh, 56px)' }}>
         {/* BASE SHADOW (3D depth) */}
         <div
           className="absolute clip-hexagon"

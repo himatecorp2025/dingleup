@@ -372,7 +372,7 @@ const Profile = () => {
   if (!profile) return null; // Don't render anything until profile loads
 
   return (
-    <div className="profile-container h-dvh w-screen fixed inset-0 overflow-y-auto flex flex-col" style={{
+    <div className="profile-container h-dvh w-screen fixed inset-0 overflow-y-auto overflow-x-hidden flex flex-col" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)',
       maxWidth: '100vw',

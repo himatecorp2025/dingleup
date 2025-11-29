@@ -41,8 +41,8 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
         style={{ background: 'rgba(34, 197, 94, 0.4)' }}
       />
 
-      {/* 3D Hexagon konténer */}
-      <div className="relative" style={{ width: 'clamp(48px, 8vh, 80px)', height: 'clamp(48px, 8vh, 80px)' }}>
+      {/* 3D Hexagon konténer - max height limited to Leaderboard back button size */}
+      <div className="relative" style={{ width: 'clamp(48px, 7vh, 56px)', height: 'clamp(48px, 7vh, 56px)' }}>
         {/* Alap árnyék */}
         <div
           className="absolute clip-hexagon"
