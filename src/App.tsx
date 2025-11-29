@@ -211,13 +211,15 @@ const SessionMonitorWrapper = () => {
   return null;
 };
 
-// Splash screen while translations load
+// Splash screen while translations load - optimized for perfect centering
 const SplashScreen = () => (
-  <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
+  <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center overflow-hidden">
     <img 
       src={loadingLogo} 
       alt="DingleUP!" 
       className="w-32 h-32 object-contain animate-pulse"
+      loading="eager"
+      fetchPriority="high"
     />
   </div>
 );
