@@ -97,8 +97,8 @@ const AdminLogin = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="w-full max-w-[clamp(20rem,90vw,28rem)] relative z-10">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-[clamp(1.5rem,4vw,3rem)] p-[clamp(1.5rem,4vw,2rem)] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="relative">

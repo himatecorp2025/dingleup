@@ -70,7 +70,7 @@ export function AdminSidebar() {
       <SidebarContent className="bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] backdrop-blur-xl border-r border-white/10">
         {/* Logo */}
         {!isCollapsed && (
-          <div className="p-6 pb-4">
+          <div className="p-[clamp(1rem,3vw,1.5rem)] pb-[clamp(0.75rem,2vw,1rem)]">
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
               <svg
@@ -78,7 +78,7 @@ export function AdminSidebar() {
                 width="48"
                 height="48"
                 viewBox="0 0 1024 1024"
-                className="w-12 h-12 relative z-10"
+                className="w-[clamp(2.5rem,5vw,3rem)] h-[clamp(2.5rem,5vw,3rem)] relative z-10"
               >
                 <image
                   href="/logo.png"
@@ -90,7 +90,7 @@ export function AdminSidebar() {
                 />
               </svg>
             </div>
-            <h2 className="text-white font-bold text-xs mt-2">{t('admin.layout.admin_panel')}</h2>
+            <h2 className="text-white font-bold text-[clamp(0.625rem,1.5vw,0.75rem)] mt-[clamp(0.25rem,1vw,0.5rem)]">{t('admin.layout.admin_panel')}</h2>
           </div>
         )}
 

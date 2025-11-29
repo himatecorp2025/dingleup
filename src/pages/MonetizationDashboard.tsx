@@ -49,42 +49,42 @@ const MonetizationDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-[clamp(1.5rem,4vw,2rem)]">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-[clamp(0.75rem,2vw,1rem)] flex-wrap">
+          <div className="flex items-center gap-[clamp(0.75rem,2vw,1rem)]">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/admin/advanced-analytics')}
               className="text-white/60 hover:text-white hover:bg-white/10"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-[clamp(1.25rem,3vw,1.5rem)] h-[clamp(1.25rem,3vw,1.5rem)]" />
             </Button>
             <div>
-              <h1 className="text-4xl font-black bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+              <h1 className="text-[clamp(2rem,5vw,2.5rem)] font-black bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
                 {t('admin.monetization.title')}
               </h1>
-              <p className="text-white/60 mt-1">{t('admin.monetization.subtitle')}</p>
+              <p className="text-white/60 mt-[clamp(0.125rem,0.5vw,0.25rem)] text-[clamp(0.75rem,1.75vw,0.875rem)]">{t('admin.monetization.subtitle')}</p>
             </div>
           </div>
           <Button onClick={() => refetch()} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-[clamp(0.875rem,2vw,1rem)] h-[clamp(0.875rem,2vw,1rem)] mr-[clamp(0.25rem,1vw,0.5rem)]" />
             {t('admin.refresh')}
           </Button>
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[clamp(1rem,3vw,1.5rem)]">
           <Card className="backdrop-blur-xl bg-white/5 border-white/10">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-white/60 flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
+            <CardHeader className="pb-[clamp(0.5rem,1.5vw,0.75rem)]">
+              <CardTitle className="text-[clamp(0.75rem,1.75vw,0.875rem)] font-medium text-white/60 flex items-center gap-[clamp(0.25rem,1vw,0.5rem)]">
+                <DollarSign className="w-[clamp(0.875rem,2vw,1rem)] h-[clamp(0.875rem,2vw,1rem)]" />
                 {t('admin.monetization.total_revenue')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">
+              <div className="text-[clamp(1.5rem,4vw,1.875rem)] font-bold text-white">
                 {analytics?.totalRevenue?.toLocaleString('hu-HU')} Ft
               </div>
             </CardContent>
