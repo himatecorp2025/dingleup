@@ -111,7 +111,7 @@ export const LootboxDropOverlay = () => {
     isAnimating,
   ]);
   
-  // Intro banner 3-2-1 countdown
+  // Intro banner 3-2-1 countdown - NOW STAYS VISIBLE FOR DEBUG
   useEffect(() => {
     if (!showIntroBanner) return;
 
@@ -119,7 +119,8 @@ export const LootboxDropOverlay = () => {
       setIntroCountdown(prev => {
         if (prev <= 1) {
           window.clearInterval(interval);
-          setShowIntroBanner(false);
+          // DON'T HIDE - KEEP VISIBLE FOR DEBUG
+          // setShowIntroBanner(false);
 
           // Start box drop (countdown starts when it arrives)
           setIsVisible(true);
@@ -180,12 +181,12 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
-      {/* Intro Banner - RED Play Now SVG with countdown */}
+      {/* Intro Banner - RED SVG notification below Lives+Profile hexagons */}
       {showIntroBanner && (
         <div
-          className="fixed z-40 animate-fade-in"
+          className="fixed z-40"
           style={{
-            top: 'calc(env(safe-area-inset-top, 0px) + 80px)',
+            top: 'clamp(140px, 35vh, 180px)', // Below hexagons row
             right: 'clamp(12px, 4vw, 24px)',
           }}
         >
