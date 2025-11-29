@@ -83,11 +83,15 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       </svg>
       
       {/* Content wrapper - flexbox centered like PlayNowButton */}
-      <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5">
-        <div className="flex items-center justify-center w-full gap-2 sm:gap-3 translate-y-[11px]">
+      <div className="absolute inset-0 flex items-center justify-center" style={{ padding: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+        <div className="flex items-center justify-center w-full translate-y-[11px]" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
           <div 
-            className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
-            style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
+            className="relative flex-shrink-0 flex items-center justify-center"
+            style={{ 
+              width: 'clamp(3rem, 7vw, 4rem)',
+              height: 'clamp(2rem, 5vw, 2.5rem)',
+              clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)'
+            }}
           >
             {/* BASE SHADOW (3D depth) */}
             <div
@@ -171,22 +175,35 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
             />
 
             {typeof questionNumber === 'number' && (
-              <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}/15</span>
+              <span 
+                className="relative z-10 text-primary-foreground font-bold leading-none drop-shadow-lg font-poppins" 
+                style={{ 
+                  fontSize: 'clamp(0.625rem, 2vw, 0.75rem)',
+                  textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' 
+                }}
+              >
+                {questionNumber}/15
+              </span>
             )}
           </div>
           <p 
             className={`font-bold text-center flex-1 drop-shadow-lg font-poppins text-foreground ${
               typeof children === 'string' && children.length > 80 
-                ? 'text-xs sm:text-sm md:text-base leading-tight' 
-                : typeof children === 'string' && children.length > 50
-                ? 'text-sm sm:text-base md:text-lg leading-snug'
-                : 'text-sm sm:text-base md:text-lg leading-snug'
+                ? 'leading-tight' 
+                : 'leading-snug'
             }`}
-            style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}
+            style={{ 
+              fontSize: typeof children === 'string' && children.length > 80 
+                ? 'clamp(0.75rem, 2.5vw, 1rem)' 
+                : typeof children === 'string' && children.length > 50
+                ? 'clamp(0.875rem, 3vw, 1.125rem)'
+                : 'clamp(0.875rem, 3.5vw, 1.125rem)',
+              textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' 
+            }}
           >
             {children}
           </p>
-          <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
+          <div className="flex-shrink-0" style={{ width: 'clamp(3rem, 7vw, 4rem)' }} aria-hidden />
         </div>
       </div>
     </div>

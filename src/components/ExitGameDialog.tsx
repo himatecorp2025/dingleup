@@ -41,9 +41,22 @@ export const ExitGameDialog = ({
         />
         
         {/* Dialog content - fully transparent background, no borders */}
-        <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-5 md:gap-6 p-4 sm:p-6 md:p-8 max-w-md w-full mx-4 animate-in zoom-in-95 duration-300">
+        <div 
+          className="relative z-10 flex flex-col items-center max-w-md w-full animate-in zoom-in-95 duration-300"
+          style={{
+            gap: 'clamp(1rem, 3vw, 1.5rem)',
+            padding: 'clamp(1rem, 3vw, 2rem)',
+            margin: '0 clamp(1rem, 2vw, 1.5rem)'
+          }}
+        >
           {/* Sad SVG Icon - 3D Deep Effect */}
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div 
+            className="relative animate-in fade-in slide-in-from-top-4 duration-500"
+            style={{
+              width: 'clamp(5rem, 12vw, 7rem)',
+              height: 'clamp(5rem, 12vw, 7rem)'
+            }}
+          >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)', background: 'rgba(0,0,0,0.4)' }} aria-hidden />
             
@@ -101,27 +114,71 @@ export const ExitGameDialog = ({
           </div>
 
           {/* Title - centered with enhanced readability */}
-          <div className="relative px-4 py-3 sm:py-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
+          <div 
+            className="relative rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500 delay-100"
+            style={{
+              padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem)',
+              borderRadius: 'clamp(1rem, 2vw, 1.5rem)'
+            }}
+          >
             {/* Dark semi-transparent background for better readability */}
-            <div className="absolute inset-0 bg-black/60 rounded-2xl backdrop-blur-sm border-2 border-white/20" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 4px rgba(255,255,255,0.05)' }} aria-hidden />
+            <div 
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm border-2 border-white/20" 
+              style={{ 
+                borderRadius: 'clamp(1rem, 2vw, 1.5rem)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 4px rgba(255,255,255,0.05)' 
+              }} 
+              aria-hidden 
+            />
             
-            <h2 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-black text-center text-white" style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' }}>
+            <h2 
+              className="relative z-10 font-black text-center text-white" 
+              style={{ 
+                fontSize: 'clamp(1.25rem, 4vw, 1.875rem)',
+                textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' 
+              }}
+            >
               {t('game.exit.title')}
             </h2>
           </div>
 
           {/* Description - enhanced readability */}
-          <div className="relative px-3 sm:px-4 py-2 sm:py-3 rounded-xl animate-in fade-in slide-in-from-top-2 duration-500 delay-200">
+          <div 
+            className="relative rounded-xl animate-in fade-in slide-in-from-top-2 duration-500 delay-200"
+            style={{
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
+              borderRadius: 'clamp(0.75rem, 1.5vw, 1rem)'
+            }}
+          >
             {/* Dark semi-transparent background */}
-            <div className="absolute inset-0 bg-black/50 rounded-xl backdrop-blur-sm border border-white/10" aria-hidden />
+            <div 
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm border border-white/10" 
+              style={{ borderRadius: 'clamp(0.75rem, 1.5vw, 1rem)' }}
+              aria-hidden 
+            />
             
-            <div className="relative z-10 text-center space-y-2">
+            <div 
+              className="relative z-10 text-center"
+              style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1vw, 1rem)' }}
+            >
               {!gameCompleted && (
-                <p className="text-destructive text-base sm:text-lg font-black animate-pulse" style={{ textShadow: '0 0 10px rgba(255,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
+                <p 
+                  className="text-destructive font-black animate-pulse" 
+                  style={{ 
+                    fontSize: 'clamp(1rem, 3vw, 1.125rem)',
+                    textShadow: '0 0 10px rgba(255,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' 
+                  }}
+                >
                   {t('game.exit.gold_lost_warning')}
                 </p>
               )}
-              <p className="text-white text-xs sm:text-sm md:text-base font-semibold" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
+              <p 
+                className="text-white font-semibold" 
+                style={{ 
+                  fontSize: 'clamp(0.75rem, 2.5vw, 1rem)',
+                  textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' 
+                }}
+              >
                 {gameCompleted 
                   ? t('game.exit.game_completed_message')
                   : t('game.exit.incomplete_game_message')}
@@ -130,11 +187,22 @@ export const ExitGameDialog = ({
           </div>
 
           {/* 3D Buttons */}
-          <div className="flex flex-col w-full gap-3 sm:gap-4 mt-2 sm:mt-3 md:mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+          <div 
+            className="flex flex-col w-full animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300"
+            style={{
+              gap: 'clamp(0.75rem, 2vw, 1rem)',
+              marginTop: 'clamp(0.5rem, 1.5vw, 1rem)'
+            }}
+          >
             {/* Exit Button - 3D Red */}
             <button
               onClick={onConfirmExit}
-              className="relative w-full py-3 sm:py-3.5 md:py-4 px-4 sm:px-5 md:px-6 rounded-2xl font-bold text-base sm:text-lg text-white transition-all hover:scale-105 active:scale-95"
+              className="relative w-full font-bold text-white transition-all hover:scale-105 active:scale-95"
+              style={{
+                padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem)',
+                borderRadius: 'clamp(1rem, 2vw, 1.5rem)',
+                fontSize: 'clamp(1rem, 3vw, 1.125rem)'
+              }}
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
@@ -158,7 +226,12 @@ export const ExitGameDialog = ({
             {/* Stay Button - 3D Green */}
             <button
               onClick={() => onOpenChange(false)}
-              className="relative w-full py-3 sm:py-3.5 md:py-4 px-4 sm:px-5 md:px-6 rounded-2xl font-bold text-base sm:text-lg text-white transition-all hover:scale-105 active:scale-95"
+              className="relative w-full font-bold text-white transition-all hover:scale-105 active:scale-95"
+              style={{
+                padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem)',
+                borderRadius: 'clamp(1rem, 2vw, 1.5rem)',
+                fontSize: 'clamp(1rem, 3vw, 1.125rem)'
+              }}
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />

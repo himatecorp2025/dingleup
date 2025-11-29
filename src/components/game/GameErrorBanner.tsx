@@ -15,7 +15,14 @@ export const GameErrorBanner = ({ visible, message, continueType }: GameErrorBan
   const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
   
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 max-w-xs" style={{ perspective: '1000px' }}>
+    <div 
+      className="absolute left-1/2 -translate-x-1/2 z-50" 
+      style={{ 
+        perspective: '1000px',
+        top: 'clamp(1rem, 2vw, 1.5rem)',
+        maxWidth: 'clamp(18rem, 40vw, 20rem)'
+      }}
+    >
       {/* BASE SHADOW */}
       <div 
         className="absolute inset-0 bg-black/70 rounded-xl" 
@@ -61,17 +68,19 @@ export const GameErrorBanner = ({ visible, message, continueType }: GameErrorBan
       />
       
       <div 
-        className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" 
+        className="relative text-white font-bold text-center animate-fade-in"
         style={{ 
+          padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
+          fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
           transform: 'translateZ(60px)', 
           textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' 
         }}
       >
-        <div className="mb-1">{message}</div>
-        <div className="text-[10px] opacity-90">
+        <div style={{ marginBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>{message}</div>
+        <div style={{ fontSize: 'clamp(0.625rem, 1.5vw, 0.75rem)', opacity: 0.9 }}>
           {t('game.swipe_up_continue_cost').replace('{cost}', String(cost))}
         </div>
-        <div className="text-[10px] opacity-90">
+        <div style={{ fontSize: 'clamp(0.625rem, 1.5vw, 0.75rem)', opacity: 0.9 }}>
           {t('game.swipe_down_exit')}
         </div>
       </div>
