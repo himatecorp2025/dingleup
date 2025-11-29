@@ -29,6 +29,7 @@ const Invitation = () => {
   const [invitationLink, setInvitationLink] = useState('');
   const [invitedCount, setInvitedCount] = useState(0);
   const [invitedFriends, setInvitedFriends] = useState<InvitedFriend[]>([]);
+  const [currentLives, setCurrentLives] = useState<number>(0);
   
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -56,16 +57,17 @@ const Invitation = () => {
 
   const fetchInvitationData = async (uid: string) => {
     try {
-      // Get user's invitation code
+      // Get user's invitation code and lives
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('invitation_code')
+        .select('invitation_code, lives')
         .eq('id', uid)
         .single();
 
       if (profileError) throw profileError;
 
       setInvitationCode(profile.invitation_code);
+      setCurrentLives(profile.lives || 0);
       setInvitationLink(`${window.location.origin}/auth/register?code=${profile.invitation_code}`);
 
       // Get all invitations with user details (accepted and pending)
@@ -173,6 +175,77 @@ const Invitation = () => {
             <h1 className="text-3xl font-black text-white">{t('invitation.header_title')}</h1>
           </div>
           <p className="text-white/70">{t('invitation.header_subtitle')}</p>
+        </div>
+
+        {/* Current Lives Display with 3D Heart */}
+        <div className="flex items-center justify-center gap-3 mb-6 mt-4">
+          {/* 3D Heart SVG */}
+          <svg className="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            {/* Shadow Layer */}
+            <path 
+              d="M50 85 C30 70, 10 55, 10 35 C10 20, 20 10, 30 10 C40 10, 45 15, 50 25 C55 15, 60 10, 70 10 C80 10, 90 20, 90 35 C90 55, 70 70, 50 85 Z"
+              fill="rgba(0,0,0,0.3)"
+              transform="translate(2,2)"
+              filter="blur(3px)"
+            />
+            
+            {/* Base Heart */}
+            <path 
+              d="M50 85 C30 70, 10 55, 10 35 C10 20, 20 10, 30 10 C40 10, 45 15, 50 25 C55 15, 60 10, 70 10 C80 10, 90 20, 90 35 C90 55, 70 70, 50 85 Z"
+              fill="url(#heartGradient)"
+              stroke="#c0392b"
+              strokeWidth="2"
+            />
+            
+            {/* Top Highlight */}
+            <path 
+              d="M50 85 C30 70, 10 55, 10 35 C10 20, 20 10, 30 10 C40 10, 45 15, 50 25 C55 15, 60 10, 70 10 C80 10, 90 20, 90 35 C90 55, 70 70, 50 85 Z"
+              fill="url(#heartHighlight)"
+              opacity="0.7"
+            />
+            
+            {/* Specular Shine */}
+            <ellipse 
+              cx="35" 
+              cy="30" 
+              rx="15" 
+              ry="12" 
+              fill="rgba(255,255,255,0.5)"
+              filter="blur(4px)"
+            />
+            
+            {/* Inner Shadow */}
+            <path 
+              d="M50 85 C30 70, 10 55, 10 35 C10 20, 20 10, 30 10 C40 10, 45 15, 50 25 C55 15, 60 10, 70 10 C80 10, 90 20, 90 35 C90 55, 70 70, 50 85 Z"
+              fill="none"
+              stroke="rgba(0,0,0,0.3)"
+              strokeWidth="1"
+              style={{ mixBlendMode: 'multiply' }}
+            />
+            
+            {/* Gradients */}
+            <defs>
+              <linearGradient id="heartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#e74c3c" />
+                <stop offset="40%" stopColor="#c0392b" />
+                <stop offset="100%" stopColor="#922b21" />
+              </linearGradient>
+              
+              <linearGradient id="heartHighlight" x1="0%" y1="0%" x2="0%" y2="50%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+              </linearGradient>
+            </defs>
+          </svg>
+          
+          {/* Lives Text */}
+          <div className="text-white">
+            <span className="text-2xl font-black uppercase" style={{ 
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+            }}>
+              {t('invitation.current_lives')}: <span className="text-red-400 text-3xl">{currentLives}</span>
+            </span>
+          </div>
         </div>
 
         <div className="space-y-4">
