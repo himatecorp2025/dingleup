@@ -72,15 +72,15 @@ export const LootboxDropOverlay = () => {
         return;
       }
 
+      // Show box and start countdown immediately
       setIsAnimating(true);
       setIsVisible(true);
-      setCountdownActive(false);
+      setCountdownActive(true);
       
-      // End animation after 1.5 seconds (medium speed), then start countdown
+      // End animation after 2.25 seconds (50% slower)
       const timer = setTimeout(() => {
         setIsAnimating(false);
-        setCountdownActive(true);
-      }, 1500);
+      }, 2250);
 
       return () => clearTimeout(timer);
     } else if (!activeLootbox || !user) {
@@ -170,7 +170,7 @@ export const LootboxDropOverlay = () => {
         style={{
           top: isAnimating ? '80px' : '50%',
           transform: isAnimating ? 'translateY(0)' : 'translateY(-50%)',
-          transition: 'top 1.5s ease-out, transform 1.5s ease-out',
+          transition: 'top 2.25s ease-out, transform 2.25s ease-out',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
