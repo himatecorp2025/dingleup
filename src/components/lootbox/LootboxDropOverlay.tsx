@@ -23,6 +23,7 @@ export const LootboxDropOverlay = () => {
   const [showIntroBanner, setShowIntroBanner] = useState(false);
   const [introCountdown, setIntroCountdown] = useState(3);
   const [lastShownLootboxId, setLastShownLootboxId] = useState<string | null>(null);
+  const [notificationShown, setNotificationShown] = useState(false);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -69,27 +70,46 @@ export const LootboxDropOverlay = () => {
 
   // Handle drop lifecycle: intro banner + drop animation
   useEffect(() => {
-    if (activeLootbox && !loading && !isAdminPage && !isAuthPage && user) {
-      // Skip if this lootbox was already handled or is currently active
-      if (dismissedLootboxes.has(activeLootbox.id)) {
-        return;
-      }
-      if (lastShownLootboxId === activeLootbox.id) {
-        return;
-      }
-
-      // Mark this lootbox as started and reset for new drop
-      setLastShownLootboxId(activeLootbox.id);
-      setShowIntroBanner(true);
-      setIntroCountdown(3);
-      setIsVisible(false);
-      setIsAnimating(false);
-    } else {
-      setShowIntroBanner(false);
-      setIsVisible(false);
-      setIsAnimating(false);
+    // Only react when we actually have an active lootbox in a valid game context
+    if (!activeLootbox || loading || isAdminPage || isAuthPage || !user) {
+      return;
     }
-  }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes, lastShownLootboxId]);
+
+    // Don't start a new event while another animation/box is visible
+    if (showIntroBanner || isVisible || isAnimating) {
+      return;
+    }
+
+    // Already dismissed → never show again
+    if (dismissedLootboxes.has(activeLootbox.id)) {
+      return;
+    }
+
+    // Notification for this lootbox was already shown
+    if (notificationShown && lastShownLootboxId === activeLootbox.id) {
+      return;
+    }
+
+    // Start notification for this lootbox
+    setLastShownLootboxId(activeLootbox.id);
+    setNotificationShown(true);
+    setShowIntroBanner(true);
+    setIntroCountdown(3);
+    setIsVisible(false);
+    setIsAnimating(false);
+  }, [
+    activeLootbox,
+    loading,
+    isAdminPage,
+    isAuthPage,
+    user,
+    dismissedLootboxes,
+    notificationShown,
+    lastShownLootboxId,
+    showIntroBanner,
+    isVisible,
+    isAnimating,
+  ]);
   
   // Intro banner 3-2-1 countdown
   useEffect(() => {
