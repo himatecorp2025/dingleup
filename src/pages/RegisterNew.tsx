@@ -207,13 +207,20 @@ const RegisterNew = () => {
         }}
       />
 
-      <div className="w-[90vw] max-w-[500px] relative z-10" style={{ height: isStandalone ? 'calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-[3vh] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full h-full overflow-y-auto"
+      <div className="w-[90vw] max-w-[500px] relative z-10 flex items-center justify-center" style={{ height: isStandalone ? 'calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))' : '90vh' }}>
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-[3vh] shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full max-h-full overflow-y-auto"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
           }}
         >
+          <style>
+            {`
+              .backdrop-blur-xl::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
           <button 
             onClick={() => navigate('/')} 
             className="absolute left-[2vh] top-[2vh] p-[1.5vh] rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[5vh] min-h-[5vh] flex items-center justify-center" 
