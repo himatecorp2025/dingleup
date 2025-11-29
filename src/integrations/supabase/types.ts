@@ -1328,68 +1328,6 @@ export type Database = {
         }
         Relationships: []
       }
-      invitations: {
-        Row: {
-          accepted: boolean | null
-          accepted_at: string | null
-          created_at: string | null
-          id: string
-          invitation_code: string
-          invited_email: string | null
-          invited_user_id: string | null
-          inviter_id: string
-        }
-        Insert: {
-          accepted?: boolean | null
-          accepted_at?: string | null
-          created_at?: string | null
-          id?: string
-          invitation_code: string
-          invited_email?: string | null
-          invited_user_id?: string | null
-          inviter_id: string
-        }
-        Update: {
-          accepted?: boolean | null
-          accepted_at?: string | null
-          created_at?: string | null
-          id?: string
-          invitation_code?: string
-          invited_email?: string | null
-          invited_user_id?: string | null
-          inviter_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "invitations_invited_user_id_fkey"
-            columns: ["invited_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invitations_invited_user_id_fkey"
-            columns: ["invited_user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invitations_inviter_id_fkey"
-            columns: ["inviter_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invitations_inviter_id_fkey"
-            columns: ["inviter_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       leaderboard_cache: {
         Row: {
           avatar_url: string | null

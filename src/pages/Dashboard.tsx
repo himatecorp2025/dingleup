@@ -53,7 +53,6 @@ import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { usePaymentPolling } from '@/hooks/usePaymentPolling';
 
-import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
 
