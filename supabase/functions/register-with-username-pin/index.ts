@@ -22,7 +22,7 @@ serve(async (req) => {
   }
 
   try {
-    const { username, pin } = await req.json();
+    const { username, pin, invitationCode } = await req.json();
 
     // Validation
     if (!username || !pin) {
@@ -88,6 +88,25 @@ serve(async (req) => {
       );
     }
 
+    // Validate invitation code if provided
+    let inviterId: string | null = null;
+    if (invitationCode && invitationCode.trim() !== '') {
+      const { data: inviterProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('invitation_code', invitationCode.trim().toUpperCase())
+        .maybeSingle();
+      
+      if (!inviterProfile) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid invitation code' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      inviterId = inviterProfile.id;
+    }
+
     // Hash PIN with SHA-256
     const pinHash = await hashPin(pin);
 
@@ -127,6 +146,71 @@ serve(async (req) => {
         JSON.stringify({ error: 'Profile creation failed' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Process invitation if valid invitation code was provided
+    if (inviterId) {
+      // Create invitation record
+      const { error: invitationError } = await supabaseAdmin
+        .from('invitations')
+        .insert({
+          inviter_id: inviterId,
+          invited_user_id: authData.user.id,
+          invited_email: autoEmail,
+          invitation_code: invitationCode.trim().toUpperCase(),
+          accepted: true,
+          accepted_at: new Date().toISOString(),
+        });
+
+      if (invitationError) {
+        console.error('Invitation creation error:', invitationError);
+        // Continue registration even if invitation fails
+      } else {
+        // Calculate and credit reward to inviter
+        const { data: acceptedInvitations } = await supabaseAdmin
+          .from('invitations')
+          .select('id')
+          .eq('inviter_id', inviterId)
+          .eq('accepted', true);
+
+        const acceptedCount = acceptedInvitations?.length || 0;
+        
+        // Calculate tier reward based on accepted count
+        let rewardCoins = 0;
+        let rewardLives = 0;
+        if (acceptedCount === 1 || acceptedCount === 2) {
+          rewardCoins = 200;
+          rewardLives = 3;
+        } else if (acceptedCount >= 3 && acceptedCount <= 9) {
+          rewardCoins = 1000;
+          rewardLives = 5;
+        } else if (acceptedCount >= 10) {
+          rewardCoins = 6000;
+          rewardLives = 20;
+        }
+
+        // Credit reward using credit_wallet RPC
+        if (rewardCoins > 0 || rewardLives > 0) {
+          const idempotencyKey = `invitation_reward:${inviterId}:${authData.user.id}:${Date.now()}`;
+          const { error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+            p_user_id: inviterId,
+            p_delta_coins: rewardCoins,
+            p_delta_lives: rewardLives,
+            p_source: 'invitation_reward',
+            p_idempotency_key: idempotencyKey,
+            p_metadata: {
+              invited_user_id: authData.user.id,
+              invited_username: username,
+              accepted_count: acceptedCount,
+            }
+          });
+
+          if (creditError) {
+            console.error('Reward crediting error:', creditError);
+            // Continue even if reward fails - will be retryable later
+          }
+        }
+      }
     }
 
     return new Response(

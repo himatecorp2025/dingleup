@@ -20,7 +20,8 @@ const createRegisterSchema = (t: (key: string) => string) => z.object({
     .regex(/^[a-zA-Z0-9_áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/, t('auth.register.validationUsernameNoSpaces')),
   pin: z.string()
     .regex(/^\d{6}$/, t('auth.register.validationPinFormat')),
-  pinConfirm: z.string()
+  pinConfirm: z.string(),
+  invitationCode: z.string().optional()
 }).refine(data => data.pin === data.pinConfirm, {
   message: t('auth.register.validationPinMismatch'),
   path: ["pinConfirm"],
@@ -74,6 +75,7 @@ const RegisterNew = () => {
     username: "",
     pin: "",
     pinConfirm: "",
+    invitationCode: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterForm, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +91,13 @@ const RegisterNew = () => {
       setIsStandalone(isPWA);
     };
     checkStandalone();
+
+    // Read invitation code from URL (?code=ABC123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      setFormData(prev => ({ ...prev, invitationCode: code }));
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,11 +108,12 @@ const RegisterNew = () => {
     try {
       const validated = registerSchema.parse(formData);
 
-      // Call register edge function
+      // Call register edge function with optional invitation code
       const { data: regData, error: regError } = await supabase.functions.invoke('register-with-username-pin', {
         body: {
           username: validated.username,
           pin: validated.pin,
+          invitationCode: validated.invitationCode || null,
         },
       });
 
@@ -287,6 +297,29 @@ const RegisterNew = () => {
                 </button>
               </div>
               {errors.pinConfirm && <p className="text-sm text-red-400">{errors.pinConfirm}</p>}
+            </div>
+
+            {/* Invitation Code (Optional) */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-white/80 flex items-center gap-2">
+                <span>{t('auth.register.invitationCodeLabel')}</span>
+                <span className="text-xs text-white/50">({t('auth.register.optional')})</span>
+              </Label>
+              <div className="relative group">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+                <Input
+                  type="text"
+                  value={formData.invitationCode}
+                  onChange={(e) => setFormData({ ...formData, invitationCode: e.target.value.toUpperCase().trim() })}
+                  className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base uppercase"
+                  placeholder={t('auth.register.invitationCodePlaceholder')}
+                  disabled={isLoading}
+                  maxLength={8}
+                />
+              </div>
+              <p className="text-xs text-white/50">{t('auth.register.invitationCodeHint')}</p>
             </div>
 
             <p className="text-center text-white/60 text-xs sm:text-sm mb-3 px-2">
