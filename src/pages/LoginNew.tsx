@@ -158,7 +158,7 @@ const LoginNew = () => {
         }}
       />
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-md relative z-10 flex items-center justify-center">
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative w-full">
           <button 
             onClick={() => navigate('/')} 
