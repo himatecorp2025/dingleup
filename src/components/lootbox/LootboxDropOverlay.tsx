@@ -75,7 +75,7 @@ export const LootboxDropOverlay = () => {
         return;
       }
 
-      // Reset state for new drop
+      // Reset for new drop
       setShowIntroBanner(true);
       setIntroCountdown(3);
       setIsVisible(false);
@@ -103,10 +103,9 @@ export const LootboxDropOverlay = () => {
           window.clearInterval(interval);
           setShowIntroBanner(false);
 
-          // Start box drop + main countdown
+          // Start box drop (countdown starts when it arrives)
           setIsVisible(true);
           setIsAnimating(true);
-          setCountdownActive(true);
 
           return 0;
         }
@@ -119,12 +118,13 @@ export const LootboxDropOverlay = () => {
     };
   }, [showIntroBanner]);
 
-  // End drop animation after 2.25s
+  // End drop animation and start countdown after 2.25s
   useEffect(() => {
     if (!isAnimating) return;
 
     const timer = window.setTimeout(() => {
       setIsAnimating(false);
+      setCountdownActive(true);
     }, 2250);
 
     return () => window.clearTimeout(timer);
@@ -214,7 +214,7 @@ export const LootboxDropOverlay = () => {
   };
 
   // Don't render on admin/auth pages, if no user, or if no active lootbox
-  if (isAdminPage || isAuthPage || !user || !isVisible || !activeLootbox) {
+  if (isAdminPage || isAuthPage || !user || (!isVisible && !showIntroBanner) || !activeLootbox) {
     return null;
   }
 
@@ -237,9 +237,9 @@ export const LootboxDropOverlay = () => {
         className="fixed z-50 cursor-pointer right-4"
         onClick={() => setShowDialog(true)}
         style={{
-          top: isAnimating ? '80px' : '50%',
-          transform: isAnimating ? 'translateY(0)' : 'translateY(-50%)',
-          transition: 'top 2.25s ease-out, transform 2.25s ease-out, opacity 0.4s ease-out',
+          top: '50%',
+          transform: `translateY(${isAnimating ? '-150%' : '-50%'})`,
+          transition: 'transform 2.25s ease-out, opacity 0.4s ease-out',
           opacity: isFadingOut ? 0 : 1,
           display: 'flex',
           alignItems: 'center',
