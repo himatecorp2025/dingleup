@@ -11,17 +11,19 @@ interface LootboxCountdownTimerProps {
  * Uses backend expiresAt when available so frontend és backend időzítés egyezik
  */
 export const LootboxCountdownTimer = ({ 
-  durationMs = 60000,
+  durationMs = 30000,
   expiresAt,
   onExpired 
 }: LootboxCountdownTimerProps) => {
   const [remainingMs, setRemainingMs] = useState(0);
   const hasExpiredRef = useRef(false);
+  const onExpiredRef = useRef(onExpired);
 
   // Reset expiry flag when a new timer starts
   useEffect(() => {
     hasExpiredRef.current = false;
-  }, [durationMs]);
+    onExpiredRef.current = onExpired;
+  }, [durationMs, expiresAt, onExpired]);
 
   useEffect(() => {
     // Ha nincs expiresAt és nincs duration, nem indul a timer
@@ -46,9 +48,9 @@ export const LootboxCountdownTimer = ({
       setRemainingMs(diff);
       
       // When timer reaches 0, trigger expiry ONCE
-      if (diff <= 0 && onExpired && !hasExpiredRef.current) {
+      if (diff <= 0 && onExpiredRef.current && !hasExpiredRef.current) {
         hasExpiredRef.current = true;
-        onExpired();
+        onExpiredRef.current();
       }
     };
 
@@ -56,7 +58,7 @@ export const LootboxCountdownTimer = ({
     const intervalId = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(intervalId);
-  }, [durationMs, expiresAt, onExpired]);
+  }, [durationMs, expiresAt]);
 
   // Hide timer when expired
   if (remainingMs === 0) {
