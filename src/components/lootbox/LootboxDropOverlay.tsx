@@ -88,7 +88,6 @@ export const LootboxDropOverlay = () => {
       setShowIntroBanner(false);
       setIsVisible(false);
       setIsAnimating(false);
-      setLastShownLootboxId(null);
     }
   }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes, lastShownLootboxId]);
   
@@ -196,7 +195,6 @@ export const LootboxDropOverlay = () => {
             {!isAnimating && (
               <LootboxCountdownTimer 
                 key={activeLootbox.id}
-                expiresAt={activeLootbox.expires_at}
                 onExpired={handleExpired}
               />
             )}
