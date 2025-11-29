@@ -37,10 +37,10 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Mobile/tablet: skip landing page, go directly to auth/choice
+  // Mobile/tablet: skip landing page, go directly to auth/login
   // No session check needed - just redirect immediately
   if (isMobileOrTablet && location.pathname === '/') {
-    return <Navigate to="/auth/choice" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   // Admin pages always accessible
