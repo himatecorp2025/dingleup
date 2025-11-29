@@ -189,27 +189,21 @@ const RegisterNew = () => {
 
   return (
     <div 
-      className="h-dvh h-svh w-screen relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center animate-fade-in"
+      className="h-screen w-screen fixed inset-0 overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center animate-fade-in"
       style={{
         paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
         paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
       }}
     >
-      {/* Background image with 75% opacity */}
+      {/* Background image with 75% opacity - fixed both horizontally and vertically */}
       <div 
-        className="absolute z-0" 
+        className="fixed inset-0 z-0" 
         style={{
           backgroundImage: `url(${gameBackground})`,
           backgroundSize: 'cover',
-          backgroundPosition: '50% 50%',
+          backgroundPosition: 'center center',
           backgroundAttachment: 'fixed',
           opacity: 0.75,
-          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
-          width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
-          height: 'calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
         }}
       />
 
