@@ -64,10 +64,11 @@ export const DailyRankingsCountdown = ({ compact = false, className = '', userTi
   if (compact) {
     return (
       <div 
-        className={`bg-primary border border-primary/60 rounded px-1 py-0.5 shadow-[0_0_8px_hsl(var(--primary)/0.6)] ${className}`}
+        className={`bg-primary border border-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.6)] ${className}`}
         title={t('countdown.dailyEndTitle')}
+        style={{ borderRadius: 'clamp(2px, 0.5vw, 3px)', padding: 'clamp(1px, 0.3vh, 2px) clamp(2px, 0.5vw, 4px)' }}
       >
-        <span className="text-[8px] font-extrabold text-foreground drop-shadow leading-none whitespace-nowrap">
+        <span className="font-extrabold text-foreground drop-shadow leading-none whitespace-nowrap" style={{ fontSize: 'clamp(6px, 1.5vw, 8px)' }}>
           {timeRemaining}
         </span>
       </div>
@@ -79,9 +80,9 @@ export const DailyRankingsCountdown = ({ compact = false, className = '', userTi
       className="relative flex items-center mx-auto"
       style={{ 
         width: `${containerWidth}px`,
-        minWidth: '180px',
+        minWidth: 'clamp(160px, 30vw, 180px)',
         maxWidth: '90vw',
-        height: '80px',
+        height: 'clamp(68px, 12vh, 80px)',
       }}
     >
       {/* Inline SVG Background - Golden Hexagon */}
@@ -165,26 +166,26 @@ export const DailyRankingsCountdown = ({ compact = false, className = '', userTi
       </svg>
 
       {/* Content - Absolutely centered */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent" style={{ gap: 'clamp(2px, 0.5vh, 4px)' }}>
         {/* TOP 100 title with trophies */}
-        <div className="flex items-center justify-center gap-1 [background:transparent]">
-          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+        <div className="flex items-center justify-center [background:transparent]" style={{ gap: 'clamp(2px, 0.5vw, 4px)' }}>
+          <Trophy className="text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" style={{ width: 'clamp(10px, 2vw, 12px)', height: 'clamp(10px, 2vw, 12px)' }} />
+          <span className="font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap" style={{ fontSize: 'clamp(8px, 1.8vw, 10px)' }}>
             {t('leaderboard.carousel_title')}
           </span>
-          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+          <Trophy className="text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" style={{ width: 'clamp(10px, 2vw, 12px)', height: 'clamp(10px, 2vw, 12px)' }} />
         </div>
         
         {/* Timer countdown with text - this row is measured for width */}
-        <div ref={timerRowRef} className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
-          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+        <div ref={timerRowRef} className="flex items-center justify-center m-0 p-0 leading-none [background:transparent]" style={{ gap: 'clamp(2px, 0.5vw, 4px)' }}>
+          <span className="font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap" style={{ fontSize: 'clamp(8px, 1.8vw, 10px)' }}>
             {t('countdown.you_can_win')}
           </span>
-          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+          <span className="font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap" style={{ fontSize: 'clamp(8px, 1.8vw, 10px)' }}>
             {timeRemaining}
           </span>
           {t('countdown.in_time') && (
-            <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+            <span className="font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap" style={{ fontSize: 'clamp(8px, 1.8vw, 10px)' }}>
               {t('countdown.in_time')}
             </span>
           )}

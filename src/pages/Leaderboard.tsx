@@ -83,7 +83,7 @@ const Leaderboard = () => {
             paddingTop: 'env(safe-area-inset-top, 0px)'
           }}
         >
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400" />
+          <div className="animate-spin rounded-full border-b-2 border-yellow-400" style={{ width: 'clamp(24px, 5vw, 32px)', height: 'clamp(24px, 5vw, 32px)' }} />
         </div>
       )}
       {/* Dynamic Island Safe Area - matches Hero component */}
@@ -110,7 +110,7 @@ const Leaderboard = () => {
       />
       
       {/* Back Button - Fixed position like Invitation page */}
-      <div className="fixed left-4 z-50 pt-safe" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
+      <div className="fixed left-4 z-50 pt-safe" style={{ top: 'calc(env(safe-area-inset-top, 0px) + clamp(12px, 2vh, 16px))' }}>
         <button
           onClick={() => navigate('/dashboard')}
           className="relative rounded-full hover:scale-110 transition-all"
@@ -146,11 +146,11 @@ const Leaderboard = () => {
       </div>
 
       <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ 
-        width: '90vw',
-        maxWidth: '90vw',
+        width: 'clamp(320px, 90vw, 90vw)',
+        maxWidth: 'clamp(320px, 90vw, 672px)',
         margin: '0 auto',
         paddingTop: 'clamp(60px, 10vh, 80px)',
-        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)'
+        paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + clamp(80px, 15vh, 100px))'
       }}>
         <div className="w-full flex flex-col">
 
