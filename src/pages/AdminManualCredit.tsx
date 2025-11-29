@@ -102,17 +102,17 @@ const AdminManualCredit = () => {
 
   return (
     <AdminLayout>
-      <div className="container mx-auto p-6 max-w-4xl">
+      <div className="container mx-auto p-[clamp(1rem,3vw,1.5rem)] max-w-4xl">
         <Button
           variant="ghost"
           onClick={() => navigate('/admin')}
-          className="mb-4"
+          className="mb-[clamp(0.75rem,2vw,1rem)]"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-[clamp(0.25rem,1vw,0.5rem)] h-[clamp(0.875rem,2vw,1rem)] w-[clamp(0.875rem,2vw,1rem)]" />
           Back to Dashboard
         </Button>
 
-        <h1 className="text-3xl font-bold mb-6">Manual Credit</h1>
+        <h1 className="text-[clamp(1.5rem,4vw,1.875rem)] font-bold mb-[clamp(1rem,3vw,1.5rem)]">Manual Credit</h1>
 
         <Alert className="mb-6">
           <AlertCircle className="h-4 w-4" />

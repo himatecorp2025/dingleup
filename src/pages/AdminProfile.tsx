@@ -243,10 +243,10 @@ const AdminProfile = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 pb-16">
+      <div className="space-y-[clamp(1rem,3vw,1.5rem)] pb-[clamp(3rem,6vw,4rem)]">
         <div>
-          <h1 className="text-3xl font-bold">{t('admin.profile.title')}</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-[clamp(1.5rem,4vw,1.875rem)] font-bold">{t('admin.profile.title')}</h1>
+          <p className="text-muted-foreground mt-[clamp(0.375rem,1vw,0.5rem)] text-[clamp(0.875rem,2vw,1rem)]">
             {t('admin.profile.description')}
           </p>
         </div>

@@ -258,28 +258,28 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-4 lg:space-y-6">
         {/* Top Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(1.5rem,4vw,2rem)]">
           <button
             onClick={() => setActiveTab('users')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-[clamp(0.75rem,2vw,1rem)] lg:rounded-[clamp(1rem,2.5vw,1.5rem)] p-[clamp(1rem,3vw,1.5rem)] text-left hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
-            <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">{t('admin.dashboard.total_users')}</h3>
-              <Users className="w-6 h-6 lg:w-8 lg:h-8 text-purple-400 bg-purple-500/20 p-1.5 lg:p-2 rounded-lg" />
+            <div className="flex items-center justify-between mb-[clamp(0.75rem,2vw,1rem)]">
+              <h3 className="text-white/70 text-[clamp(0.75rem,1.75vw,0.875rem)]">{t('admin.dashboard.total_users')}</h3>
+              <Users className="w-[clamp(1.25rem,3vw,1.5rem)] h-[clamp(1.25rem,3vw,1.5rem)] lg:w-[clamp(1.5rem,3.5vw,2rem)] lg:h-[clamp(1.5rem,3.5vw,2rem)] text-purple-400 bg-purple-500/20 p-[clamp(0.25rem,1vw,0.375rem)] lg:p-[clamp(0.375rem,1.5vw,0.5rem)] rounded-[clamp(0.5rem,1.5vw,0.75rem)]" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">{totalUsers.toLocaleString()}</p>
+            <p className="text-[clamp(1.25rem,4vw,1.5rem)] lg:text-[clamp(1.5rem,5vw,1.875rem)] font-bold text-white">{totalUsers.toLocaleString()}</p>
           </button>
 
           <button
             onClick={() => setActiveTab('revenue')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
+            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-[clamp(0.75rem,2vw,1rem)] lg:rounded-[clamp(1rem,2.5vw,1.5rem)] p-[clamp(1rem,3vw,1.5rem)] text-left hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
           >
-            <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">{t('admin.dashboard.total_revenue')}</h3>
-              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-400 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
+            <div className="flex items-center justify-between mb-[clamp(0.75rem,2vw,1rem)]">
+              <h3 className="text-white/70 text-[clamp(0.75rem,1.75vw,0.875rem)]">{t('admin.dashboard.total_revenue')}</h3>
+              <DollarSign className="w-[clamp(1.25rem,3vw,1.5rem)] h-[clamp(1.25rem,3vw,1.5rem)] lg:w-[clamp(1.5rem,3.5vw,2rem)] lg:h-[clamp(1.5rem,3.5vw,2rem)] text-blue-400 bg-blue-500/20 p-[clamp(0.25rem,1vw,0.375rem)] lg:p-[clamp(0.375rem,1.5vw,0.5rem)] rounded-[clamp(0.5rem,1.5vw,0.75rem)]" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
-            <p className="text-white/50 text-xs mt-1">{t('admin.dashboard.revenue_source')}</p>
+            <p className="text-[clamp(1.25rem,4vw,1.5rem)] lg:text-[clamp(1.5rem,5vw,1.875rem)] font-bold text-white">${totalRevenue}</p>
+            <p className="text-white/50 text-[clamp(0.625rem,1.5vw,0.75rem)] mt-[clamp(0.125rem,0.5vw,0.25rem)]">{t('admin.dashboard.revenue_source')}</p>
           </button>
 
         </div>

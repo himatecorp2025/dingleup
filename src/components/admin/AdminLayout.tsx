@@ -72,7 +72,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Main Content */}
         <main className="flex-1 min-h-dvh min-h-svh overflow-auto relative z-10">
           {/* Header with controls */}
-          <div className="p-4 flex items-center gap-3 justify-between sticky top-0 bg-gradient-to-br from-[#1a0b2e]/95 via-[#2d1b4e]/95 to-[#0f0a1f]/95 backdrop-blur-xl border-b border-white/10 z-20">
+          <div className="p-[clamp(0.75rem,2vw,1rem)] flex items-center gap-[clamp(0.5rem,1.5vw,0.75rem)] justify-between sticky top-0 bg-gradient-to-br from-[#1a0b2e]/95 via-[#2d1b4e]/95 to-[#0f0a1f]/95 backdrop-blur-xl border-b border-white/10 z-20">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-white/70 hover:text-white hover:bg-white/10" />
               
@@ -125,7 +125,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
 
           {/* Page Content */}
-          <div className="px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="px-[clamp(1rem,3vw,2rem)] pb-[clamp(1.5rem,4vw,2rem)]">
             {children}
           </div>
         </main>
