@@ -242,17 +242,26 @@ export const AdminReportActionDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-[hsl(var(--primary-dark))] to-[hsl(var(--primary-darker))] border-2 border-accent/50 text-foreground z-[9999] p-4">
-        <DialogHeader className="space-y-1">
-          <DialogTitle className="text-xl font-black text-accent">
+      <DialogContent className="bg-gradient-to-b from-[hsl(var(--primary-dark))] to-[hsl(var(--primary-darker))] border-2 border-accent/50 text-foreground z-[9999]"
+        style={{
+          maxWidth: 'clamp(320px, 90vw, 500px)',
+          padding: 'clamp(0.75rem, 3vw, 1rem)'
+        }}
+      >
+        <DialogHeader style={{ marginBottom: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
+          <DialogTitle className="font-black text-accent"
+            style={{ fontSize: 'clamp(1rem, 3vw, 1.25rem)', marginBottom: 'clamp(0.25rem, 1vw, 0.5rem)' }}
+          >
             {config.title}
           </DialogTitle>
-          <DialogDescription className="text-foreground/80 text-sm">
+          <DialogDescription className="text-foreground/80"
+            style={{ fontSize: 'clamp(0.75rem, 2vw, 0.875rem)' }}
+          >
             {config.description}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 mt-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
           <div>
             <Label className="text-base text-accent mb-2 block font-bold">
               {t('admin.report.reason_label')} {actionType === 'reviewing' ? t('admin.report.reason_reviewing_suffix') : actionType === 'resolved' ? t('admin.report.reason_resolved_suffix') : t('admin.report.reason_dismissed_suffix')}?

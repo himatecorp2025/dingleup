@@ -31,9 +31,10 @@ export const LootboxRewardDisplay = ({ gold, life, onClose }: LootboxRewardDispl
       }`}
     >
       <div
-        className={`relative flex flex-col items-center gap-6 p-8 transition-all duration-500 ${
+        className={`relative flex flex-col items-center transition-all duration-500 ${
           isVisible ? "scale-100 opacity-100" : "scale-75 opacity-0"
         }`}
+        style={{ gap: 'clamp(1rem, 3vh, 1.5rem)', padding: 'clamp(1.5rem, 4vh, 2rem)' }}
       >
         {/* Glow effect */}
         <div 
@@ -54,34 +55,49 @@ export const LootboxRewardDisplay = ({ gold, life, onClose }: LootboxRewardDispl
           <img 
             src={boxGold} 
             alt="Lootbox" 
-            className="relative w-32 h-32 object-contain animate-pulse"
+            className="relative object-contain animate-pulse"
             style={{
+              width: 'clamp(80px, 20vw, 128px)',
+              height: 'clamp(80px, 20vw, 128px)',
               filter: "drop-shadow(0 0 20px rgba(255, 215, 0, 0.8))",
             }}
           />
         </div>
 
         {/* Rewards container */}
-        <div className="relative flex flex-col gap-4 bg-gradient-to-br from-yellow-900/50 to-yellow-800/30 border-2 border-yellow-500/60 rounded-2xl p-6 backdrop-blur-md min-w-[280px]"
+        <div className="relative flex flex-col bg-gradient-to-br from-yellow-900/50 to-yellow-800/30 border-2 border-yellow-500/60 backdrop-blur-md"
           style={{
+            gap: 'clamp(0.75rem, 2vh, 1rem)',
+            padding: 'clamp(1rem, 3vh, 1.5rem)',
+            borderRadius: 'clamp(0.75rem, 2vw, 1rem)',
+            minWidth: 'clamp(240px, 70vw, 280px)',
             boxShadow: "0 0 40px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1)",
           }}
         >
           {/* Gold reward */}
-          <div className="flex items-center justify-between gap-4 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center"
+          <div className="flex items-center justify-between bg-black/30 border border-yellow-500/30"
+            style={{
+              gap: 'clamp(0.75rem, 2vw, 1rem)',
+              padding: 'clamp(0.75rem, 2vh, 1rem)',
+              borderRadius: 'clamp(0.5rem, 1.5vw, 0.75rem)'
+            }}
+          >
+            <div className="flex items-center" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
+              <div className="rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center"
                 style={{
+                  width: 'clamp(32px, 8vw, 40px)',
+                  height: 'clamp(32px, 8vw, 40px)',
                   boxShadow: "0 0 20px rgba(255, 215, 0, 0.6)",
                 }}
               >
-                <Coins className="w-6 h-6 text-black" />
+                <Coins style={{ width: 'clamp(20px, 5vw, 24px)', height: 'clamp(20px, 5vw, 24px)' }} className="text-black" />
               </div>
-              <span className="text-white font-bold text-lg">Aranyérme</span>
+              <span className="text-white font-bold" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>Aranyérme</span>
             </div>
             <span 
-              className="text-3xl font-black text-yellow-400"
+              className="font-black text-yellow-400"
               style={{
+                fontSize: 'clamp(1.5rem, 5vw, 1.875rem)',
                 textShadow: "0 0 20px rgba(255, 215, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.8)",
               }}
             >
@@ -90,20 +106,29 @@ export const LootboxRewardDisplay = ({ gold, life, onClose }: LootboxRewardDispl
           </div>
 
           {/* Life reward */}
-          <div className="flex items-center justify-between gap-4 bg-black/30 rounded-xl p-4 border border-red-500/30">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center"
+          <div className="flex items-center justify-between bg-black/30 border border-red-500/30"
+            style={{
+              gap: 'clamp(0.75rem, 2vw, 1rem)',
+              padding: 'clamp(0.75rem, 2vh, 1rem)',
+              borderRadius: 'clamp(0.5rem, 1.5vw, 0.75rem)'
+            }}
+          >
+            <div className="flex items-center" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
+              <div className="rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center"
                 style={{
+                  width: 'clamp(32px, 8vw, 40px)',
+                  height: 'clamp(32px, 8vw, 40px)',
                   boxShadow: "0 0 20px rgba(239, 68, 68, 0.6)",
                 }}
               >
-                <Heart className="w-6 h-6 text-white fill-white" />
+                <Heart style={{ width: 'clamp(20px, 5vw, 24px)', height: 'clamp(20px, 5vw, 24px)' }} className="text-white fill-white" />
               </div>
-              <span className="text-white font-bold text-lg">Élet</span>
+              <span className="text-white font-bold" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>Élet</span>
             </div>
             <span 
-              className="text-3xl font-black text-red-400"
+              className="font-black text-red-400"
               style={{
+                fontSize: 'clamp(1.5rem, 5vw, 1.875rem)',
                 textShadow: "0 0 20px rgba(239, 68, 68, 0.8), 0 2px 4px rgba(0, 0, 0, 0.8)",
               }}
             >
@@ -113,13 +138,21 @@ export const LootboxRewardDisplay = ({ gold, life, onClose }: LootboxRewardDispl
         </div>
 
         {/* Sparkle effects */}
-        <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-yellow-400 animate-ping"
+        <div className="absolute rounded-full bg-yellow-400 animate-ping"
           style={{
+            top: 'clamp(-0.5rem, -1vw, -0.25rem)',
+            right: 'clamp(-0.5rem, -1vw, -0.25rem)',
+            width: 'clamp(12px, 3vw, 16px)',
+            height: 'clamp(12px, 3vw, 16px)',
             boxShadow: "0 0 20px rgba(255, 215, 0, 0.8)",
           }}
         />
-        <div className="absolute -bottom-2 -left-2 w-4 h-4 rounded-full bg-yellow-400 animate-ping"
+        <div className="absolute rounded-full bg-yellow-400 animate-ping"
           style={{
+            bottom: 'clamp(-0.5rem, -1vw, -0.25rem)',
+            left: 'clamp(-0.5rem, -1vw, -0.25rem)',
+            width: 'clamp(12px, 3vw, 16px)',
+            height: 'clamp(12px, 3vw, 16px)',
             boxShadow: "0 0 20px rgba(255, 215, 0, 0.8)",
             animationDelay: "0.5s",
           }}

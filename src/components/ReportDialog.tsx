@@ -206,17 +206,26 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-primary-dark to-primary-darker border-2 border-accent/50 text-foreground z-[9999] p-4">
-        <DialogHeader className="space-y-1">
-          <DialogTitle className="text-xl font-black text-accent">
+      <DialogContent className="bg-gradient-to-b from-primary-dark to-primary-darker border-2 border-accent/50 text-foreground z-[9999]"
+        style={{
+          maxWidth: 'clamp(320px, 90vw, 500px)',
+          padding: 'clamp(0.75rem, 3vw, 1rem)'
+        }}
+      >
+        <DialogHeader style={{ marginBottom: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
+          <DialogTitle className="font-black text-accent"
+            style={{ fontSize: 'clamp(1rem, 3vw, 1.25rem)', marginBottom: 'clamp(0.25rem, 1vw, 0.5rem)' }}
+          >
             {t('report.title')}
           </DialogTitle>
-          <DialogDescription className="text-foreground/80 text-sm">
+          <DialogDescription className="text-foreground/80"
+            style={{ fontSize: 'clamp(0.75rem, 2vw, 0.875rem)' }}
+          >
             {t('report.description_label')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
           <div>
             <Label className="text-sm">{t('report.type_label')}</Label>
             <Select value={reportType} onValueChange={(v) => setReportType(v as 'bug' | 'user_behavior')}>
