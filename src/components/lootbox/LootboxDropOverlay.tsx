@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { GoldLootboxIcon } from './GoldLootboxIcon';
 import { LootboxDecisionDialog } from './LootboxDecisionDialog';
+import { LootboxNotificationBanner } from './LootboxNotificationBanner';
 import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -122,7 +123,9 @@ export const LootboxDropOverlay = () => {
   useEffect(() => {
     if (!isAnimating) return;
 
+    console.log('[LootboxDropOverlay] Drop animation in progress, will start countdown in 2.25s');
     const timer = window.setTimeout(() => {
+      console.log('[LootboxDropOverlay] Animation complete, activating countdown');
       setIsAnimating(false);
       setCountdownActive(true);
     }, 2250);
@@ -132,11 +135,19 @@ export const LootboxDropOverlay = () => {
 
   // Handle countdown - only start when animation intro is complete and box is visible
   useEffect(() => {
+    console.log('[LootboxDropOverlay] Countdown effect triggered:', { 
+      hasActiveLootbox: !!activeLootbox, 
+      countdownActive,
+      remainingSeconds 
+    });
+
     if (!activeLootbox || !countdownActive) {
+      console.log('[LootboxDropOverlay] Countdown blocked - conditions not met');
       setRemainingSeconds(null);
       return;
     }
 
+    console.log('[LootboxDropOverlay] Starting countdown...');
     let interval: number | undefined;
     let timeout: number | undefined;
 
@@ -149,7 +160,9 @@ export const LootboxDropOverlay = () => {
         return Math.max(0, Math.floor(diffMs / 1000));
       };
 
-      setRemainingSeconds(calculateRemaining());
+      const initialRemaining = calculateRemaining();
+      console.log('[LootboxDropOverlay] Using expires_at countdown, initial:', initialRemaining);
+      setRemainingSeconds(initialRemaining);
 
       interval = window.setInterval(() => {
         const remaining = calculateRemaining();
@@ -169,11 +182,15 @@ export const LootboxDropOverlay = () => {
       }, 1000);
     } else {
       // No expires_at - count down from 60 seconds locally (after animation)
+      console.log('[LootboxDropOverlay] Using 60s local countdown');
       setRemainingSeconds(60);
 
       interval = window.setInterval(() => {
         setRemainingSeconds(prev => {
-          if (prev === null || prev <= 1) {
+          const newVal = prev === null || prev <= 1 ? 0 : prev - 1;
+          console.log('[LootboxDropOverlay] Countdown tick:', newVal);
+          
+          if (newVal <= 0) {
             if (interval) window.clearInterval(interval);
             setCountdownActive(false);
             setIsFadingOut(true);
@@ -183,15 +200,15 @@ export const LootboxDropOverlay = () => {
               setIsFadingOut(false);
               refetch();
             }, 400);
-
-            return 0;
           }
-          return prev - 1;
+          
+          return newVal;
         });
       }, 1000);
     }
 
     return () => {
+      console.log('[LootboxDropOverlay] Cleaning up countdown interval');
       if (interval) window.clearInterval(interval);
       if (timeout) window.clearTimeout(timeout);
     };
@@ -220,54 +237,39 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
-      {/* Intro Banner - appears before lootbox drop */}
+      {/* Intro Banner - RED Play Now SVG with countdown */}
       {showIntroBanner && (
         <div
-          className="fixed z-40 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full shadow-lg hover-scale animate-enter"
+          className="fixed z-40 animate-fade-in"
           style={{
-            top: 'calc(env(safe-area-inset-top, 0px) + 110px)',
-            background: 'linear-gradient(135deg, #22c55e, #a3e635)',
-            boxShadow:
-              '0 0 14px rgba(34,197,94,0.9), 0 0 28px rgba(132,204,22,0.75), 0 8px 16px rgba(0,0,0,0.9)',
-            borderRadius: '999px',
+            top: 'calc(env(safe-area-inset-top, 0px) + 80px)',
+            right: 'clamp(12px, 4vw, 24px)',
           }}
         >
-          <div
-            className="text-xs font-extrabold tracking-wide text-black text-center"
-            style={{
-              textShadow:
-                '0 0 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.9)',
-            }}
-          >
-            Ajándékod érkezik – fogadd el, mielőtt elvész!
-          </div>
-          <div className="mt-0.5 text-center text-xs font-black">
-            {introCountdown > 0 ? `${introCountdown}…` : ''}
-          </div>
+          <LootboxNotificationBanner countdown={introCountdown} />
         </div>
       )}
 
-      {/* Global Fixed Overlay - Lootbox under profile hexagon */}
+      {/* Lootbox - appears ONLY after banner disappears, drops to Speed Booster level */}
       {isVisible && (
         <div
           className="fixed z-50 cursor-pointer"
           onClick={() => setShowDialog(true)}
           style={{
-            top: 'calc(env(safe-area-inset-top, 0px) + 150px)',
+            bottom: isAnimating ? '100vh' : 'calc(25vh + 80px)', // Speed Booster button level
             right: 'clamp(12px, 4vw, 24px)',
-            transform: isAnimating ? 'translateY(-120%)' : 'translateY(0)',
-            transition: 'transform 2.25s ease-out, opacity 0.4s ease-out',
+            transition: 'bottom 2.25s ease-out, opacity 0.4s ease-out',
             opacity: isFadingOut ? 0 : 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          {/* Lootbox Icon - 50% smaller */}
+          {/* Lootbox Icon */}
           <div className="relative">
             <GoldLootboxIcon className="w-16 h-auto md:w-20 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
 
-            {/* 60s Countdown Badge - only show when countdown is active - positioned at bottom */}
+            {/* 60s Countdown Badge - positioned at bottom */}
             {countdownActive && remainingSeconds !== null && remainingSeconds > 0 && (
               <div
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2 px-3 py-1 rounded-full bg-black/80 text-white text-sm font-semibold"
