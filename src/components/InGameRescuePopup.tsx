@@ -197,14 +197,18 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[75vw] w-full h-[80vh] sm:h-[75vh] md:h-[70vh] overflow-y-auto bg-gradient-to-br from-red-900/50 via-purple-900/70 to-red-900/50 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-400 p-3 sm:p-4 md:p-5 shadow-2xl rounded-[20px] !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" style={{ boxShadow: '0 0 50px rgba(250, 204, 21, 0.7), 0 25px 80px rgba(0, 0, 0, 0.8), inset 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 -4px 20px rgba(250, 204, 21, 0.2)' }}>
+      <DialogContent className="bg-gradient-to-br from-red-900/50 via-purple-900/70 to-red-900/50 border-yellow-400 p-3 sm:p-4 md:p-5 shadow-2xl !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" style={{ maxWidth: 'clamp(320px, 95vw, 600px)', width: 'clamp(320px, 95vw, 600px)', height: 'clamp(480px, 80vh, 720px)', borderWidth: 'clamp(3px, 1vw, 6px)', borderRadius: 'clamp(16px, 4vw, 20px)', padding: 'clamp(0.75rem, 2.5vw, 1.25rem)', boxShadow: '0 0 50px rgba(250, 204, 21, 0.7), 0 25px 80px rgba(0, 0, 0, 0.8), inset 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 -4px 20px rgba(250, 204, 21, 0.2)' }}>
         {/* Close button - top right */}
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/30 hover:bg-black/50 transition-all duration-200 hover:scale-110"
+          className="absolute z-50 rounded-full bg-black/30 hover:bg-black/50 transition-all duration-200 hover:scale-110"
+          style={{ 
+            top: 'clamp(0.75rem, 2vh, 1rem)', 
+            right: 'clamp(0.75rem, 2vw, 1rem)', 
+            padding: 'clamp(0.375rem, 1vh, 0.5rem)' 
+          }}
           aria-label="Close"
         >
-          <X className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
+          <X style={{ width: 'clamp(18px, 4vw, 24px)', height: 'clamp(18px, 4vh, 24px)' }} className="text-yellow-400" />
         </button>
 
         {/* Animated background stars */}
@@ -224,22 +228,22 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           ))}
         </div>
         {/* Header with enhanced 3D styling */}
-        <DialogHeader className="space-y-1 mb-2 sm:mb-3 relative mt-[3%] sm:mt-[5%]">
+        <DialogHeader className="space-y-1 relative" style={{ marginBottom: 'clamp(0.375rem, 1.5vh, 0.75rem)', marginTop: 'clamp(0.5rem, 2vh, 1rem)' }}>
           {/* Multi-layer header background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent rounded-t-[20px]" style={{ boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent" style={{ borderRadius: 'clamp(16px, 4vw, 20px)', boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
           <div className="absolute inset-0 bg-gradient-radial from-yellow-400/10 via-transparent to-transparent rounded-t-[20px]"></div>
           
-          <DialogTitle className="relative text-lg sm:text-xl md:text-2xl font-black text-center text-yellow-50 leading-tight tracking-wider" style={{ textShadow: '0 4px 15px rgba(0, 0, 0, 0.9), 0 6px 25px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(0, 0, 0, 0.8))' }}>
+          <DialogTitle className="relative text-center text-yellow-50 leading-tight tracking-wider" style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)', textShadow: '0 4px 15px rgba(0, 0, 0, 0.9), 0 6px 25px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(0, 0, 0, 0.8))' }}>
             {t('rescue.title')}
           </DialogTitle>
-          <p className="relative text-center text-yellow-50 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
+          <p className="relative text-center text-yellow-50 font-bold flex items-center justify-center" style={{ fontSize: 'clamp(0.7rem, 2.5vw, 0.875rem)', gap: 'clamp(0.25rem, 1vw, 0.5rem)', textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
             {t('rescue.last_chance')}
-            <DiamondIcon3D size={20} className="drop-shadow-2xl sm:w-6 sm:h-6" />
+            <DiamondIcon3D size={24} className="drop-shadow-2xl" />
           </p>
         </DialogHeader>
 
         {/* Current Status with 3D icons */}
-        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[3px] sm:border-[4px] border-blue-400/60 rounded-[20px] p-2 sm:p-3 mb-2 sm:mb-3 mt-4 sm:mt-6 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
+        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-blue-400/60 rounded-xl p-2 sm:p-3 shadow-xl" style={{ borderWidth: 'clamp(2px, 0.6vw, 4px)', borderRadius: 'clamp(16px, 4vw, 20px)', padding: 'clamp(0.375rem, 1.5vh, 0.75rem)', marginBottom: 'clamp(0.375rem, 1.5vh, 0.75rem)', marginTop: 'clamp(0.75rem, 2.5vh, 1.5rem)', boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
           {/* Multi-layer glow effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-[20px] pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-[20px] pointer-events-none"></div>
@@ -272,7 +276,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         </div>
 
         {/* Booster Options - Enhanced 3D styling */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3 items-stretch mt-[5%]">
+        <div className="grid grid-cols-2 items-stretch" style={{ gap: 'clamp(0.375rem, 1.5vw, 0.75rem)', marginBottom: 'clamp(0.375rem, 1.5vh, 0.75rem)', marginTop: 'clamp(0.75rem, 2.5vh, 1rem)' }}>
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             

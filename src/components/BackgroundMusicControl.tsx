@@ -9,18 +9,18 @@ export const BackgroundMusicControl = () => {
   return (
     <div className="background-music-control relative rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 transform-gpu">
       {/* Base shadow (3D depth) */}
-      <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+      <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: 'clamp(2px, 0.5vh, 3px)', left: 'clamp(2px, 0.5vw, 3px)', right: 'clamp(-2px, -0.5vw, -3px)', bottom: 'clamp(-2px, -0.5vh, -3px)' }} aria-hidden />
       
       {/* Outer frame */}
       <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary-dark/40 via-primary/30 to-primary-dark/40 border-2 border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.4),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
       
       {/* Middle frame (bright highlight) */}
       <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-primary/15 via-primary-glow/10 to-primary-dark/15"
-        style={{ top: '3px', left: '3px', right: '3px', bottom: '3px', boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.075)' }} aria-hidden />
+        style={{ top: 'clamp(2px, 0.5vh, 3px)', left: 'clamp(2px, 0.5vw, 3px)', right: 'clamp(2px, 0.5vw, 3px)', bottom: 'clamp(2px, 0.5vh, 3px)', boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.075)' }} aria-hidden />
       
-      {/* Inner crystal layer */}
-      <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-background/60 via-background/70 to-background/80"
-        style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.05), inset 0 -4px 8px rgba(0,0,0,0.2)' }} aria-hidden />
+      {/* Inner layer (3D beveled effect) */}
+      <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-primary-glow/8 via-transparent to-primary-dark/8"
+        style={{ top: 'clamp(3px, 0.8vh, 5px)', left: 'clamp(3px, 0.8vw, 5px)', right: 'clamp(3px, 0.8vw, 5px)', bottom: 'clamp(3px, 0.8vh, 5px)', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.05), inset 0 -4px 8px rgba(0,0,0,0.2)' }} aria-hidden />
       
       {/* Content */}
       <div className="relative z-10">

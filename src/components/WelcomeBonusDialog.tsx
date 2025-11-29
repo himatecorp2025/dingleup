@@ -313,12 +313,14 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                          animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
-                  <div className="relative px-8 py-2 rounded-full flex items-center justify-center gap-2"
+                  <div className="rounded-full flex items-center justify-center"
                        style={{ 
+                         padding: 'clamp(0.375rem, 1.5vh, 0.5rem) clamp(1.5rem, 4vw, 2rem)',
+                         gap: 'clamp(0.375rem, 1vw, 0.5rem)',
                          transform: 'perspective(600px) rotateX(4deg)',
                          animation: 'offerPulse 1.5s ease-in-out infinite'
                        }}>
-                     <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0" fill="#fbbf24">
+                     <svg viewBox="0 0 24 24" className="flex-shrink-0" fill="#fbbf24" style={{ width: 'clamp(14px, 3vw, 16px)', height: 'clamp(14px, 3vw, 16px)' }}>
                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                      </svg>
                      <p className="text-white font-black text-center tracking-wider"
@@ -329,7 +331,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                         }}>
                         {t('welcome.special_offer')}
                       </p>
-                     <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0" fill="#fbbf24">
+                     <svg viewBox="0 0 24 24" className="flex-shrink-0" fill="#fbbf24" style={{ width: 'clamp(14px, 3vw, 16px)', height: 'clamp(14px, 3vw, 16px)' }}>
                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                      </svg>
                    </div>
@@ -348,9 +350,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 </div>
 
                 {/* Subtitle with reszponzív professzionális 3D gift boxes */}
-                <div className="flex items-center justify-center gap-3 mb-4 w-full px-4">
+                <div className="flex items-center justify-center w-full" style={{ gap: 'clamp(0.5rem, 2vw, 0.75rem)', marginBottom: 'clamp(0.75rem, 2vh, 1rem)', padding: '0 clamp(0.75rem, 3vw, 1rem)' }}>
                   {/* Left 3D Gift Box SVG - reszponzív, professzionális 3D */}
-                  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0" style={{ maxWidth: '15vw', maxHeight: '15vw' }}>
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0" style={{ maxWidth: 'clamp(48px, 15vw, 80px)', maxHeight: 'clamp(48px, 15vw, 80px)' }}>
                     <defs>
                       <linearGradient id="giftBoxGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
