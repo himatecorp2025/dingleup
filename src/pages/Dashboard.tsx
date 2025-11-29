@@ -433,8 +433,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
-      background: 'transparent'
+    <div className="h-dvh w-screen overflow-x-hidden relative flex flex-col" style={{
+      background: 'transparent',
+      maxWidth: '100vw',
+      maxHeight: '100vh'
     }}>
       {/* Pull-to-refresh indicator */}
       {isPulling && (

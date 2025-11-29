@@ -9,7 +9,10 @@ const GameRules = () => {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-dvh min-h-svh relative overflow-y-auto">
+    <div className="h-dvh w-screen overflow-y-auto overflow-x-hidden relative flex flex-col" style={{
+      maxWidth: '100vw',
+      maxHeight: '100vh'
+    }}>
       {/* Background extends beyond safe-area */}
       <div 
         className="fixed bg-cover bg-no-repeat"
@@ -25,7 +28,12 @@ const GameRules = () => {
         }}
       />
       
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
+      <div className="relative z-10 flex-1 overflow-y-auto" style={{
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto',
+        padding: 'clamp(12px, 2vh, 24px)'
+      }}>
         {/* Header */}
         <div className="mb-8">
           <Button 

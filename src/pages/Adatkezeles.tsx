@@ -42,8 +42,17 @@ export default function Adatkezeles() {
   }
   
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-6">
-      <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-xl rounded-lg p-8 relative">
+    <div className="h-dvh w-screen overflow-y-auto overflow-x-hidden bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col" style={{
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      padding: 'clamp(12px, 2vh, 24px)'
+    }}>
+      <div className="bg-white/5 backdrop-blur-xl rounded-lg relative flex-1 overflow-y-auto" style={{
+        width: '90vw',
+        maxWidth: '90vw',
+        margin: '0 auto',
+        padding: 'clamp(16px, 3vh, 32px)'
+      }}>
         <button 
           onClick={() => navigate('/auth/register')} 
           className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 

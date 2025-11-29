@@ -243,16 +243,24 @@ const Gifts = () => {
         />
       )}
 
-      <div className="h-[100dvh] bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white relative overflow-hidden flex flex-col">
+      <div className="h-dvh bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white relative overflow-hidden flex flex-col" style={{
+        maxWidth: '100vw',
+        maxHeight: '100vh'
+      }}>
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[url('/game-background.png')] bg-cover bg-center opacity-10 pointer-events-none" />
 
       <div
-        className="relative z-10 flex-1 flex justify-center overflow-hidden"
-        style={{ height: 'calc(100dvh - var(--bottom-nav-h) - env(safe-area-inset-bottom, 0px))' }}
+        className="relative z-10 flex-1 flex justify-center overflow-y-auto overflow-x-hidden"
+        style={{ 
+          height: 'calc(100dvh - var(--bottom-nav-h) - env(safe-area-inset-bottom, 0px))',
+          width: '90vw',
+          maxWidth: '90vw',
+          margin: '0 auto'
+        }}
       >
-        <div className="container mx-auto px-3 sm:px-4 py-2 max-w-2xl flex-1 flex flex-col justify-between">
+        <div className="w-full flex-1 flex flex-col justify-between" style={{ padding: 'clamp(8px, 2vh, 16px)' }}>
           {/* Header with Back and Play buttons */}
           <div className="flex items-center justify-between mb-2 gap-2">
             {/* Back Button - Left */}
