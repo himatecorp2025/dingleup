@@ -392,6 +392,7 @@ const Profile = () => {
     <div className="profile-container h-dvh w-screen fixed inset-0 overflow-y-auto overflow-x-hidden flex flex-col" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)',
+      width: '100vw',
       maxWidth: '100vw',
       maxHeight: '100vh',
       touchAction: 'pan-y',
@@ -413,13 +414,17 @@ const Profile = () => {
       
       {/* Casino lights removed per user requirement */}
       
-      <div className="flex-1 flex flex-col relative z-10 overflow-y-auto" style={{ 
-        width: '90vw',
-        maxWidth: '90vw',
-        margin: '0 auto',
+      <div className="flex-1 flex flex-col relative z-10 overflow-y-auto overflow-x-hidden" style={{ 
+        width: '100%',
+        maxWidth: '100%',
         paddingTop: 'clamp(8px, 2vh, 16px)',
         paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' 
       }}>
+        <div style={{ 
+          width: '90vw',
+          maxWidth: '90vw',
+          margin: '0 auto'
+        }}>
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
         <div className="flex items-center justify-between mb-2">
           <button
@@ -947,6 +952,7 @@ const Profile = () => {
         {/* Background Music Control - Moved below Account Info */}
         <div style={{ marginTop: '5vh' }}>
           <BackgroundMusicControl />
+        </div>
         </div>
       </div>
 
