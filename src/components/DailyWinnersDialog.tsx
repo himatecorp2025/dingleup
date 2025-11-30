@@ -479,7 +479,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   style={{ 
                     height: '100%',
                     paddingTop: '0%',
-                    transform: 'translateY(-15%)'
+                    transform: 'translateY(-10%)'
                   }}
                 >
                   {topPlayers.length === 0 ? (
@@ -961,7 +961,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       {/* CONGRATULATIONS BUTTON - Fixed at bottom */}
                       <div 
                         className="w-full flex justify-center px-4" 
-                        style={{ marginTop: 'clamp(16px, 4vh, 28px)' }}
+                        style={{ 
+                          marginTop: 'clamp(16px, 4vh, 28px)',
+                          transform: 'translateY(-5%)'
+                        }}
                       >
                         <HexAcceptButton 
                           onClick={handleAccept}
