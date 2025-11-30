@@ -183,16 +183,29 @@ const AdminDashboard = () => {
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = allUsers.filter(user => 
-      user.id.toLowerCase().includes(query) ||
-      user.username.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query) ||
-      (user.role && user.role.toLowerCase().includes(query)) ||
-      user.lives.toString().includes(query) ||
-      user.coins.toString().includes(query) ||
-      user.total_correct_answers.toString().includes(query) ||
-      new Date(user.created_at).toLocaleDateString('hu-HU').includes(query)
-    );
+    const filtered = allUsers.filter((user) => {
+      const id = (user.id ?? '').toLowerCase();
+      const username = (user.username ?? '').toLowerCase();
+      const email = (user.email ?? '').toLowerCase();
+      const role = (user.role ?? '').toLowerCase();
+      const lives = (user.lives ?? 0).toString();
+      const coins = (user.coins ?? 0).toString();
+      const totalCorrect = (user.total_correct_answers ?? 0).toString();
+      const createdAt = user.created_at
+        ? new Date(user.created_at).toLocaleDateString('hu-HU')
+        : '';
+
+      return (
+        id.includes(query) ||
+        username.includes(query) ||
+        email.includes(query) ||
+        role.includes(query) ||
+        lives.includes(query) ||
+        coins.includes(query) ||
+        totalCorrect.includes(query) ||
+        createdAt.includes(query)
+      );
+    });
     setFilteredUsers(filtered);
   }, [searchQuery, allUsers]);
 
