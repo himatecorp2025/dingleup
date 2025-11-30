@@ -158,8 +158,8 @@ const Profile = () => {
 
       const file = event.target.files[0];
       
-      // Validate file size (max 5MB)
-      const maxSizeBytes = 5 * 1024 * 1024;
+      // Validate file size (max 10MB)
+      const maxSizeBytes = 10 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
         toast.error(t('profile.error.file_too_large'));
         return;
