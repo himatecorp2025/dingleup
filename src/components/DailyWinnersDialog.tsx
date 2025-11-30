@@ -479,7 +479,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   style={{ 
                     height: '100%',
                     paddingTop: '0%',
-                    transform: 'translateY(-50%)'
+                    transform: 'translateY(-25%)'
                   }}
                 >
                   {topPlayers.length === 0 ? (
