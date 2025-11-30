@@ -530,13 +530,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   style={{ height: '100%', paddingTop: '0', paddingBottom: '14%' }}
                 >
                   <div
-                    className="w-full mb-2"
+                    className="w-full h-full"
                     style={{
-                      maxHeight: '100%',
-                      overflowY: 'auto',
-                      overflowX: 'hidden',
                       width: '100%',
-                      transform: 'translateY(-4%)'
+                      height: '100%',
+                      overflow: 'hidden',
+                      transform: 'translateY(-2%)',
+                      display: 'grid',
+                      gridTemplateRows: topPlayers.length === 0
+                        ? '1fr'
+                        : 'minmax(0, 1.1fr) minmax(0, 1fr)',
+                      rowGap: 'clamp(8px, 2vh, 14px)'
                     }}
                   >
                     {topPlayers.length === 0 ? (
@@ -648,12 +652,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        {/* TOP 3 Winners */}
+                        {/* TOP 3 Winners row */}
                         <div 
-                          className="flex justify-center items-end w-full mb-4 px-1" 
+                          className="flex justify-center items-end w-full px-1" 
                           style={{ 
-                            gap: 'clamp(4px, 1.5vw, 8px)',
-                            transform: 'translateY(0%)'
+                            gap: 'clamp(4px, 1.5vw, 8px)'
                           }}
                         >
                           {topPlayers[1] && (
@@ -897,7 +900,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
-                        <div style={{ transform: 'translateY(-4%)' }}>
+                        <div style={{ width: '100%' }}>
                           {/* First row: positions 4-7 - Grid layout */}
                           <div 
                             className="grid grid-cols-4 px-2" 
