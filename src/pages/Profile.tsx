@@ -462,29 +462,109 @@ const Profile = () => {
 
           {/* Avatar on the same line as back button */}
           <div className="relative" data-tutorial="profile-pic">
-            <div 
-              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-cyan-900 via-cyan-600 to-cyan-800 flex items-center justify-center border-2 sm:border-4 border-cyan-400
-                shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5),inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-4px_12px_rgba(0,0,0,0.3)]
-                before:absolute before:inset-0 before:clip-hexagon before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
-                after:absolute after:inset-[2px] after:clip-hexagon after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
-                relative transform-gpu"
-            >
-              <img 
-                src={profile.avatar_url || defaultProfileImage} 
-                alt={profile.username}
-                className="w-full h-full object-cover clip-hexagon"
+            {/* Outer glow */}
+            <div
+              className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
+              style={{ background: 'rgba(34, 211, 238, 0.4)', width: '64px', height: '64px' }}
+            />
+
+            {/* 3D Hexagon Container */}
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20">
+              {/* BASE SHADOW (3D depth) */}
+              <div
+                className="absolute clip-hexagon"
+                style={{
+                  top: '3px',
+                  left: '3px',
+                  right: '-3px',
+                  bottom: '-3px',
+                  background: 'rgba(0,0,0,0.35)',
+                  filter: 'blur(3px)',
+                }}
+                aria-hidden
               />
+
+              {/* OUTER FRAME - gradient with border */}
+              <div
+                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-cyan-900 via-cyan-600 to-cyan-800 border-2 sm:border-4 border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5)]"
+                aria-hidden
+              />
+
+              {/* MIDDLE FRAME (bright inner highlight) */}
+              <div
+                className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-cyan-600 via-cyan-400 to-cyan-700"
+                style={{ boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' }}
+                aria-hidden
+              />
+
+              {/* INNER CRYSTAL/COLOR LAYER */}
+              <div
+                className="absolute clip-hexagon bg-gradient-to-b from-cyan-400 via-cyan-500 to-cyan-700"
+                style={{
+                  top: '5px',
+                  left: '5px',
+                  right: '5px',
+                  bottom: '5px',
+                  boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)',
+                }}
+                aria-hidden
+              />
+
+              {/* SPECULAR HIGHLIGHT (top-left) */}
+              <div
+                className="absolute clip-hexagon pointer-events-none"
+                style={{
+                  top: '5px',
+                  left: '5px',
+                  right: '5px',
+                  bottom: '5px',
+                  background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)',
+                }}
+                aria-hidden
+              />
+
+              {/* INNER GLOW (bottom shadow for 3D depth) */}
+              <div
+                className="absolute clip-hexagon pointer-events-none"
+                style={{
+                  top: '5px',
+                  left: '5px',
+                  right: '5px',
+                  bottom: '5px',
+                  boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)',
+                }}
+                aria-hidden
+              />
+
+              {/* Avatar Image */}
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <img 
+                  src={profile.avatar_url || defaultProfileImage} 
+                  alt={profile.username}
+                  className="w-full h-full object-cover clip-hexagon"
+                />
+              </div>
             </div>
+
+            {/* Camera Upload Button with 3D effect */}
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-gradient-to-br from-cyan-600 via-cyan-400 to-cyan-700 hover:from-cyan-500 hover:via-cyan-300 hover:to-cyan-600 p-1.5 sm:p-2 rounded-full border-2 border-cyan-400 transition-all
-                shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.3)]
-                before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
-                after:absolute after:inset-[1px] after:rounded-full after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
-                hover:shadow-[0_0_24px_rgba(34,211,238,0.7),0_10px_30px_rgba(0,0,0,0.6)]
-                transform-gpu hover:scale-110"
+              className="absolute bottom-0 right-0 p-1.5 sm:p-2 rounded-full transition-all transform-gpu hover:scale-110"
+              style={{ 
+                background: 'linear-gradient(135deg, rgb(8 145 178) 0%, rgb(34 211 238) 50%, rgb(21 94 117) 100%)',
+                border: '2px solid rgb(34 211 238)',
+                boxShadow: '0 0 20px rgba(34,211,238,0.6), 0 8px 25px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.3)'
+              }}
             >
+              <div 
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
+              />
+              <div 
+                className="absolute inset-[1px] rounded-full pointer-events-none"
+                style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 100%)' }}
+              />
               <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white drop-shadow relative z-10" />
             </button>
             <input
