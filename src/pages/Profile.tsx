@@ -537,7 +537,7 @@ const Profile = () => {
               />
 
               {/* Avatar Image */}
-              <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="absolute inset-[5px] flex items-center justify-center z-[5]">
                 <img 
                   src={profile.avatar_url || defaultProfileImage} 
                   alt={profile.username}
@@ -550,7 +550,7 @@ const Profile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 p-1.5 sm:p-2 rounded-full transition-all transform-gpu hover:scale-110"
+              className="absolute bottom-0 right-0 p-1.5 sm:p-2 rounded-full transition-all transform-gpu hover:scale-110 z-20"
               style={{ 
                 background: 'linear-gradient(135deg, rgb(8 145 178) 0%, rgb(34 211 238) 50%, rgb(21 94 117) 100%)',
                 border: '2px solid rgb(34 211 238)',
