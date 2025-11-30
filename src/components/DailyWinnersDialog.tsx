@@ -712,8 +712,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '39.8475%',
-                              transform: 'translateY(-8%)',
+                              width: '36.225%',
+                              transform: 'translateY(-8%) scale(1.1)',
                               animation: 'pulse-scale 2.4s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
