@@ -39,9 +39,10 @@ interface Pool {
 }
 
 // ============================================================================
-// IN-MEMORY POOL CACHE - ALL 15 POOLS LOADED AT STARTUP
+// IN-MEMORY DUAL-LANGUAGE POOL CACHE - ALL 15 POOLS (HU + EN) LOADED AT STARTUP
 // ============================================================================
-const POOLS_MEMORY_CACHE = new Map<number, Question[]>();
+const POOLS_CACHE_HU = new Map<number, Question[]>();
+const POOLS_CACHE_EN = new Map<number, Question[]>();
 let CACHE_INITIALIZED = false;
 let CACHE_INIT_PROMISE: Promise<void> | null = null;
 
@@ -61,7 +62,7 @@ async function initializePoolsCache(supabase: any): Promise<void> {
   if (CACHE_INIT_PROMISE) return CACHE_INIT_PROMISE;
 
   CACHE_INIT_PROMISE = (async () => {
-    console.log('[POOL CACHE] Initializing all 15 pools into memory...');
+    console.log('[POOL CACHE] Initializing all 15 pools (HU + EN) into memory...');
     const startTime = Date.now();
 
     try {
@@ -80,42 +81,66 @@ async function initializePoolsCache(supabase: any): Promise<void> {
         console.warn(`[POOL CACHE] Only ${pools?.length || 0} pools found, expected ${TOTAL_POOLS}`);
       }
 
-      // Load all pools into memory
+      // Load all pools into memory (both HU and EN)
       for (const poolData of pools || []) {
-        // ✅ CRITICAL FIX: Explicit JSONB[] -> Question[] parsing
-        const questionsRaw = poolData.questions;
-        let questions: Question[] = [];
+        const poolOrder = poolData.pool_order;
 
-        if (questionsRaw && Array.isArray(questionsRaw)) {
-          // Parse each question object explicitly (JSONB[] conversion)
-          questions = questionsRaw.map((q: any) => {
-            // If string, parse JSON
+        // ========== HUNGARIAN QUESTIONS ==========
+        const questionsRawHu = poolData.questions;
+        let questionsHu: Question[] = [];
+
+        if (questionsRawHu && Array.isArray(questionsRawHu)) {
+          questionsHu = questionsRawHu.map((q: any) => {
             if (typeof q === 'string') {
               try {
                 return JSON.parse(q);
               } catch (err) {
-                console.error(`[POOL CACHE] Failed to parse question:`, err);
+                console.error(`[POOL CACHE] Failed to parse HU question:`, err);
                 return null;
               }
             }
-            // If already object, return as-is
             return q;
-          }).filter((q: any) => q !== null); // Remove null entries
+          }).filter((q: any) => q !== null);
         }
 
-        // ✅ VALIDATION: Ensure pool has sufficient questions
-        if (questions.length < MIN_QUESTIONS_PER_POOL) {
-          console.error(`[POOL CACHE] ❌ Pool ${poolData.pool_order} has only ${questions.length} questions (expected ${MIN_QUESTIONS_PER_POOL})`);
+        // ========== ENGLISH QUESTIONS ==========
+        const questionsRawEn = poolData.questions_en;
+        let questionsEn: Question[] = [];
+
+        if (questionsRawEn && Array.isArray(questionsRawEn)) {
+          questionsEn = questionsRawEn.map((q: any) => {
+            if (typeof q === 'string') {
+              try {
+                return JSON.parse(q);
+              } catch (err) {
+                console.error(`[POOL CACHE] Failed to parse EN question:`, err);
+                return null;
+              }
+            }
+            return q;
+          }).filter((q: any) => q !== null);
+        }
+
+        // ✅ VALIDATION
+        if (questionsHu.length < MIN_QUESTIONS_PER_POOL) {
+          console.error(`[POOL CACHE] ❌ Pool ${poolOrder} (HU) has only ${questionsHu.length} questions`);
         } else {
-          console.log(`[POOL CACHE] ✅ Pool ${poolData.pool_order} loaded: ${questions.length} questions`);
+          console.log(`[POOL CACHE] ✅ Pool ${poolOrder} (HU) loaded: ${questionsHu.length} questions`);
         }
 
-        POOLS_MEMORY_CACHE.set(poolData.pool_order, questions);
+        if (questionsEn.length < MIN_QUESTIONS_PER_POOL) {
+          console.warn(`[POOL CACHE] ⚠️  Pool ${poolOrder} (EN) has only ${questionsEn.length} questions (may need population)`);
+        } else {
+          console.log(`[POOL CACHE] ✅ Pool ${poolOrder} (EN) loaded: ${questionsEn.length} questions`);
+        }
+
+        POOLS_CACHE_HU.set(poolOrder, questionsHu);
+        POOLS_CACHE_EN.set(poolOrder, questionsEn);
       }
 
       CACHE_INITIALIZED = true;
       const elapsed = Date.now() - startTime;
-      console.log(`[POOL CACHE] ✅ All pools loaded in ${elapsed}ms. Total pools: ${POOLS_MEMORY_CACHE.size}`);
+      console.log(`[POOL CACHE] ✅ All pools loaded in ${elapsed}ms. HU pools: ${POOLS_CACHE_HU.size}, EN pools: ${POOLS_CACHE_EN.size}`);
     } catch (err) {
       console.error('[POOL CACHE] Initialization failed:', err);
       CACHE_INIT_PROMISE = null;
@@ -168,13 +193,14 @@ serve(async (req) => {
 
     console.log(`[get-game-questions] Requesting pool ${nextPoolOrder}, lang: ${lang}`);
 
-    // Get pool questions from in-memory cache (instant, <1ms)
-    const poolQuestions = POOLS_MEMORY_CACHE.get(nextPoolOrder);
+    // ========== SELECT LANGUAGE-SPECIFIC CACHE ==========
+    const poolCache = lang === 'en' ? POOLS_CACHE_EN : POOLS_CACHE_HU;
+    const poolQuestions = poolCache.get(nextPoolOrder);
     
     if (!poolQuestions || poolQuestions.length < MIN_QUESTIONS_PER_POOL) {
-      console.error(`[get-game-questions] Pool ${nextPoolOrder} not in cache or insufficient questions`);
+      console.error(`[get-game-questions] Pool ${nextPoolOrder} (${lang}) not in cache or insufficient questions`);
       
-      // Fallback: load from database
+      // Fallback: load from database with translation
       const { data: fallbackQuestions } = await supabase
         .from('questions')
         .select('*')
@@ -194,23 +220,26 @@ serve(async (req) => {
     }
 
     // Select 15 random questions from pool (in-memory, <5ms)
+    // NO TRANSLATION NEEDED - questions already in correct language!
     const startSelect = Date.now();
     const selectedQuestions = selectRandomQuestionsFromMemory(poolQuestions, QUESTIONS_PER_GAME);
     const selectTime = Date.now() - startSelect;
     
-    console.log(`[get-game-questions] Selected ${selectedQuestions.length} questions from pool ${nextPoolOrder} in ${selectTime}ms`);
+    console.log(`[get-game-questions] Selected ${selectedQuestions.length} questions (${lang}) from pool ${nextPoolOrder} in ${selectTime}ms (NO DB QUERY)`);
 
-    // Translate questions to target language
-    const translatedQuestions = await translateQuestions(supabase, selectedQuestions, lang);
+    // Questions are already in the correct language from cache - return directly!
+    const finalQuestions = selectedQuestions;
 
     return new Response(
       JSON.stringify({
-        questions: translatedQuestions,
+        questions: finalQuestions,
         used_pool_order: nextPoolOrder,
         fallback: false,
+        lang: lang,
         performance: {
           selection_time_ms: selectTime,
-          cache_hit: true
+          cache_hit: true,
+          translation_needed: false // Already in correct language!
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -2310,6 +2310,7 @@ export type Database = {
           pool_order: number
           question_count: number | null
           questions: Json[]
+          questions_en: Json | null
           updated_at: string | null
           version: number
         }
@@ -2319,6 +2320,7 @@ export type Database = {
           pool_order: number
           question_count?: number | null
           questions?: Json[]
+          questions_en?: Json | null
           updated_at?: string | null
           version?: number
         }
@@ -2328,6 +2330,7 @@ export type Database = {
           pool_order?: number
           question_count?: number | null
           questions?: Json[]
+          questions_en?: Json | null
           updated_at?: string | null
           version?: number
         }
