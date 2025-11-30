@@ -15,21 +15,12 @@ interface PersonalWinnerDialogProps {
 // Generate unique IDs for SVG gradients to prevent conflicts
 const generateUniqueId = (prefix: string) => `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 
-// Get shield inner color based on rank
-const getShieldColorByRank = (rank: number): string => {
-  if (rank === 1) {
-    // Rich, vibrant gold with more depth
-    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #FFE55C 0%, #FFD700 20%, #FFC700 40%, #FFB700 60%, #FFAA00 80%, #DAA520 100%)';
-  } else if (rank === 2) {
-    // Silver
-    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #F5F5F5 0%, #E8E8E8 30%, #CFCFCF 60%, #A0A0A0 100%)';
-  } else if (rank === 3) {
-    // Bronze
-    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #CD7F32 0%, #C87533 30%, #B87333 60%, #8B4513 100%)';
-  } else {
-    // Royal Blue (4-10)
-    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #6B8EFF 0%, #4169E1 30%, #274BBD 60%, #1E3A8A 100%)';
-  }
+// Get shield inner SVG gradient ID based on rank
+const getShieldGradientId = (rank: number): string => {
+  if (rank === 1) return 'url(#crystalGold)';
+  if (rank === 2) return 'url(#crystalSilver)';
+  if (rank === 3) return 'url(#crystalBronze)';
+  return 'url(#crystalBlue)';
 };
 
 export const PersonalWinnerDialog = ({ 
@@ -97,7 +88,7 @@ export const PersonalWinnerDialog = ({
     }
   }, [open]);
 
-  const shieldInnerColor = useMemo(() => getShieldColorByRank(rank), [rank]);
+  const shieldInnerGradient = useMemo(() => getShieldGradientId(rank), [rank]);
 
   if (!open) return null;
 
@@ -141,7 +132,7 @@ export const PersonalWinnerDialog = ({
               >
                 <HexShieldFrame 
                   showShine={true}
-                  customInnerBackground={shieldInnerColor}
+                  customInnerBackground={shieldInnerGradient}
                 >
                   {/* RED BANNER - Personal Reward */}
                   <div 
@@ -404,16 +395,14 @@ export const PersonalWinnerDialog = ({
                     </div>
                   </div>
 
-                  {/* Bottom button - 25% smaller */}
+                  {/* Bottom button */}
                   <div 
                     className="absolute bottom-0 left-0 right-0 flex justify-center pb-10"
                     style={{ zIndex: 30 }}
                   >
-                    <div style={{ transform: 'scale(0.75)' }}>
-                      <HexAcceptButton onClick={onClose}>
-                        Köszönöm
-                      </HexAcceptButton>
-                    </div>
+                    <HexAcceptButton onClick={onClose}>
+                      Köszönöm
+                    </HexAcceptButton>
                   </div>
                 </HexShieldFrame>
               </div>

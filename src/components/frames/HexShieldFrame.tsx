@@ -13,7 +13,7 @@ import React, { PropsWithChildren } from 'react';
 interface HexShieldFrameProps {
   className?: string;
   showShine?: boolean;
-  customInnerBackground?: string; // Optional custom background for inner crystal panel
+  customInnerBackground?: string; // Optional custom background for inner crystal panel (SVG gradient url)
 }
 
 const HexShieldFrame: React.FC<PropsWithChildren<HexShieldFrameProps>> = ({ 
@@ -76,11 +76,45 @@ const HexShieldFrame: React.FC<PropsWithChildren<HexShieldFrameProps>> = ({
             <stop offset="100%" stopColor="hsl(var(--dup-gold-700))" />
           </linearGradient>
           
-          {/* Crystal Panel - radial + vertical gradient */}
+          {/* Crystal Panel - radial + vertical gradient (default purple) */}
           <radialGradient id="crystalRadial" cx="50%" cy="-10%">
             <stop offset="0%" stopColor="hsl(var(--dup-purple-300))" stopOpacity="0.9" />
             <stop offset="40%" stopColor="hsl(var(--dup-purple-400))" />
             <stop offset="100%" stopColor="hsl(var(--dup-purple-700))" />
+          </radialGradient>
+          
+          {/* Gold Crystal Panel for rank 1 */}
+          <radialGradient id="crystalGold" cx="50%" cy="-10%">
+            <stop offset="0%" stopColor="#FFE55C" stopOpacity="1" />
+            <stop offset="20%" stopColor="#FFD700" stopOpacity="1" />
+            <stop offset="40%" stopColor="#FFC700" stopOpacity="1" />
+            <stop offset="60%" stopColor="#FFB700" stopOpacity="1" />
+            <stop offset="80%" stopColor="#FFAA00" stopOpacity="1" />
+            <stop offset="100%" stopColor="#DAA520" stopOpacity="1" />
+          </radialGradient>
+          
+          {/* Silver Crystal Panel for rank 2 */}
+          <radialGradient id="crystalSilver" cx="50%" cy="-10%">
+            <stop offset="0%" stopColor="#F5F5F5" />
+            <stop offset="30%" stopColor="#E8E8E8" />
+            <stop offset="60%" stopColor="#CFCFCF" />
+            <stop offset="100%" stopColor="#A0A0A0" />
+          </radialGradient>
+          
+          {/* Bronze Crystal Panel for rank 3 */}
+          <radialGradient id="crystalBronze" cx="50%" cy="-10%">
+            <stop offset="0%" stopColor="#CD7F32" />
+            <stop offset="30%" stopColor="#C87533" />
+            <stop offset="60%" stopColor="#B87333" />
+            <stop offset="100%" stopColor="#8B4513" />
+          </radialGradient>
+          
+          {/* Royal Blue Crystal Panel for rank 4-10 */}
+          <radialGradient id="crystalBlue" cx="50%" cy="-10%">
+            <stop offset="0%" stopColor="#6B8EFF" />
+            <stop offset="30%" stopColor="#4169E1" />
+            <stop offset="60%" stopColor="#274BBD" />
+            <stop offset="100%" stopColor="#1E3A8A" />
           </radialGradient>
           
           {/* Specular Highlight (conic, top-left) */}
