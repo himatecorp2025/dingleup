@@ -21,9 +21,10 @@ export const LootboxDropOverlay = () => {
   const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
 
-  // Hide overlay on admin pages and auth pages
+  // Hide overlay on admin pages, auth pages, and landing page
   const isAdminPage = location.pathname.startsWith('/admin');
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth-choice';
+  const isAuthPage = location.pathname.startsWith('/auth') || location.pathname === '/login' || location.pathname === '/register';
+  const isLandingPage = location.pathname === '/';
 
   // Check user authentication
   useEffect(() => {
@@ -66,7 +67,7 @@ export const LootboxDropOverlay = () => {
 
   // Handle drop lifecycle: immediate drop animation
   useEffect(() => {
-    if (!activeLootbox || loading || isAdminPage || isAuthPage || !user) {
+    if (!activeLootbox || loading || isAdminPage || isAuthPage || isLandingPage || !user) {
       return;
     }
 
@@ -86,6 +87,7 @@ export const LootboxDropOverlay = () => {
     loading,
     isAdminPage,
     isAuthPage,
+    isLandingPage,
     user,
     dismissedLootboxes,
     isVisible,
@@ -130,8 +132,8 @@ export const LootboxDropOverlay = () => {
     }
   };
 
-  // Don't render on admin/auth pages, if no user, or if no active lootbox
-  if (isAdminPage || isAuthPage || !user || !isVisible || !activeLootbox) {
+  // Don't render on admin/auth/landing pages, if no user, or if no active lootbox
+  if (isAdminPage || isAuthPage || isLandingPage || !user || !isVisible || !activeLootbox) {
     return null;
   }
 
