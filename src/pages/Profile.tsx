@@ -463,8 +463,8 @@ const Profile = () => {
           {/* Avatar on the same line as back button */}
           <div className="relative" data-tutorial="profile-pic">
             <div 
-              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-primary to-primary flex items-center justify-center border-2 sm:border-4 border-accent gold-glow
-                shadow-[0_8px_24px_hsl(var(--accent)/0.6),0_0_32px_hsl(var(--accent)/0.4),inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-4px_12px_rgba(0,0,0,0.3)]
+              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-cyan-900 via-cyan-600 to-cyan-800 flex items-center justify-center border-2 sm:border-4 border-cyan-400
+                shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5),inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-4px_12px_rgba(0,0,0,0.3)]
                 before:absolute before:inset-0 before:clip-hexagon before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
                 after:absolute after:inset-[2px] after:clip-hexagon after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
                 relative transform-gpu"
@@ -478,11 +478,11 @@ const Profile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-accent hover:bg-accent/90 p-1.5 sm:p-2 rounded-full border-2 border-accent transition-all gold-glow
-                shadow-[0_4px_12px_hsl(var(--accent)/0.6),0_0_24px_hsl(var(--accent)/0.4),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.3)]
+              className="absolute bottom-0 right-0 bg-gradient-to-br from-cyan-600 via-cyan-400 to-cyan-700 hover:from-cyan-500 hover:via-cyan-300 hover:to-cyan-600 p-1.5 sm:p-2 rounded-full border-2 border-cyan-400 transition-all
+                shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.3)]
                 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
                 after:absolute after:inset-[1px] after:rounded-full after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
-                hover:shadow-[0_6px_16px_rgba(234,179,8,0.7),0_0_32px_rgba(234,179,8,0.5)]
+                hover:shadow-[0_0_24px_rgba(34,211,238,0.7),0_10px_30px_rgba(0,0,0,0.6)]
                 transform-gpu hover:scale-110"
             >
               <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white drop-shadow relative z-10" />
