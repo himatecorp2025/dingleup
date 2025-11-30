@@ -557,8 +557,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           marginTop: 'clamp(8px, 2vh, 16px)'
                         }}
                       >
-                        {/* 2ND PLACE - SILVER - LEFT */}
-                        {topPlayers[1] && (
+                        {/* 3RD PLACE - BRONZE - LEFT */}
+                        {topPlayers[2] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
                               style={{ 
@@ -579,26 +579,26 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       backgroundSize: 'contain',
                                       backgroundPosition: 'center',
                                       backgroundRepeat: 'no-repeat',
-                                      filter: 'grayscale(100%) brightness(1.2) contrast(1.1) saturate(0.3)'
+                                      filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
                                     }}
                                   />
                                   <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                       <div className="absolute inset-0 rounded-full" style={{
-                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
-                                        boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                        background: 'linear-gradient(135deg, #cd7f32 0%, #c87533 25%, #b87333 50%, #a0522d 75%, #8b4513 100%)',
+                                        boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                        {topPlayers[1].avatar_url ? (
+                                        {topPlayers[2].avatar_url ? (
                                           <img 
-                                            src={topPlayers[1].avatar_url} 
-                                            alt={topPlayers[1].username}
+                                            src={topPlayers[2].avatar_url} 
+                                            alt={topPlayers[2].username}
                                             className="w-full h-full object-cover"
                                           />
                                         ) : (
-                                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-800"
+                                          <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold bg-gray-800"
                                                style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>
-                                            {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                            {topPlayers[2].username.substring(0, 2).toUpperCase()}
                                           </div>
                                         )}
                                       </div>
@@ -607,23 +607,22 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                     <div className="aspect-square rounded-full relative">
                                       <div className="absolute inset-0 rounded-full" style={{
-                                        background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)',
-                                        boxShadow: '0 4px 8px rgba(192,192,192,0.5)'
+                                        background: 'radial-gradient(circle at 30% 30%, #cd7f32 0%, #c87533 30%, #b87333 60%, #a0522d 100%)',
+                                        boxShadow: '0 4px 8px rgba(205,127,50,0.5)'
                                       }} />
                                       <div className="absolute inset-[3px] rounded-full" style={{
-                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
-                                        boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                        background: 'linear-gradient(135deg, #d2a679 0%, #cd7f32 50%, #b87333 100%)',
+                                        boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                        background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
-                                        boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8)'
+                                        background: 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)'
                                       }}>
                                         <span className="font-black" style={{ 
                                           fontSize: 'clamp(0.75rem, 3.5vw, 1.125rem)',
-                                          background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
+                                          background: 'linear-gradient(180deg, #fffacd 0%, #daa520 100%)',
                                           WebkitBackgroundClip: 'text',
                                           WebkitTextFillColor: 'transparent'
-                                        }}>{topPlayers[1].rank}</span>
+                                        }}>{topPlayers[2].rank}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -634,7 +633,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
                               }}>
-                                {topPlayers[1].username}
+                                {topPlayers[2].username}
                               </p>
                             </div>
                           </div>
@@ -721,8 +720,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           </div>
                         )}
 
-                        {/* 3RD PLACE - BRONZE - RIGHT */}
-                        {topPlayers[2] && (
+                        {/* 2ND PLACE - SILVER - RIGHT */}
+                        {topPlayers[1] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
                               style={{ 
@@ -743,26 +742,26 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       backgroundSize: 'contain',
                                       backgroundPosition: 'center',
                                       backgroundRepeat: 'no-repeat',
-                                      filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
+                                      filter: 'grayscale(100%) brightness(1.2) contrast(1.1) saturate(0.3)'
                                     }}
                                   />
                                   <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                       <div className="absolute inset-0 rounded-full" style={{
-                                        background: 'linear-gradient(135deg, #cd7f32 0%, #c87533 25%, #b87333 50%, #a0522d 75%, #8b4513 100%)',
-                                        boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
+                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                        boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                        {topPlayers[2].avatar_url ? (
+                                        {topPlayers[1].avatar_url ? (
                                           <img 
-                                            src={topPlayers[2].avatar_url} 
-                                            alt={topPlayers[2].username}
+                                            src={topPlayers[1].avatar_url} 
+                                            alt={topPlayers[1].username}
                                             className="w-full h-full object-cover"
                                           />
                                         ) : (
-                                          <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold bg-gray-800"
+                                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-800"
                                                style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>
-                                            {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                            {topPlayers[1].username.substring(0, 2).toUpperCase()}
                                           </div>
                                         )}
                                       </div>
@@ -771,22 +770,23 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                     <div className="aspect-square rounded-full relative">
                                       <div className="absolute inset-0 rounded-full" style={{
-                                        background: 'radial-gradient(circle at 30% 30%, #cd7f32 0%, #c87533 30%, #b87333 60%, #a0522d 100%)',
-                                        boxShadow: '0 4px 8px rgba(205,127,50,0.5)'
+                                        background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)',
+                                        boxShadow: '0 4px 8px rgba(192,192,192,0.5)'
                                       }} />
                                       <div className="absolute inset-[3px] rounded-full" style={{
-                                        background: 'linear-gradient(135deg, #d2a679 0%, #cd7f32 50%, #b87333 100%)',
-                                        boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                        boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                        background: 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)'
+                                        background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
+                                        boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8)'
                                       }}>
                                         <span className="font-black" style={{ 
                                           fontSize: 'clamp(0.75rem, 3.5vw, 1.125rem)',
-                                          background: 'linear-gradient(180deg, #fffacd 0%, #daa520 100%)',
+                                          background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
                                           WebkitBackgroundClip: 'text',
                                           WebkitTextFillColor: 'transparent'
-                                        }}>{topPlayers[2].rank}</span>
+                                        }}>{topPlayers[1].rank}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -797,7 +797,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
                               }}>
-                                {topPlayers[2].username}
+                                {topPlayers[1].username}
                               </p>
                             </div>
                           </div>
