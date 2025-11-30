@@ -37,8 +37,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 150000, totalLives: 20000 });
   const [isLoading, setIsLoading] = useState(false);
+  const [scale, setScale] = useState(1);
   const badgeRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(true);
+  
+  // Fixed 3D canvas dimensions
+  const BASE_WIDTH = 414;
+  const BASE_HEIGHT = 736;
   
   // Fetch current user for pendingReward check
   const [userId, setUserId] = useState<string | undefined>();
@@ -70,6 +75,22 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       isMountedRef.current = false;
     };
   }, []);
+
+  // Calculate scale for responsive canvas
+  useEffect(() => {
+    const updateScale = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const scaleX = vw / BASE_WIDTH;
+      const scaleY = vh / BASE_HEIGHT;
+      const nextScale = Math.min(scaleX, scaleY);
+      setScale(nextScale);
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [BASE_WIDTH, BASE_HEIGHT]);
 
   // Add keyframes for animations only once
   useEffect(() => {
@@ -271,13 +292,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
   return (
     <>
-      <style>{`
-        @media (min-width: 768px) {
-          .daily-winners-card {
-            width: min(60vw, 480px) !important;
-          }
-        }
-      `}</style>
       <Dialog open={open} onOpenChange={() => {}}>
         <DialogContent 
           overlayClassName="bg-black/25"
@@ -290,35 +304,48 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
             zIndex: 99999
           }}
         >
-          <div className="fixed inset-0 flex items-center justify-center">
-            <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
-            <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
+          <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
+          <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
 
-            {/* Close X button - Only when no data */}
-            {topPlayers.length === 0 && (
-              <button
-                onClick={onClose}
-                className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)' }}
-                aria-label="Close"
-              >
-                ×
-              </button>
-            )}
-
-            {/* CARD WRAPPER - Fix 3:5 aspect ratio */}
-            <div 
-              className="daily-winners-card relative"
-              style={{ 
-                width: 'min(90vw, 420px)',
-                maxWidth: '420px',
-                aspectRatio: '3 / 5',
-                transform: contentVisible ? 'scale(1)' : 'scale(0)',
+          <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
+            <div
+              className="daily-winners-canvas"
+              style={{
+                width: BASE_WIDTH,
+                height: BASE_HEIGHT,
+                transform: `scale(${scale})`,
+                transformOrigin: 'center center',
+                position: 'relative',
                 opacity: contentVisible ? 1 : 0,
-                transition: 'transform 1500ms ease-in-out, opacity 1500ms ease-in-out',
-                transformOrigin: 'center'
+                transition: 'opacity 1500ms ease-in-out'
               }}
             >
+              {/* Close X button - Only when no data */}
+              {topPlayers.length === 0 && (
+                <button
+                  onClick={onClose}
+                  className={`absolute text-white/70 hover:text-white font-bold z-30 flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                  style={{ 
+                    top: '60px',
+                    right: '16px',
+                    width: '50px',
+                    height: '50px',
+                    fontSize: '2.5rem'
+                  }}
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              )}
+
+              {/* CARD WRAPPER */}
+              <div 
+                className="daily-winners-card relative"
+                style={{ 
+                  width: '100%',
+                  height: '100%'
+                }}
+              >
               <HexShieldFrame showShine={true}>
                 {/* RED BANNER - GENIUSES / JACKPOT */}
                 <div 
@@ -985,6 +1012,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               </HexShieldFrame>
             </div>
           </div>
+        </div>
         </DialogContent>
       </Dialog>
     </>
