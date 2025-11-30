@@ -289,15 +289,18 @@ export const PersonalWinnerDialog = ({
 
                   {/* Shield content - Personal message */}
                   <div 
-                    className="relative px-8"
+                    className="px-8"
                     style={{
-                      marginTop: '-45%',
+                      position: 'absolute',
+                      top: '50%',
+                      left: 0,
+                      right: 0,
+                      transform: 'translateY(-50%)',
                       zIndex: 10,
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      minHeight: '350px'
+                      justifyContent: 'center'
                     }}
                   >
                     <div className="text-center space-y-4">
