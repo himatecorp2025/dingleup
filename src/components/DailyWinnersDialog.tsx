@@ -478,7 +478,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   className="relative z-10 flex flex-col items-center justify-between px-[4%] pb-[8%]" 
                   style={{ 
                     height: '100%',
-                    paddingTop: '0%'
+                    paddingTop: '0%',
+                    transform: 'translateY(-3%)'
                   }}
                 >
                   {topPlayers.length === 0 ? (
