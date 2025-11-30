@@ -525,16 +525,18 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center px-[2%] pb-[2%]" style={{ height: '100%', paddingTop: '0' }}>
+                <div
+                  className="relative z-10 flex flex-col items-center px-[2%]"
+                  style={{ height: '100%', paddingTop: '0', paddingBottom: '14%' }}
+                >
                   <div
                     className="w-full mb-2"
                     style={{
-                      minHeight: 'calc(100% - 80px)',
-                      maxHeight: 'calc(100% - 80px)',
+                      maxHeight: '100%',
                       overflowY: 'auto',
                       overflowX: 'hidden',
                       width: '100%',
-                      transform: 'translateY(-8%)'
+                      transform: 'translateY(-4%)'
                     }}
                   >
                     {topPlayers.length === 0 ? (
