@@ -26,6 +26,10 @@ html, body {
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   box-sizing: border-box;
+  scroll-behavior: smooth;
+  /* Hardware acceleration for all scrolling */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* PWA fullscreen - hide status bar */
@@ -90,6 +94,11 @@ html, body {
   /* NINCS env(...) – az alsó csíkot a háttér tölti ki */
   padding-bottom: calc(var(--bottom-nav-h) + 16px);
   scroll-padding-bottom: calc(var(--bottom-nav-h) + 16px);
+  scroll-behavior: smooth;
+  /* GPU acceleration */
+  will-change: scroll-position;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .page-scroll > :last-child {

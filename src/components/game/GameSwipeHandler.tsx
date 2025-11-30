@@ -50,7 +50,9 @@ export const GameSwipeHandler = ({
       if (rafId) cancelAnimationFrame(rafId);
       
       rafId = requestAnimationFrame(() => {
-        currentTranslateY = delta * 0.35;
+        // Smoother, more responsive scrolling with easing
+        const easedDelta = delta * 0.55; // Increased from 0.35 for better responsiveness
+        currentTranslateY = easedDelta;
         onTranslateYChange(currentTranslateY);
       });
     };
