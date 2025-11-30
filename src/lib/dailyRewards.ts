@@ -99,6 +99,15 @@ export function getWeekday(date: Date): Weekday {
 }
 
 /**
+ * Converts JavaScript day of week (0-6) to database format (1-7)
+ * Database: 1=Monday, 2=Tuesday, ..., 7=Sunday
+ */
+export function getDayOfWeekNumber(date: Date): number {
+  const jsDay = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+  return jsDay === 0 ? 7 : jsDay;
+}
+
+/**
  * Kiszámolja egy adott napra vonatkozó napi jutalmakat
  */
 export function getDailyRewardsForDate(date: Date): {

@@ -39,13 +39,22 @@ function getYesterdayDate(timezone: string): string {
 }
 
 /**
- * Checks if yesterday was Sunday (for jackpot determination)
+ * Gets yesterday's day of week (1=Monday, 2=Tuesday, ..., 7=Sunday)
  */
-function wasYesterdaySunday(timezone: string): boolean {
+function getYesterdayDayOfWeek(timezone: string): number {
   const localTime = getLocalTime(timezone);
   const yesterday = new Date(localTime);
   yesterday.setDate(yesterday.getDate() - 1);
-  return yesterday.getDay() === 0;
+  const jsDay = yesterday.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+  // Convert to database format: 1=Monday, 2=Tuesday, ..., 7=Sunday
+  return jsDay === 0 ? 7 : jsDay;
+}
+
+/**
+ * Checks if yesterday was Sunday (for jackpot determination)
+ */
+function wasYesterdaySunday(timezone: string): boolean {
+  return getYesterdayDayOfWeek(timezone) === 7;
 }
 
 serve(async (req) => {
@@ -245,11 +254,13 @@ serve(async (req) => {
             continue;
           }
 
-          // Get prize configuration
+          // Get prize configuration for yesterday's day of week
+          const yesterdayDayOfWeek = getYesterdayDayOfWeek(timezone);
           const { data: prize, error: prizeError } = await supabaseClient
             .from('daily_prize_table')
             .select('*')
             .eq('rank', actualRank)
+            .eq('day_of_week', yesterdayDayOfWeek)
             .single();
 
           if (prizeError || !prize) {
