@@ -94,7 +94,7 @@ serve(async (req) => {
         p_user_id: userId,
         p_delta_coins: gold_awarded,
         p_delta_lives: 0,
-        p_source: 'daily_rank_reward',
+        p_source: 'game_reward',
         p_idempotency_key: coinCorrelationId,
         p_metadata: {
           day_date,
@@ -119,7 +119,7 @@ serve(async (req) => {
       .rpc('credit_lives', {
         p_user_id: userId,
         p_delta_lives: lives_awarded,
-        p_source: 'daily_rank_reward',
+        p_source: 'game_reward',
         p_idempotency_key: livesCorrelationId,
         p_metadata: {
           day_date,
