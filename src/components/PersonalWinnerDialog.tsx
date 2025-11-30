@@ -334,17 +334,9 @@ export const PersonalWinnerDialog = ({
                       </p>
                       
                       <div 
-                        className="font-black space-y-3 mt-8 p-6 rounded-xl"
+                        className="font-black space-y-3 mt-8"
                         style={{
                           fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                          background: rank === 1 
-                            ? 'linear-gradient(135deg, rgba(139,69,19,0.7) 0%, rgba(101,67,33,0.8) 100%)' 
-                            : 'rgba(0,0,0,0.3)',
-                          backdropFilter: 'blur(6px)',
-                          border: rank === 1 ? '3px solid rgba(255,215,0,0.5)' : 'none',
-                          boxShadow: rank === 1 
-                            ? '0 0 30px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.15)' 
-                            : 'none',
                           lineHeight: '1.4'
                         }}
                       >
