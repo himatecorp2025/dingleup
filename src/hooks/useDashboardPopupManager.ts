@@ -43,8 +43,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   // Integrate popup hooks internally (eliminates external duplication)
   const dailyGift = useDailyGift(userId, false);
   const welcomeBonus = useWelcomeBonus(userId);
-  // TESTING: Force Daily Winners to always show for Halikababa
-  const dailyWinners = useDailyWinnersPopup(userId, username, true);
+  const dailyWinners = useDailyWinnersPopup(userId, username);
   const rankReward = useDailyRankReward(userId); // NEW: rank reward hook
 
   const [popupState, setPopupState] = useState<PopupState>({
@@ -142,33 +141,18 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, welcomeBonus.canClaim, popupState.welcomeBonusCompleted, dailyGift.canClaim, popupState.showDailyGift]);
 
-  // Priority 5: Daily Winners (FORCED TESTING MODE for Halikababa)
+  // Priority 5: Daily Winners (after Daily Gift interaction, for non-winners too)
   useEffect(() => {
-    // TESTING BYPASS: Halikababa user sees popup immediately, ignoring all gates
-    const isTestUser = username === 'Halikababa';
-    
-    if (isTestUser && canMountModals && userId && !profileLoading && dailyWinners.canShowToday && !popupState.showDailyWinners) {
-      const timer = setTimeout(() => {
-        setPopupState(prev => ({
-          ...prev,
-          showDailyWinners: true,
-        }));
-      }, 500); // Short delay for test user
-      
-      return () => clearTimeout(timer);
-    }
-    
-    // Normal flow for other users
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
-    
+
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
-    
-    // TEMPORARY TESTING: Daily Winners appears independently from Daily Gift
-    // TODO: Restore Daily Gift dependency later when testing is complete
-    // Original logic: if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
-    
+
+    // CRITICAL: Daily Winners only appears AFTER Daily Gift interaction
+    // If Daily Gift can be claimed but user has not interacted yet, wait
+    if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+
     // Only show if can show today and not already showing
     if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
       const timer = setTimeout(() => {
@@ -177,10 +161,24 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
           showDailyWinners: true,
         }));
       }, 1200); // 1200ms delay to ensure clear separation from other popups
-      
+
       return () => clearTimeout(timer);
     }
-  }, [canMountModals, userId, username, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyWinners.canShowToday, popupState.showDailyWinners]);
+  }, [
+    canMountModals,
+    userId,
+    profileLoading,
+    popupState.ageGateCompleted,
+    popupState.showAgeGate,
+    popupState.showRankReward,
+    popupState.showWelcomeBonus,
+    popupState.showDailyGift,
+    popupState.dailyGiftCompleted,
+    rankReward.showRewardPopup,
+    dailyGift.canClaim,
+    dailyWinners.canShowToday,
+    popupState.showDailyWinners,
+  ]);
 
   // Handlers for closing popups
   const closeAgeGate = () => {
