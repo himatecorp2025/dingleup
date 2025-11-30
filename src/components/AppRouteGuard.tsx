@@ -49,11 +49,10 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // CRITICAL: Mobilon/táblagépen PWA/natív módban mindig login/register legyen az első oldal
-  // Ha a user nincs bejelentkezve ÉS landing page-en van ÉS mobil/tablet ÉS PWA/natív
+  // CRITICAL: Mobilon/táblagépen MINDIG login/register legyen az első oldal
+  // Ha a user nincs bejelentkezve ÉS landing page-en van ÉS mobil/tablet
   if (
     isMobileOrTablet && 
-    isPWAOrNative && 
     hasSession === false && 
     location.pathname === '/'
   ) {
