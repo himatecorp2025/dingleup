@@ -1024,7 +1024,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   </div>
 
                   {topPlayers.length > 0 && (
-                    <div className="absolute bottom-0 left-0 right-0 flex justify-center w-full px-4">
+                    <div className="absolute left-0 right-0 flex justify-center w-full px-4" style={{ bottom: '-5%' }}>
                       <HexAcceptButton 
                         onClick={handleAccept}
                         className="w-full max-w-[280px]"
