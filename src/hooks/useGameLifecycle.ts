@@ -314,18 +314,36 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   const handleVideoEnd = useCallback(async () => {
     if (gameInitPromiseRef.current) {
       try {
-        // INCREASED TIMEOUT: 10 seconds to handle slower networks
+        // Timeout set to 5 seconds
         await Promise.race([
           gameInitPromiseRef.current,
           new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Game initialization timeout')), 10000)
+            setTimeout(() => reject(new Error('Game initialization timeout')), 5000)
           )
         ]);
       } catch (error) {
         console.error('[useGameLifecycle] Init timeout or error:', error);
-        // CRITICAL FIX: On timeout, show error and navigate back to dashboard
-        // instead of leaving user with frozen video
+        
+        // CRITICAL FIX: Refund the spent life since game didn't start
+        try {
+          await supabase.rpc('credit_lives', {
+            p_user_id: userId!,
+            p_delta_lives: 1,
+            p_source: 'game_timeout_refund',
+            p_idempotency_key: `timeout_refund_${Date.now()}`
+          });
+          await refetchWallet();
+          await broadcast('wallet:update', { source: 'game_timeout_refund', livesDelta: 1 });
+        } catch (refundError) {
+          console.error('[useGameLifecycle] Failed to refund life:', refundError);
+        }
+        
+        // Show error message
         toast.error(t('game.loading_timeout'));
+        
+        // Wait 2 seconds before navigating (5s timeout + 2s = 7s total)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
         setIsStarting(false);
         navigate('/dashboard');
         return;
@@ -335,7 +353,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setIsGameReady(true);
     setVideoEnded(true);
     setIsStarting(false);
-  }, [navigate, t]);
+  }, [navigate, t, userId, refetchWallet, broadcast]);
 
   const restartGameImmediately = useCallback(async () => {
     if (!profile || isStarting) return;
