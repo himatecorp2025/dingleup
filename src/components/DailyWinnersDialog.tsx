@@ -619,7 +619,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent'
-                                      }}>2</span>
+                                      }}>{topPlayers[1].rank}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -694,7 +694,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         background: 'linear-gradient(180deg, #8b4513 0%, #4a2511 100%)',
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent'
-                                      }}>1</span>
+                                      }}>{topPlayers[0].rank}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -770,7 +770,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         background: 'linear-gradient(180deg, #fffacd 0%, #daa520 100%)',
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent'
-                                      }}>3</span>
+                                      }}>{topPlayers[2].rank}</span>
                                     </div>
                                   </div>
                                 </div>
