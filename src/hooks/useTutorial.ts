@@ -6,7 +6,8 @@ export type TutorialRoute =
   | 'profile' 
   | 'play' 
   | 'landing'
-  | 'topics';
+  | 'topics'
+  | 'gifts';
 
 interface TutorialState {
   [key: string]: boolean;
@@ -49,16 +50,28 @@ export const useTutorial = (route: TutorialRoute) => {
   };
 
   const closeTutorial = () => {
+    // CRITICAL: Immediately mark as seen BEFORE hiding to prevent re-appearance
+    markTutorialAsSeen();
     setIsVisible(false);
     setCurrentStep(0);
-    markTutorialAsSeen();
   };
 
   const markTutorialAsSeen = () => {
-    const stored = localStorage.getItem(TUTORIAL_STORAGE_KEY);
-    const tutorialState: TutorialState = stored ? JSON.parse(stored) : {};
-    tutorialState[route] = true;
-    localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify(tutorialState));
+    try {
+      const stored = localStorage.getItem(TUTORIAL_STORAGE_KEY);
+      const tutorialState: TutorialState = stored ? JSON.parse(stored) : {};
+      tutorialState[route] = true;
+      localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify(tutorialState));
+      
+      // CRITICAL: Double-check that it was actually saved
+      const verification = localStorage.getItem(TUTORIAL_STORAGE_KEY);
+      if (!verification || !JSON.parse(verification)[route]) {
+        console.error('[TUTORIAL] Failed to save tutorial state, retrying...');
+        localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify(tutorialState));
+      }
+    } catch (error) {
+      console.error('[TUTORIAL] Error saving tutorial state:', error);
+    }
   };
 
   const resetTutorial = () => {
