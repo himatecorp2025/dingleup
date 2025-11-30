@@ -45,7 +45,28 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   const dailyGift = useDailyGift(userId, false);
   const welcomeBonus = useWelcomeBonus(userId);
   const dailyWinners = useDailyWinnersPopup(userId, username, false);
-  const rankReward = useDailyRankReward(userId); // NEW: rank reward hook
+  const rankRewardOriginal = useDailyRankReward(userId);
+  
+  // TESTING MODE: Override rank reward for admin (DingleUP) to test Personal Winner popup
+  const isAdminTestUser = username === 'DingleUP';
+  const rankReward = isAdminTestUser 
+    ? {
+        pendingReward: {
+          rank: 1,
+          gold: 12500,
+          lives: 50,
+          isSundayJackpot: false,
+          dayDate: new Date().toISOString().split('T')[0],
+          username: 'DingleUP',
+          rewardPayload: null,
+        },
+        showRewardPopup: false, // Don't show the old DailyRankRewardDialog
+        isLoading: false,
+        isClaiming: false,
+        claimReward: async () => {},
+        dismissReward: async () => {},
+      }
+    : rankRewardOriginal;
 
   const [popupState, setPopupState] = useState<PopupState>({
     showAgeGate: false,
@@ -148,14 +169,20 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   // If user has NO pending reward (not winner) → show Daily Winners popup
   useEffect(() => {
     if (!canMountModals || !userId || profileLoading) return;
-    if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
+    if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus) return;
 
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
 
-    // CRITICAL: Only show AFTER Daily Gift is completed (accepted or closed)
+    // TESTING MODE: For admin testing, skip Daily Gift dependency
+    const skipDailyGiftDependency = username === 'DingleUP';
+    
+    // CRITICAL: Only show AFTER Daily Gift is completed (accepted or closed) - UNLESS in testing mode
     // If Daily Gift can be claimed but not completed yet, wait
-    if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    if (!skipDailyGiftDependency) {
+      if (popupState.showDailyGift) return;
+      if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    }
 
     // Decide which popup to show based on pending reward (winner status)
     if (rankReward.pendingReward) {
