@@ -28,8 +28,15 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
           return;
         }
 
-        // CRITICAL: Check if user is in TOP 100 leaderboard (any country)
-        // If user is ranked, they should NOT see the "Nem nyertes" popup
+        // CRITICAL: Check if user is in TOP 10 (Monday-Saturday) or TOP 25 (Sunday) leaderboard
+        // Determine current day of week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        const isSunday = dayOfWeek === 0;
+        
+        // Sunday: TOP 25, Other days: TOP 10
+        const rankThreshold = isSunday ? 25 : 10;
+
         const { data: leaderboardEntry, error: leaderboardError } = await supabase
           .from('leaderboard_cache')
           .select('rank')
@@ -40,9 +47,9 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
           console.error('[DAILY-WINNERS-POPUP] Error checking leaderboard status:', leaderboardError);
         }
 
-        if (leaderboardEntry && leaderboardEntry.rank <= 100) {
+        if (leaderboardEntry && leaderboardEntry.rank <= rankThreshold) {
           setCanShowToday(false);
-          console.log('[DAILY-WINNERS-POPUP] User is in TOP 100 (rank:', leaderboardEntry.rank, '), skipping popup');
+          console.log('[DAILY-WINNERS-POPUP] User is in TOP', rankThreshold, '(rank:', leaderboardEntry.rank, '), skipping popup');
           return;
         }
 
