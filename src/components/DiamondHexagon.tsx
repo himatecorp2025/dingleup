@@ -1,5 +1,6 @@
 import React from 'react';
 import { useI18n } from '@/i18n/useI18n';
+import defaultProfileImage from '@/assets/default-profile.png';
 
 interface DiamondHexagonProps {
   type: 'rank' | 'coins' | 'lives' | 'avatar';
@@ -238,20 +239,12 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         {/* Content: ugyanaz a távolság mint RankHexagon-nál (translateY + marginTop) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
           {type === 'avatar' ? (
-            avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={String(value)}
-                className="rounded-full object-cover"
-                style={{ width: 'clamp(36px, 6vh, 64px)', height: 'clamp(36px, 6vh, 64px)' }}
-              />
-            ) : (
-              <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
-                style={{ fontSize: 'clamp(1.25rem, 3vh, 1.875rem)' }}
-              >
-                {getInitials(String(value))}
-              </span>
-            )
+            <img
+              src={avatarUrl || defaultProfileImage}
+              alt={String(value)}
+              className="rounded-full object-cover"
+              style={{ width: 'clamp(36px, 6vh, 64px)', height: 'clamp(36px, 6vh, 64px)' }}
+            />
           ) : (
             <>
               {renderIcon()}
