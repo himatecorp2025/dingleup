@@ -25,16 +25,7 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client with user's Auth context (same pattern as get-daily-gift-status)
-    const supabaseAuth = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: { headers: { Authorization: authHeader } },
-        auth: { persistSession: false }
-      }
-    );
-
+    // Extract and decode JWT from Authorization header to get user ID
     const token = authHeader.split(' ')[1];
     if (!token) {
       console.error('[CLAIM-REWARD] Missing bearer token in Authorization header');
@@ -44,9 +35,16 @@ serve(async (req) => {
       );
     }
 
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
-    if (authError || !user) {
-      console.error('[CLAIM-REWARD] Auth error in getUser:', authError);
+    let userId: string;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userId = payload.sub as string;
+
+      if (!userId) {
+        throw new Error('Missing sub (user id) in JWT payload');
+      }
+    } catch (e) {
+      console.error('[CLAIM-REWARD] Failed to decode JWT:', e);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -73,7 +71,7 @@ serve(async (req) => {
     const { data: pendingReward, error: rewardError } = await supabaseService
       .from('daily_winner_awarded')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('day_date', day_date)
       .eq('status', 'pending')
       .single();
@@ -90,10 +88,10 @@ serve(async (req) => {
     const countryCode = rewardPayload.country_code || 'unknown';
 
     // Credit gold (coins)
-    const coinCorrelationId = `daily-rank-claim:${user.id}:${day_date}:${rank}:${countryCode}`;
+    const coinCorrelationId = `daily-rank-claim:${userId}:${day_date}:${rank}:${countryCode}`;
     const { error: coinError } = await supabaseService
       .rpc('credit_wallet', {
-        p_user_id: user.id,
+        p_user_id: userId,
         p_delta_coins: gold_awarded,
         p_delta_lives: 0,
         p_source: 'daily_rank_reward',
@@ -116,10 +114,10 @@ serve(async (req) => {
     }
 
     // Credit lives
-    const livesCorrelationId = `daily-rank-lives-claim:${user.id}:${day_date}:${rank}:${countryCode}`;
+    const livesCorrelationId = `daily-rank-lives-claim:${userId}:${day_date}:${rank}:${countryCode}`;
     const { error: livesError } = await supabaseService
       .rpc('credit_lives', {
-        p_user_id: user.id,
+        p_user_id: userId,
         p_delta_lives: lives_awarded,
         p_source: 'daily_rank_reward',
         p_idempotency_key: livesCorrelationId,
@@ -147,7 +145,7 @@ serve(async (req) => {
         status: 'claimed',
         claimed_at: new Date().toISOString()
       })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('day_date', day_date)
       .eq('status', 'pending');
 
@@ -159,7 +157,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[CLAIM-REWARD] User ${user.id} claimed rank ${rank} reward: ${gold_awarded} gold, ${lives_awarded} lives`);
+    console.log(`[CLAIM-REWARD] User ${userId} claimed rank ${rank} reward: ${gold_awarded} gold, ${lives_awarded} lives`);
 
     return new Response(
       JSON.stringify({ 
