@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 interface AppRouteGuardProps {
   children: React.ReactNode;
@@ -63,9 +64,9 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
       <div className="h-dvh h-svh w-screen flex items-center justify-center bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker">
         <div className="animate-pulse">
           <img 
-            src="/dingleup-logo.png" 
+            src={loadingLogo} 
             alt="DingleUP!" 
-            className="w-32 h-32 object-contain"
+            className="w-40 h-40 object-contain"
           />
         </div>
       </div>
