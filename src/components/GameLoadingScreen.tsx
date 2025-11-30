@@ -16,29 +16,46 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
     if (!video || hasStarted.current) return;
 
     hasStarted.current = true;
+    
+    console.log('[GameLoadingScreen] Starting video initialization');
+    let playStarted = false;
+    let canPlayFired = false;
 
     const handleCanPlay = () => {
+      canPlayFired = true;
       setVideoLoaded(true);
+      console.log('[GameLoadingScreen] canplay event - attempting play');
+      
       // Start playing immediately without any delay
-      video.play().catch((err) => {
-        console.warn('[GameLoadingScreen] Autoplay failed:', err);
-        // On autoplay failure, immediately proceed to game
-        onVideoEnd();
-      });
+      video.play()
+        .then(() => {
+          playStarted = true;
+          console.log('[GameLoadingScreen] Video play() successful');
+        })
+        .catch((err) => {
+          console.warn('[GameLoadingScreen] Autoplay failed:', err);
+          // On autoplay failure, immediately proceed to game
+          if (!hasEnded.current) {
+            hasEnded.current = true;
+            onVideoEnd();
+          }
+        });
     };
 
     const handleEnded = () => {
       if (!hasEnded.current) {
         hasEnded.current = true;
+        console.log('[GameLoadingScreen] Video ended normally');
         onVideoEnd();
       }
     };
 
-    const handleError = () => {
-      console.error('[GameLoadingScreen] Video loading error');
-      setTimeout(() => {
+    const handleError = (e: any) => {
+      console.error('[GameLoadingScreen] Video loading error:', e);
+      if (!hasEnded.current) {
+        hasEnded.current = true;
         onVideoEnd();
-      }, 2000);
+      }
     };
 
     // Preload and start immediately
@@ -51,24 +68,48 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
     video.load();
     
     // Attempt to start playing as soon as possible
-    video.play().catch(() => {
-      // Will retry when canplay fires
-    });
+    video.play()
+      .then(() => {
+        playStarted = true;
+        console.log('[GameLoadingScreen] Initial play() successful');
+      })
+      .catch(() => {
+        console.log('[GameLoadingScreen] Initial play() blocked - waiting for canplay');
+      });
 
-    // SAFETY FALLBACK: Force video end after 15 seconds if not ended yet
-    // This prevents infinite video freeze if something goes wrong with event handlers
-    const safetyTimeout = setTimeout(() => {
-      if (!hasEnded.current) {
-        console.warn('[GameLoadingScreen] Safety timeout triggered - forcing video end');
+    // FAST FALLBACK: If video doesn't start playing within 3 seconds, skip it
+    const fastFallback = setTimeout(() => {
+      if (!playStarted && !hasEnded.current) {
+        console.warn('[GameLoadingScreen] Fast fallback (3s) - video not playing, skipping intro');
         hasEnded.current = true;
         onVideoEnd();
       }
-    }, 15000);
+    }, 3000);
+    
+    // MEDIUM FALLBACK: If canplay never fires within 5 seconds, skip video
+    const mediumFallback = setTimeout(() => {
+      if (!canPlayFired && !hasEnded.current) {
+        console.warn('[GameLoadingScreen] Medium fallback (5s) - canplay never fired, skipping intro');
+        hasEnded.current = true;
+        onVideoEnd();
+      }
+    }, 5000);
+
+    // SAFETY FALLBACK: Force video end after 8 seconds maximum (reduced from 15s)
+    const safetyTimeout = setTimeout(() => {
+      if (!hasEnded.current) {
+        console.warn('[GameLoadingScreen] Safety timeout (8s) - forcing video end');
+        hasEnded.current = true;
+        onVideoEnd();
+      }
+    }, 8000);
 
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('error', handleError);
+      clearTimeout(fastFallback);
+      clearTimeout(mediumFallback);
       clearTimeout(safetyTimeout);
     };
   }, [onVideoEnd]);
