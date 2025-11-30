@@ -234,7 +234,7 @@ serve(async (req) => {
     const firstSlot = pendingDueSlots[0];
 
     // Insert lootbox_instance (active_drop)
-    const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds from now
+    const expiresAt = new Date(now.getTime() + 30 * 1000); // 30 seconds from now
     
     console.log('[Lootbox Heartbeat] Creating drop with data:', {
       user_id: userId,
