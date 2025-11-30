@@ -12,7 +12,7 @@ export const useSessionMonitor = () => {
 
   useEffect(() => {
     // Public pages that don't require session monitoring
-    const publicPaths = ['/', '/desktop', '/auth/register', '/auth/login', '/about', '/intro', '/admin/login'];
+    const publicPaths = ['/', '/desktop', '/auth/register', '/auth/login', '/auth/forgot-pin', '/about', '/intro', '/admin/login'];
     const isPublicPage = publicPaths.some(path => location.pathname === path);
     
     // Skip session monitoring on public pages
