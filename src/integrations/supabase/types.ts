@@ -500,6 +500,7 @@ export type Database = {
       }
       daily_winner_awarded: {
         Row: {
+          avatar_url: string | null
           awarded_at: string | null
           claimed_at: string | null
           country_code: string | null
@@ -512,10 +513,13 @@ export type Database = {
           rank: number
           reward_payload: Json | null
           status: string
+          total_correct_answers: number | null
           user_id: string
           user_timezone: string | null
+          username: string | null
         }
         Insert: {
+          avatar_url?: string | null
           awarded_at?: string | null
           claimed_at?: string | null
           country_code?: string | null
@@ -528,10 +532,13 @@ export type Database = {
           rank: number
           reward_payload?: Json | null
           status?: string
+          total_correct_answers?: number | null
           user_id: string
           user_timezone?: string | null
+          username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           awarded_at?: string | null
           claimed_at?: string | null
           country_code?: string | null
@@ -544,8 +551,10 @@ export type Database = {
           rank?: number
           reward_payload?: Json | null
           status?: string
+          total_correct_answers?: number | null
           user_id?: string
           user_timezone?: string | null
+          username?: string | null
         }
         Relationships: []
       }

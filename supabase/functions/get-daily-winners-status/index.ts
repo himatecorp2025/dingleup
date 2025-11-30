@@ -45,18 +45,17 @@ Deno.serve(async (req) => {
       throw profileError;
     }
 
-    // TESTING: Temporarily allow DingleUP to see Daily Winners popup for testing
-    // Admin users normally never see Daily Winners popup
-    // if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
-    //   return new Response(
-    //     JSON.stringify({
-    //       canShow: false,
-    //       localDate: null,
-    //       timeZone: profile.user_timezone || 'UTC',
-    //     }),
-    //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    //   );
-    // }
+    // Admin users never see Daily Winners popup
+    if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+      return new Response(
+        JSON.stringify({
+          canShow: false,
+          localDate: null,
+          timeZone: profile.user_timezone || 'UTC',
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const userTimezone = profile.user_timezone || 'UTC';
     

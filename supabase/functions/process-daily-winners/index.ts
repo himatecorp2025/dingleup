@@ -225,27 +225,6 @@ serve(async (req) => {
 
         console.log(`[DAILY-WINNERS] Found ${countryRankings.length} winners in ${countryCode} (${timezone})`);
 
-        // Create snapshot for this country's winners
-        for (let idx = 0; idx < countryRankings.length; idx++) {
-          const ranking = countryRankings[idx];
-          const actualRank = idx + 1;
-          const userProfile = countryProfiles.find(p => p.id === ranking.user_id);
-
-          await supabaseClient
-            .from('daily_leaderboard_snapshot')
-            .upsert({
-              snapshot_date: yesterdayDate,
-              rank: actualRank,
-              user_id: ranking.user_id,
-              total_correct_answers: ranking.total_correct_answers,
-              username: userProfile?.username || '',
-              avatar_url: userProfile?.avatar_url || null,
-              country_code: countryCode
-            }, {
-              onConflict: 'snapshot_date,user_id'
-            });
-        }
-
         // Process each winner in this country
         for (let idx = 0; idx < countryRankings.length; idx++) {
           const ranking = countryRankings[idx];
@@ -279,8 +258,9 @@ serve(async (req) => {
           }
 
           const { gold, lives } = prize;
+          const userProfile = countryProfiles.find(p => p.id === user_id);
 
-          // Create pending reward record (NO automatic credit)
+          // Create pending reward record with all snapshot data (NO automatic credit)
           const { error: awardError } = await supabaseClient
             .from('daily_winner_awarded')
             .insert({
@@ -293,6 +273,9 @@ serve(async (req) => {
               is_sunday_jackpot: isSundayJackpot,
               country_code: countryCode,
               user_timezone: timezone,
+              username: userProfile?.username || '',
+              avatar_url: userProfile?.avatar_url || null,
+              total_correct_answers: ranking.total_correct_answers,
               reward_payload: {
                 gold,
                 lives,
