@@ -736,7 +736,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       backgroundSize: 'contain',
                                       backgroundPosition: 'center',
                                       backgroundRepeat: 'no-repeat',
-                                      filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
+                                      filter: 'grayscale(100%) brightness(1.1) contrast(1.1) saturate(0)'
                                     }}
                                   />
                                   <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
