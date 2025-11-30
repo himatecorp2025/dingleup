@@ -165,6 +165,29 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }
 
       if (!players || players.length === 0) {
+        // Check if admin user for testing
+        const isAdmin = profileData.username === 'DingelUP!' || profileData.username === 'Halikababa';
+        
+        if (isAdmin) {
+          // Generate mock winner data for admin testing
+          console.log('[DAILY-WINNERS] Admin user - generating mock winner data for testing');
+          const mockPlayers: TopPlayer[] = [
+            { user_id: 'mock-1', rank: 1, username: 'GeniusPlayer1', avatar_url: null, total_correct_answers: 150 },
+            { user_id: 'mock-2', rank: 2, username: 'MasterMind22', avatar_url: null, total_correct_answers: 145 },
+            { user_id: 'mock-3', rank: 3, username: 'QuizKing777', avatar_url: null, total_correct_answers: 140 },
+            { user_id: 'mock-4', rank: 4, username: 'BrainPower99', avatar_url: null, total_correct_answers: 135 },
+            { user_id: 'mock-5', rank: 5, username: 'SmartOne', avatar_url: null, total_correct_answers: 130 },
+            { user_id: 'mock-6', rank: 6, username: 'ThinkFast', avatar_url: null, total_correct_answers: 125 },
+            { user_id: 'mock-7', rank: 7, username: 'QuickWit', avatar_url: null, total_correct_answers: 120 },
+            { user_id: 'mock-8', rank: 8, username: 'CleverMind', avatar_url: null, total_correct_answers: 115 },
+            { user_id: 'mock-9', rank: 9, username: 'WisePlayer', avatar_url: null, total_correct_answers: 110 },
+            { user_id: 'mock-10', rank: 10, username: 'TopThinker', avatar_url: null, total_correct_answers: 105 }
+          ];
+          setTopPlayers(mockPlayers);
+          setTotalRewards({ totalGold: 2500, totalLives: 50 });
+          return;
+        }
+        
         console.log('[DAILY-WINNERS] No snapshot data - triggering on-demand processing');
         
         const { data: { session } } = await supabase.auth.getSession();
