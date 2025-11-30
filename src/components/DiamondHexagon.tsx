@@ -239,19 +239,14 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         {/* Content: ugyanaz a távolság mint RankHexagon-nál (translateY + marginTop) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
           {type === 'avatar' ? (
-            <img
-              src={avatarUrl || defaultProfileImage}
-              alt={String(value)}
-              className="rounded-full object-cover"
-              style={{ 
-                width: 'clamp(32px, 5.5vh, 54px)', 
-                height: 'clamp(32px, 5.5vh, 54px)',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)'
-              }}
-            />
+            // Avatar Image - same structure as Profile page
+            <div className="absolute inset-[5px] flex items-center justify-center z-[5]">
+              <img
+                src={avatarUrl || defaultProfileImage}
+                alt={String(value)}
+                className="w-full h-full object-cover clip-hexagon"
+              />
+            </div>
           ) : (
             <>
               {renderIcon()}
