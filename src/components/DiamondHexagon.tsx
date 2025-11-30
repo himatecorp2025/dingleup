@@ -236,10 +236,10 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
           aria-hidden
         />
 
-        {/* Content: ugyanaz a távolság mint RankHexagon-nál (translateY + marginTop) */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
+        {/* Content: avatar esetén nincs translateY, hogy kitöltse a hexagont */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: type === 'avatar' ? 'none' : 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
           {type === 'avatar' ? (
-            // Avatar Image - same structure as Profile page
+            // Avatar Image - fills entire hexagon without vertical shift
             <div className="absolute inset-[5px] flex items-center justify-center z-[5]">
               <img
                 src={avatarUrl || defaultProfileImage}
