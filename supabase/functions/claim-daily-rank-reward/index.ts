@@ -17,7 +17,7 @@ serve(async (req) => {
 
   try {
     // Authenticate user
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
         JSON.stringify({ error: 'Missing authorization header' }),
@@ -25,18 +25,17 @@ serve(async (req) => {
       );
     }
 
-    // Extract raw JWT token from "Bearer <token>" header
-    const token = authHeader.replace('Bearer', '').trim();
-
-    const supabaseClient = createClient(
+    // Create Supabase client with user's Auth context (same pattern as get-daily-gift-status)
+    const supabaseAuth = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { 
+      {
+        global: { headers: { Authorization: authHeader } },
         auth: { persistSession: false }
       }
     );
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       console.error('[CLAIM-REWARD] Auth error in getUser:', authError);
       return new Response(
