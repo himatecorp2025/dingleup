@@ -21,11 +21,12 @@ export const GameQuestionContainer = memo(({
           ? 'translate3d(0, -100%, 0)' // GPU-accelerated
           : `translate3d(0, ${translateY}px, 0)`, // GPU-accelerated
         transition: isAnimating 
-          ? 'transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1)' // Smooth ease-out
+          ? 'transform 400ms cubic-bezier(0.25, 0.1, 0.25, 1.0)' // Ultra-smooth ease-in-out
           : 'transform 0ms',
         willChange: isAnimating || translateY !== 0 ? 'transform' : 'auto',
         backfaceVisibility: 'hidden', // Prevent flickering
         WebkitBackfaceVisibility: 'hidden',
+        WebkitFontSmoothing: 'antialiased', // Smoother text rendering during animation
       }}
     >
       <div 
