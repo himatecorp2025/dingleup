@@ -299,29 +299,38 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent 
-        overlayClassName="bg-black/25"
-        className="overflow-visible p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
-        style={{ 
-          margin: 0,
-          maxHeight: 'none',
-          minHeight: '100dvh',
-          borderRadius: 0,
-          zIndex: 99999
-        }}
-      >
-          <div 
-            className="fixed inset-0 flex flex-col items-center justify-center overflow-visible"
-            style={{ 
-              minHeight: '100dvh', 
-              minWidth: '100vw',
-              paddingLeft: '0',
-              paddingRight: '0',
-              marginLeft: '0',
-              marginRight: '0'
-            }}
-          >
+    <>
+      <style>{`
+        @media (min-width: 768px) {
+          .daily-winners-modal-wrapper {
+            width: min(480px, 90vw) !important;
+            max-width: 520px !important;
+          }
+        }
+      `}</style>
+      <Dialog open={open} onOpenChange={() => {}}>
+        <DialogContent 
+          overlayClassName="bg-black/25"
+          className="overflow-visible p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
+          style={{ 
+            margin: 0,
+            maxHeight: 'none',
+            minHeight: '100dvh',
+            borderRadius: 0,
+            zIndex: 99999
+          }}
+        >
+            <div 
+              className="fixed inset-0 flex flex-col items-center justify-center overflow-visible"
+              style={{ 
+                minHeight: '100dvh', 
+                minWidth: '100vw',
+                paddingLeft: '0',
+                paddingRight: '0',
+                marginLeft: '0',
+                marginRight: '0'
+              }}
+            >
           <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
           <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
 
@@ -339,9 +348,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
           {/* BONUS MODAL WRAPPER - Fix arányú, skálázódó layout */}
           <div 
-            className="relative z-10"
+            className="daily-winners-modal-wrapper relative z-10"
             style={{ 
-              width: 'min(420px, 90vw)',
+              width: 'min(420px, 92vw)',
+              maxWidth: '480px',
               aspectRatio: '9 / 16',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
@@ -636,10 +646,18 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(0%)' }}>
+                        {/* TOP 3 Winners */}
+                        <div 
+                          className="flex justify-center items-end w-full mb-4 px-1" 
+                          style={{ 
+                            gap: 'clamp(4px, 1.5vw, 8px)',
+                            transform: 'translateY(0%)'
+                          }}
+                        >
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '36.225%',
+                              flex: '0 0 32%',
+                              maxWidth: '32%',
                               transform: 'scale(0.9)'
                             }}>
                               <div
@@ -718,7 +736,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '36.225%',
+                              flex: '0 0 32%',
+                              maxWidth: '32%',
                               transform: 'translateY(-24%) scale(1.2)'
                             }}>
                               <div
@@ -796,7 +815,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '36.225%',
+                              flex: '0 0 32%',
+                              maxWidth: '32%',
                               transform: 'scale(0.9)'
                             }}>
                               <div
@@ -876,16 +896,22 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                         {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
                         <div style={{ transform: 'translateY(-4%)' }}>
-                          {/* First row: positions 4-7 */}
-                          <div className="grid grid-cols-4 gap-2 mb-2">
+                          {/* First row: positions 4-7 - Grid layout */}
+                          <div 
+                            className="grid grid-cols-4 px-2" 
+                            style={{ 
+                              gap: 'clamp(4px, 1.5vw, 8px)',
+                              marginBottom: 'clamp(6px, 2vw, 10px)'
+                            }}
+                          >
                             {rankFourToTen.slice(0, 4).map((player) => {
                               return (
                                 <div
                                   key={player.user_id}
-                                  className="flex flex-col items-center relative"
-                                  style={{ width: '100%', transform: 'scale(0.7)' }}
+                                  className="flex flex-col items-center relative w-full"
+                                  style={{ transform: 'scale(0.7)' }}
                                 >
-                                  <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                  <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
                                     {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                       <div className="absolute inset-0 rounded-full" style={{
@@ -960,16 +986,24 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             })}
                           </div>
 
-                          {/* Second row: positions 8-10 centered */}
-                          <div className="flex justify-center gap-2">
+                          {/* Second row: positions 8-10 centered - Grid layout */}
+                          <div 
+                            className="grid grid-cols-3 px-2" 
+                            style={{ 
+                              gap: 'clamp(4px, 1.5vw, 8px)',
+                              maxWidth: '75%',
+                              margin: '0 auto',
+                              width: '100%'
+                            }}
+                          >
                             {rankFourToTen.slice(4, 7).map((player) => {
                               return (
                                 <div
                                   key={player.user_id}
-                                  className="flex flex-col items-center relative"
-                                  style={{ width: 'calc(28.75% - 6px)', transform: 'scale(0.7)' }}
+                                  className="flex flex-col items-center relative w-full"
+                                  style={{ transform: 'scale(0.7)' }}
                                 >
-                                  <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                  <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
                                     {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                       <div className="absolute inset-0 rounded-full" style={{
@@ -1074,9 +1108,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               </HexShieldFrame>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
