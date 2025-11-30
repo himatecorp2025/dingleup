@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { GoldLootboxIcon } from './GoldLootboxIcon';
@@ -22,6 +22,9 @@ export const LootboxDropOverlay = () => {
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [showNotification, setShowNotification] = useState(false);
   const [startDrop, setStartDrop] = useState(false);
+  
+  // Prevent duplicate notifications for same lootbox
+  const processedLootboxRef = useRef<string | null>(null);
 
   // Hide overlay on admin pages, auth pages, and landing page
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -88,6 +91,8 @@ export const LootboxDropOverlay = () => {
   useEffect(() => {
     console.log('[🎁 LOOTBOX DEBUG] Lifecycle useEffect triggered:', {
       hasActiveLootbox: !!activeLootbox,
+      lootboxId: activeLootbox?.id,
+      processedLootboxId: processedLootboxRef.current,
       loading,
       isAdminPage,
       isAuthPage,
@@ -104,6 +109,12 @@ export const LootboxDropOverlay = () => {
       return;
     }
 
+    // CRITICAL: Prevent duplicate processing of same lootbox
+    if (processedLootboxRef.current === activeLootbox.id) {
+      console.log('[🎁 LOOTBOX DEBUG] Early return - already processed this lootbox');
+      return;
+    }
+
     if (showNotification || isVisible || isAnimating) {
       console.log('[🎁 LOOTBOX DEBUG] Early return - already showing');
       return;
@@ -114,8 +125,11 @@ export const LootboxDropOverlay = () => {
       return;
     }
 
+    // Mark this lootbox as processed
+    processedLootboxRef.current = activeLootbox.id;
+
     // Show notification first (5 seconds before drop)
-    console.log('[🎁 LOOTBOX DEBUG] ✅ Starting notification!');
+    console.log('[🎁 LOOTBOX DEBUG] ✅ Starting notification for lootbox:', activeLootbox.id);
     setShowNotification(true);
   }, [
     activeLootbox,
@@ -161,6 +175,7 @@ export const LootboxDropOverlay = () => {
 
     if (activeLootbox) {
       setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
+      processedLootboxRef.current = null; // Reset for next lootbox
     }
 
     refetch();
@@ -173,6 +188,7 @@ export const LootboxDropOverlay = () => {
     // Mark this lootbox as dismissed
     if (activeLootbox) {
       setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
+      processedLootboxRef.current = null; // Reset for next lootbox
     }
     
     refetch();
@@ -203,17 +219,17 @@ export const LootboxDropOverlay = () => {
           className="fixed z-50 cursor-pointer"
           onClick={() => setShowDialog(true)}
           style={{
-            top: isAnimating ? '-100px' : 'clamp(160px, 22vh, 200px)', // Below 4 hexagons
+            bottom: isAnimating ? '100vh' : 'calc(25vh + 80px)', // Speed Booster button level (original position)
             right: 'clamp(12px, 4vw, 24px)',
-            transition: 'top 2.25s ease-out',
+            transition: 'bottom 2.25s ease-out',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          {/* Lootbox Icon with countdown timer - 50% smaller */}
+          {/* Lootbox Icon with countdown timer - ORIGINAL SIZE */}
           <div className="relative">
-            <GoldLootboxIcon className="w-8 h-auto md:w-10 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
+            <GoldLootboxIcon className="w-16 h-auto md:w-20 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
 
             {/* 3D Countdown Timer - same style as life timer */}
             {!isAnimating && (

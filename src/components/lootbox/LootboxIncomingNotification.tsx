@@ -55,7 +55,7 @@ export const LootboxIncomingNotification = ({ onComplete }: LootboxIncomingNotif
       className="fixed z-[60] pointer-events-none"
       style={{
         right: 'clamp(12px, 4vw, 24px)',
-        top: 'calc(env(safe-area-inset-top) + clamp(140px, 20vh, 180px))',
+        top: 'clamp(160px, 22vh, 200px)', // Directly below 4 hexagons
         transform: isVisible ? 'translateX(0)' : 'translateX(calc(100% + 24px))',
         transition: 'transform 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
         opacity: countdown === 0 ? 0 : 1,
