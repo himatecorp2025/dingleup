@@ -229,7 +229,7 @@ serve(async (req) => {
         for (let idx = 0; idx < countryRankings.length; idx++) {
           const ranking = countryRankings[idx];
           const { user_id } = ranking;
-          const actualRank = idx + 1;
+          const actualRank = ranking.rank; // Use database rank (includes fake users)
 
           // Check if already awarded
           const { data: existing } = await supabaseClient
