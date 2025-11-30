@@ -933,10 +933,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       >
                         <HexAcceptButton 
                           onClick={handleAccept}
-                          className="w-full max-w-[85%]"
+                          className="w-full max-w-[100%]"
                           disabled={isClaiming}
                         >
-                          <span className="font-bold leading-tight px-2" style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
+                          <span className="font-bold leading-tight flex items-center justify-center w-full" style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
                             {pendingReward 
                               ? t('dailyWinners.claimReward')
                               : t('dailyWinners.congratulate')
