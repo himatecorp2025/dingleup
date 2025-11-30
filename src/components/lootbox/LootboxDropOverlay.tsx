@@ -147,7 +147,7 @@ export const LootboxDropOverlay = () => {
   };
 
   // Don't render on auth/landing pages, if no user, or if no active lootbox
-  if (isAuthPage || isLandingPage || !user || !isVisible || !activeLootbox) {
+  if (isAuthPage || isLandingPage || !user || !activeLootbox) {
     return null;
   }
 
