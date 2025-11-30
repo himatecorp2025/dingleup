@@ -238,13 +238,22 @@ const LoginNew = () => {
               </button>
             </p>
             
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/auth/forgot-pin')}
                 className="text-white/60 hover:text-white/90 text-sm transition-colors underline"
               >
-                {t('auth.choice.back')}
+                {t('auth.login.forgotPin')}
               </button>
+              
+              <div>
+                <button
+                  onClick={() => navigate('/')}
+                  className="text-white/60 hover:text-white/90 text-sm transition-colors underline"
+                >
+                  {t('auth.choice.back')}
+                </button>
+              </div>
             </div>
           </div>
         </div>
