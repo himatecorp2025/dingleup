@@ -24,6 +24,7 @@ export const LootboxDropOverlay = () => {
   const [introCountdown, setIntroCountdown] = useState(3);
   const [lastShownLootboxId, setLastShownLootboxId] = useState<string | null>(null);
   const [notificationShown, setNotificationShown] = useState(false);
+  const [bannerPosition, setBannerPosition] = useState<{ top: number; right: number } | null>(null);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -137,6 +138,35 @@ export const LootboxDropOverlay = () => {
     };
   }, [showIntroBanner]);
 
+  // Position intro banner directly under lives + profile hexagon bar
+  useEffect(() => {
+    if (!showIntroBanner) return;
+
+    const updatePosition = () => {
+      if (typeof window === 'undefined') return;
+      const anchor = document.querySelector('[data-lootbox-banner-anchor]') as HTMLElement | null;
+      if (!anchor) {
+        setBannerPosition(null);
+        return;
+      }
+
+      const rect = anchor.getBoundingClientRect();
+      const offsetY = 8; // px gap under hexagon row
+      const minRight = 12; // px from right edge
+
+      const top = rect.bottom + offsetY;
+      const right = Math.max(window.innerWidth - rect.right, minRight);
+
+      setBannerPosition({ top, right });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [showIntroBanner]);
+
   // End drop animation after 2.25s
   useEffect(() => {
     if (!isAnimating) return;
@@ -186,8 +216,8 @@ export const LootboxDropOverlay = () => {
         <div
           className="fixed z-40"
           style={{
-            top: 'clamp(140px, 35vh, 180px)', // Below hexagons row
-            right: 'clamp(12px, 4vw, 24px)',
+            top: bannerPosition ? `${bannerPosition.top}px` : 'clamp(140px, 35vh, 180px)',
+            right: bannerPosition ? `${bannerPosition.right}px` : 'clamp(12px, 4vw, 24px)',
           }}
         >
           <LootboxNotificationBanner countdown={introCountdown} />
