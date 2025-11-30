@@ -561,11 +561,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {topPlayers[1] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
-                              style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}
+                              style={{ 
+                                transform: 'scale(0.85)',
+                                transformOrigin: 'center bottom'
+                              }}
                               className="w-full flex flex-col items-center"
                             >
                               <div
-                                className="w-full"
+                                className="w-full flex flex-col items-center"
                                 style={{ animation: 'pulse-scale 2s ease-in-out infinite' }}
                               >
                                 <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -626,6 +629,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
+
                               <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
@@ -640,11 +644,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {topPlayers[0] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
-                              style={{ transform: 'scale(1.2) translateY(-20%)' }}
+                              style={{ 
+                                transform: 'scale(1.2) translateY(-20%)',
+                                transformOrigin: 'center bottom'
+                              }}
                               className="w-full flex flex-col items-center"
                             >
                               <div
-                                className="w-full"
+                                className="w-full flex flex-col items-center"
                                 style={{ animation: 'pulse-scale 2.4s ease-in-out infinite' }}
                               >
                                 <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -703,6 +710,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
+
                               <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
                                 fontSize: 'clamp(0.65rem, 3vw, 0.8rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
@@ -717,11 +725,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {topPlayers[2] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
-                              style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}
+                              style={{ 
+                                transform: 'scale(0.85)',
+                                transformOrigin: 'center bottom'
+                              }}
                               className="w-full flex flex-col items-center"
                             >
                               <div
-                                className="w-full"
+                                className="w-full flex flex-col items-center"
                                 style={{ animation: 'pulse-scale 2s ease-in-out infinite' }}
                               >
                                 <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -781,6 +792,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
+
                               <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
