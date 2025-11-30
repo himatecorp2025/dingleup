@@ -303,8 +303,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       <style>{`
         @media (min-width: 768px) {
           .daily-winners-modal-wrapper {
-            width: min(480px, 90vw) !important;
-            max-width: 520px !important;
+            width: min(60vw, 480px) !important;
+            max-width: 480px !important;
           }
         }
       `}</style>
@@ -321,9 +321,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           }}
         >
             <div 
-              className="fixed inset-0 flex flex-col items-center justify-center overflow-visible"
+              className="daily-winners-wrapper fixed inset-0 flex flex-col items-center justify-center overflow-visible"
               style={{ 
-                minHeight: '100dvh', 
+                minHeight: '100vh',
                 minWidth: '100vw',
                 paddingLeft: '0',
                 paddingRight: '0',
@@ -350,9 +350,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <div 
             className="daily-winners-modal-wrapper relative z-10"
             style={{ 
-              width: 'min(420px, 92vw)',
-              maxWidth: '480px',
-              aspectRatio: '9 / 16',
+              width: 'min(90vw, 420px)',
+              maxWidth: '420px',
+              aspectRatio: '390 / 720',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
