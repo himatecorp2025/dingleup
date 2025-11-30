@@ -31,6 +31,7 @@ import Index from "./pages/Index";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const RegisterNew = lazy(() => import("./pages/RegisterNew"));
 const LoginNew = lazy(() => import("./pages/LoginNew"));
+const ForgotPin = lazy(() => import("./pages/ForgotPin"));
 const Game = lazy(() => import("./pages/Game"));
 const GameRules = lazy(() => import("./pages/GameRules"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -145,6 +146,7 @@ const AppCore = () => {
               {/* New simplified auth routes - choice removed, direct login */}
               <Route path="/auth/login" element={<LoginNew />} />
               <Route path="/auth/register" element={<RegisterNew />} />
+              <Route path="/auth/forgot-pin" element={<ForgotPin />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}
               <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
