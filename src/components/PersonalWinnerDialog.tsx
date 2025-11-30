@@ -308,7 +308,7 @@ export const PersonalWinnerDialog = ({
                         className="font-black uppercase"
                         style={{
                           fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
-                          color: rank === 1 ? '#1a0f00' : '#ffffff',
+                          color: '#f5f5f5',
                           textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                           letterSpacing: '0.05em',
                           lineHeight: '1.2',
@@ -322,7 +322,7 @@ export const PersonalWinnerDialog = ({
                         className="font-bold"
                         style={{
                           fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
-                          color: rank === 1 ? '#2d1a00' : '#ffffff',
+                          color: '#f5f5f5',
                           textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                           letterSpacing: '0.05em',
                           lineHeight: '1.4',
@@ -341,7 +341,7 @@ export const PersonalWinnerDialog = ({
                       >
                         <p
                           style={{
-                            color: rank === 1 ? '#1a0f00' : '#ffffff',
+                            color: '#f5f5f5',
                             textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                             letterSpacing: '0.05em',
                             fontWeight: 900,
@@ -352,7 +352,7 @@ export const PersonalWinnerDialog = ({
                         </p>
                         <p 
                           style={{ 
-                            color: rank === 1 ? '#1a0f00' : '#ffffff',
+                            color: '#f5f5f5',
                             textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                             letterSpacing: '0.05em',
                             fontWeight: 900,
@@ -364,7 +364,7 @@ export const PersonalWinnerDialog = ({
                         </p>
                         <p 
                           style={{ 
-                            color: rank === 1 ? '#1a0f00' : '#ffffff',
+                            color: '#f5f5f5',
                             textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                             letterSpacing: '0.05em',
                             fontWeight: 900,
@@ -380,7 +380,7 @@ export const PersonalWinnerDialog = ({
                         className="font-bold mt-8"
                         style={{
                           fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                          color: rank === 1 ? '#2d1a00' : '#ffffff',
+                          color: '#f5f5f5',
                           textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                           letterSpacing: '0.05em',
                           fontStyle: 'italic',
