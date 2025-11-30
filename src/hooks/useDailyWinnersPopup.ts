@@ -28,6 +28,24 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
           return;
         }
 
+        // CRITICAL: Check if user is in TOP 100 leaderboard (any country)
+        // If user is ranked, they should NOT see the "Nem nyertes" popup
+        const { data: leaderboardEntry, error: leaderboardError } = await supabase
+          .from('leaderboard_cache')
+          .select('rank')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (leaderboardError) {
+          console.error('[DAILY-WINNERS-POPUP] Error checking leaderboard status:', leaderboardError);
+        }
+
+        if (leaderboardEntry && leaderboardEntry.rank <= 100) {
+          setCanShowToday(false);
+          console.log('[DAILY-WINNERS-POPUP] User is in TOP 100 (rank:', leaderboardEntry.rank, '), skipping popup');
+          return;
+        }
+
         // Call timezone-aware backend edge function (matching Daily Gift pattern)
         const { data, error } = await supabase.functions.invoke('get-daily-winners-status');
 
