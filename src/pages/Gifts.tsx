@@ -10,6 +10,7 @@ import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
 import { LootboxRewardDisplay } from '@/components/LootboxRewardDisplay';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useMobilePayment } from '@/hooks/useMobilePayment';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 interface StoredLootbox {
   id: string;
@@ -244,6 +245,7 @@ const Gifts = () => {
       )}
 
       <div 
+        data-tutorial="gifts-container"
         className="w-screen fixed inset-0 overflow-y-auto overflow-x-hidden flex flex-col bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white"
         style={{
           paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
@@ -275,6 +277,7 @@ const Gifts = () => {
           <div className="flex items-center justify-between gap-2" style={{ marginBottom: 'clamp(0.25rem, 1vh, 0.5rem)' }}>
             {/* Back Button - Left */}
             <button
+              data-tutorial="back-dashboard"
               onClick={() => navigate('/dashboard')}
               className="relative rounded-full hover:scale-110 transition-all flex-shrink-0"
               style={{ 
@@ -359,7 +362,7 @@ const Gifts = () => {
           {/* Header removed from here as it's now part of the button row above */}
 
           {/* My Reward Boxes Section */}
-          <div style={{ marginBottom: 'clamp(10px, 2.5vh, 18px)' }}>
+          <div data-tutorial="stored-lootboxes" style={{ marginBottom: 'clamp(10px, 2.5vh, 18px)' }}>
             <h2 
               className="font-bold text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]"
               style={{ 
@@ -451,7 +454,7 @@ const Gifts = () => {
           </div>
 
           {/* Get New Rewards Section */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div data-tutorial="purchase-packages" className="flex-1 flex flex-col min-h-0">
             <h2 
               className="font-bold text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]"
               style={{ 
@@ -537,6 +540,7 @@ const Gifts = () => {
       </div>
 
       <BottomNav />
+      <TutorialManager route="gifts" />
       </div>
     </>
   );
