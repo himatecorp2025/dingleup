@@ -7,9 +7,10 @@ interface AppRouteGuardProps {
 }
 
 export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState<boolean | null>(null);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
   const [isPWAOrNative, setIsPWAOrNative] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const location = useLocation();
 
   // Detect device type
@@ -22,6 +23,13 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
+
+  // Set ready state when all detection is complete
+  useEffect(() => {
+    if (isMobileOrTablet !== null && hasSession !== null) {
+      setIsReady(true);
+    }
+  }, [isMobileOrTablet, hasSession]);
 
   // Detect PWA/native mode
   useEffect(() => {
@@ -48,6 +56,21 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Show loading screen until platform and session detection complete
+  if (!isReady) {
+    return (
+      <div className="h-dvh h-svh w-screen flex items-center justify-center bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker">
+        <div className="animate-pulse">
+          <img 
+            src="/dingleup-logo.png" 
+            alt="DingleUP!" 
+            className="w-32 h-32 object-contain"
+          />
+        </div>
+      </div>
+    );
+  }
 
   // CRITICAL: Mobilon/táblagépen MINDIG login/register legyen az első oldal
   // Ha a user nincs bejelentkezve ÉS landing page-en van ÉS mobil/tablet
