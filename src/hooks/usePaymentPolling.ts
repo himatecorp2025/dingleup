@@ -53,7 +53,7 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_lootbox_session');
-              toast.success(t('payment.polling.lootbox_verified'), { duration: 5000 });
+              toast.success(t('payment.polling.lootbox_verified'), { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
             }
           }
@@ -72,7 +72,7 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_speed_session');
-              toast.success(t('payment.polling.speed_verified'), { duration: 5000 });
+              toast.success(t('payment.polling.speed_verified'), { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
             }
           }
@@ -92,7 +92,7 @@ export const usePaymentPolling = () => {
             if (!error && data?.success) {
               localStorage.removeItem('pending_premium_session');
               const successMsg = `${t('payment.success.rewards_prefix')} +${data.grantedRewards?.gold} ${t('payment.success.gold')} ${t('payment.success.and')} +${data.grantedRewards?.lives} ${t('payment.success.lives')} ${t('payment.success.rewards_suffix')}`;
-              toast.success(successMsg, { duration: 6000 });
+              toast.success(successMsg, { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
             }
           }
@@ -112,7 +112,7 @@ export const usePaymentPolling = () => {
             if (!error && data?.success) {
               localStorage.removeItem('pending_rescue_session');
               const successMsg = `${t('payment.success.rewards_prefix')} +${data.grantedRewards?.gold} ${t('payment.success.gold')} ${t('payment.success.and')} +${data.grantedRewards?.lives} ${t('payment.success.lives')} ${t('payment.success.rewards_suffix')}`;
-              toast.success(successMsg, { duration: 6000 });
+              toast.success(successMsg, { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
             }
           }

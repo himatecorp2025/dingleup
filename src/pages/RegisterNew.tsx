@@ -150,7 +150,7 @@ const RegisterNew = () => {
         toast({
           title: t('auth.register.success_title'),
           description: t('auth.register.successPleaseLogin'),
-          duration: 3000,
+          duration: 2000,
         });
         navigate('/auth/login');
         return;
@@ -159,7 +159,7 @@ const RegisterNew = () => {
       toast({
         title: t('auth.register.success_title'),
         description: t('auth.register.successMessage'),
-        duration: 3000,
+        duration: 2000,
       });
       navigate('/dashboard');
     } catch (error) {

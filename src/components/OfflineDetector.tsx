@@ -15,7 +15,7 @@ export const OfflineDetector = () => {
         toast({
           title: t('offline.connection_restored'),
           description: t('offline.connection_available'),
-          duration: 3000,
+          duration: 2000,
         });
         setWasOffline(false);
       }
@@ -27,7 +27,7 @@ export const OfflineDetector = () => {
       toast({
         title: t('offline.no_internet'),
         description: t('offline.some_features_unavailable'),
-        duration: 5000,
+        duration: 3000,
         variant: "destructive",
       });
     };
