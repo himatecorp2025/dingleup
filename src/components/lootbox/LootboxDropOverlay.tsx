@@ -28,6 +28,23 @@ export const LootboxDropOverlay = () => {
   const isAuthPage = location.pathname.startsWith('/auth') || location.pathname === '/login' || location.pathname === '/register';
   const isLandingPage = location.pathname === '/';
 
+  // DEBUG: Log render state
+  console.log('[🎁 LOOTBOX DEBUG] Component render:', {
+    path: location.pathname,
+    isAdminPage,
+    isAuthPage, 
+    isLandingPage,
+    hasUser: !!user,
+    userId: user?.id,
+    hasActiveLootbox: !!activeLootbox,
+    lootboxId: activeLootbox?.id,
+    showNotification,
+    isVisible,
+    isAnimating,
+    showDialog,
+    viewport: `${window.innerWidth}x${window.innerHeight}`
+  });
+
   // Check user authentication
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -69,19 +86,36 @@ export const LootboxDropOverlay = () => {
 
   // Handle notification and drop lifecycle
   useEffect(() => {
+    console.log('[🎁 LOOTBOX DEBUG] Lifecycle useEffect triggered:', {
+      hasActiveLootbox: !!activeLootbox,
+      loading,
+      isAdminPage,
+      isAuthPage,
+      isLandingPage,
+      hasUser: !!user,
+      showNotification,
+      isVisible,
+      isAnimating,
+      isDismissed: activeLootbox ? dismissedLootboxes.has(activeLootbox.id) : false
+    });
+
     if (!activeLootbox || loading || isAdminPage || isAuthPage || isLandingPage || !user) {
+      console.log('[🎁 LOOTBOX DEBUG] Early return - conditions not met');
       return;
     }
 
     if (showNotification || isVisible || isAnimating) {
+      console.log('[🎁 LOOTBOX DEBUG] Early return - already showing');
       return;
     }
 
     if (dismissedLootboxes.has(activeLootbox.id)) {
+      console.log('[🎁 LOOTBOX DEBUG] Early return - dismissed');
       return;
     }
 
     // Show notification first (5 seconds before drop)
+    console.log('[🎁 LOOTBOX DEBUG] ✅ Starting notification!');
     setShowNotification(true);
   }, [
     activeLootbox,
@@ -150,8 +184,11 @@ export const LootboxDropOverlay = () => {
 
   // Don't render on admin/auth/landing pages, if no user, or if no active lootbox
   if (isAdminPage || isAuthPage || isLandingPage || !user || !activeLootbox) {
+    console.log('[🎁 LOOTBOX DEBUG] ❌ Returning null - will not render overlay');
     return null;
   }
+
+  console.log('[🎁 LOOTBOX DEBUG] ✅ Rendering overlay!');
 
   return (
     <>
