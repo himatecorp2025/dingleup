@@ -69,10 +69,10 @@ export function useWalletQuery(userId: string | undefined) {
     queryKey: WALLET_QUERY_KEY(userId || ''),
     queryFn: () => fetchWallet(userId!),
     enabled: !!userId,
-    staleTime: 1000 * 30, // 30 seconds - wallet data stays fresh
-    gcTime: 1000 * 60 * 5, // 5 minutes - cache kept in memory
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
   });
 
   // Manual refetch function
@@ -85,8 +85,10 @@ export function useWalletQuery(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
 
+    console.log('[useWalletQuery] Setting up realtime subscription for user:', userId);
+
     const channel = supabase
-      .channel(`wallet-${userId}`)
+      .channel(`wallet-realtime-${userId}`)
       .on(
         'postgres_changes',
         {
@@ -95,43 +97,58 @@ export function useWalletQuery(userId: string | undefined) {
           table: 'profiles',
           filter: `id=eq.${userId}`,
         },
-        (payload: any) => {
-          // Optimistic update for coins/lives changes
-          if (payload.new) {
-            queryClient.setQueryData(
-              WALLET_QUERY_KEY(userId),
-              (old: WalletData | undefined) => {
-                if (!old) return old;
-                return {
-                  ...old,
-                  coins: payload.new.coins ?? old.coins,
-                  lives: payload.new.lives ?? old.lives,
-                  maxLives: payload.new.max_lives ?? old.maxLives,
-                };
-              }
-            );
-          }
+        (payload) => {
+          console.log('[useWalletQuery] Profile update received:', payload);
+          // Immediately refetch with zero delay
+          queryClient.refetchQueries({
+            queryKey: WALLET_QUERY_KEY(userId),
+            exact: true,
+          });
         }
       )
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'wallet_ledger',
           filter: `user_id=eq.${userId}`,
         },
-        () => {
-          // Refetch on wallet ledger changes
-          refetchWallet();
+        (payload) => {
+          console.log('[useWalletQuery] Wallet ledger update received:', payload);
+          // Immediately refetch with zero delay
+          queryClient.refetchQueries({
+            queryKey: WALLET_QUERY_KEY(userId),
+            exact: true,
+          });
         }
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'lives_ledger',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log('[useWalletQuery] Lives ledger update received:', payload);
+          // Immediately refetch with zero delay
+          queryClient.refetchQueries({
+            queryKey: WALLET_QUERY_KEY(userId),
+            exact: true,
+          });
+        }
+      )
+      .subscribe((status) => {
+        console.log('[useWalletQuery] Subscription status:', status);
+      });
 
     return () => {
+      console.log('[useWalletQuery] Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
-  }, [userId, queryClient, refetchWallet]);
+  }, [userId, queryClient]);
 
   return {
     walletData: query.data,
@@ -141,11 +158,11 @@ export function useWalletQuery(userId: string | undefined) {
   };
 }
 
-// Prefetch wallet data before navigation
+// Prefetch wallet data before navigation (with zero cache)
 export function prefetchWallet(userId: string, queryClient: any) {
   return queryClient.prefetchQuery({
     queryKey: WALLET_QUERY_KEY(userId),
     queryFn: () => fetchWallet(userId),
-    staleTime: 1000 * 30,
+    staleTime: 0, // No cache on prefetch either
   });
 }

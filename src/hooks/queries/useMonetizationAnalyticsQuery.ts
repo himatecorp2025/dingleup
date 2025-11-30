@@ -51,12 +51,16 @@ export function useMonetizationAnalyticsQuery() {
   const query = useQuery({
     queryKey: [MONETIZATION_ANALYTICS_KEY],
     queryFn: fetchMonetizationAnalytics,
-    staleTime: 1000 * 30, // 30 seconds
-    gcTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
   });
 
   // Real-time subscription for instant updates
   useEffect(() => {
+    console.log('[useMonetizationAnalyticsQuery] Setting up realtime subscription');
+
     const channel = supabase
       .channel('monetization-analytics-realtime')
       .on(
@@ -66,24 +70,35 @@ export function useMonetizationAnalyticsQuery() {
           schema: 'public',
           table: 'booster_purchases',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [MONETIZATION_ANALYTICS_KEY] });
+        (payload) => {
+          console.log('[useMonetizationAnalyticsQuery] Booster purchases update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [MONETIZATION_ANALYTICS_KEY],
+            exact: true,
+          });
         }
       )
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'purchases',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [MONETIZATION_ANALYTICS_KEY] });
+        (payload) => {
+          console.log('[useMonetizationAnalyticsQuery] Purchases update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [MONETIZATION_ANALYTICS_KEY],
+            exact: true,
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[useMonetizationAnalyticsQuery] Subscription status:', status);
+      });
 
     return () => {
+      console.log('[useMonetizationAnalyticsQuery] Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [queryClient]);

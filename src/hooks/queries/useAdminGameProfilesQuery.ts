@@ -39,12 +39,16 @@ export function useAdminGameProfilesQuery() {
   const query = useQuery({
     queryKey: [ADMIN_GAME_PROFILES_KEY],
     queryFn: fetchAdminGameProfiles,
-    staleTime: 1000 * 30, // 30 seconds
-    gcTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
   });
 
   // Real-time subscription for instant updates
   useEffect(() => {
+    console.log('[useAdminGameProfilesQuery] Setting up realtime subscription');
+
     const channel = supabase
       .channel('admin-game-profiles-realtime')
       .on(
@@ -54,8 +58,12 @@ export function useAdminGameProfilesQuery() {
           schema: 'public',
           table: 'game_results',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_GAME_PROFILES_KEY] });
+        (payload) => {
+          console.log('[useAdminGameProfilesQuery] Game results update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_GAME_PROFILES_KEY],
+            exact: true,
+          });
         }
       )
       .on(
@@ -65,8 +73,12 @@ export function useAdminGameProfilesQuery() {
           schema: 'public',
           table: 'question_likes',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_GAME_PROFILES_KEY] });
+        (payload) => {
+          console.log('[useAdminGameProfilesQuery] Question likes update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_GAME_PROFILES_KEY],
+            exact: true,
+          });
         }
       )
       .on(
@@ -76,8 +88,12 @@ export function useAdminGameProfilesQuery() {
           schema: 'public',
           table: 'question_dislikes',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_GAME_PROFILES_KEY] });
+        (payload) => {
+          console.log('[useAdminGameProfilesQuery] Question dislikes update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_GAME_PROFILES_KEY],
+            exact: true,
+          });
         }
       )
       .on(
@@ -87,13 +103,20 @@ export function useAdminGameProfilesQuery() {
           schema: 'public',
           table: 'game_question_analytics',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_GAME_PROFILES_KEY] });
+        (payload) => {
+          console.log('[useAdminGameProfilesQuery] Game question analytics update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_GAME_PROFILES_KEY],
+            exact: true,
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[useAdminGameProfilesQuery] Subscription status:', status);
+      });
 
     return () => {
+      console.log('[useAdminGameProfilesQuery] Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [queryClient]);

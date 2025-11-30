@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export interface TopicProfile {
   topicId: string;
@@ -56,9 +56,77 @@ export function useUserGameProfileQuery(userId: string | undefined) {
     queryKey: USER_GAME_PROFILE_KEY(userId || ''),
     queryFn: () => fetchUserGameProfile(userId!),
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
   });
+
+  // Real-time subscription for instant game profile updates
+  useEffect(() => {
+    if (!userId) return;
+
+    console.log('[useUserGameProfileQuery] Setting up realtime subscription for user:', userId);
+
+    const channel = supabase
+      .channel(`user-game-profile-realtime-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'game_results',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log('[useUserGameProfileQuery] Game results update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: USER_GAME_PROFILE_KEY(userId),
+            exact: true,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'question_likes',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log('[useUserGameProfileQuery] Question likes update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: USER_GAME_PROFILE_KEY(userId),
+            exact: true,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'question_dislikes',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log('[useUserGameProfileQuery] Question dislikes update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: USER_GAME_PROFILE_KEY(userId),
+            exact: true,
+          });
+        }
+      )
+      .subscribe((status) => {
+        console.log('[useUserGameProfileQuery] Subscription status:', status);
+      });
+
+    return () => {
+      console.log('[useUserGameProfileQuery] Cleaning up realtime subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [userId, queryClient]);
 
   const updateSettings = useCallback(
     async (settings: { aiPersonalizedQuestionsEnabled: boolean }) => {
