@@ -38,6 +38,7 @@ interface UseGameLifecycleOptions {
   questions: Question[];
   questionStartTime: number;
   gameCompleted: boolean;
+  setGameCompleted: (completed: boolean) => void;
   prefetchedQuestions: Question[] | null;
   onPrefetchComplete: (questions: Question[]) => void;
 }
@@ -76,6 +77,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     questions,
     questionStartTime,
     gameCompleted,
+    setGameCompleted,
     prefetchedQuestions,
     onPrefetchComplete,
   } = options;
@@ -374,6 +376,9 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     resetRewardAnimation();
     setCurrentQuestionIndex(0);
     
+    // CRITICAL: Reset gameCompleted flag to allow normal swipe navigation
+    setGameCompleted(false);
+    
     // CRITICAL: Clear old questions IMMEDIATELY to prevent old question flash
     setQuestions([]);
     setQuestionVisible(false);
@@ -410,7 +415,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
     resetQuestionHelpers, setFirstAttempt, setSecondAttempt, setErrorBannerVisible,
     resetRewardAnimation, startGame, setIsAnimating, setCanSwipe, setQuestionVisible,
-    setCurrentQuestionIndex, resetTimer
+    setCurrentQuestionIndex, resetTimer, setGameCompleted
   ]);
 
   const finishGame = useCallback(async () => {
