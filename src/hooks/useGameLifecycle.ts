@@ -314,15 +314,20 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   const handleVideoEnd = useCallback(async () => {
     if (gameInitPromiseRef.current) {
       try {
-        // Add 5-second timeout to prevent infinite wait
+        // INCREASED TIMEOUT: 10 seconds to handle slower networks
         await Promise.race([
           gameInitPromiseRef.current,
           new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Game initialization timeout')), 5000)
+            setTimeout(() => reject(new Error('Game initialization timeout')), 10000)
           )
         ]);
       } catch (error) {
         console.error('[useGameLifecycle] Init timeout or error:', error);
+        // CRITICAL FIX: On timeout, show error and navigate back to dashboard
+        // instead of leaving user with frozen video
+        toast.error(t('game.loading_timeout'));
+        setIsStarting(false);
+        navigate('/dashboard');
         return;
       }
     }
@@ -330,7 +335,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setIsGameReady(true);
     setVideoEnded(true);
     setIsStarting(false);
-  }, []);
+  }, [navigate, t]);
 
   const restartGameImmediately = useCallback(async () => {
     if (!profile || isStarting) return;

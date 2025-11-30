@@ -55,10 +55,21 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
       // Will retry when canplay fires
     });
 
+    // SAFETY FALLBACK: Force video end after 15 seconds if not ended yet
+    // This prevents infinite video freeze if something goes wrong with event handlers
+    const safetyTimeout = setTimeout(() => {
+      if (!hasEnded.current) {
+        console.warn('[GameLoadingScreen] Safety timeout triggered - forcing video end');
+        hasEnded.current = true;
+        onVideoEnd();
+      }
+    }, 15000);
+
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('error', handleError);
+      clearTimeout(safetyTimeout);
     };
   }, [onVideoEnd]);
 
