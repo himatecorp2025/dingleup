@@ -716,7 +716,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               className="flex flex-col items-center w-full"
                               style={{ 
                                 animation: 'pulse-scale 2s ease-in-out infinite',
-                                transform: 'scale(0.85)'
+                                transform: 'scale(0.92)'
                               }}
                             >
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
