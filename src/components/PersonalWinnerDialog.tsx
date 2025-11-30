@@ -308,9 +308,9 @@ export const PersonalWinnerDialog = ({
                         className="font-black uppercase"
                         style={{
                           fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
-                          color: '#f5f5f5',
-                          WebkitTextStroke: '2px rgba(0,0,0,0.9)',
-                          letterSpacing: '0.08em',
+                          color: '#ffffff',
+                          textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                          letterSpacing: '0.05em',
                           lineHeight: '1.2',
                           fontWeight: 900
                         }}
@@ -322,8 +322,9 @@ export const PersonalWinnerDialog = ({
                         className="font-bold"
                         style={{
                           fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
-                          color: '#f5f5f5',
-                          WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
+                          color: '#ffffff',
+                          textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                          letterSpacing: '0.05em',
                           lineHeight: '1.4',
                           fontWeight: 900
                         }}
@@ -340,8 +341,9 @@ export const PersonalWinnerDialog = ({
                       >
                         <p
                           style={{
-                            color: '#f5f5f5',
-                            WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
+                            color: '#ffffff',
+                            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                            letterSpacing: '0.05em',
                             fontWeight: 900,
                             fontSize: 'clamp(1.3rem, 4.5vw, 1.8rem)',
                           }}
@@ -350,11 +352,11 @@ export const PersonalWinnerDialog = ({
                         </p>
                         <p 
                           style={{ 
-                            color: '#f5f5f5',
-                            WebkitTextStroke: '2px rgba(0,0,0,0.9)',
+                            color: '#ffffff',
+                            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                            letterSpacing: '0.05em',
                             fontWeight: 900,
-                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
-                            letterSpacing: '0.03em'
+                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)'
                           }}
                         >
                           {goldReward.toLocaleString()} arany és {livesReward} élet!
@@ -365,8 +367,9 @@ export const PersonalWinnerDialog = ({
                         className="font-bold mt-8"
                         style={{
                           fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                          color: '#f5f5f5',
-                          WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
+                          color: '#ffffff',
+                          textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                          letterSpacing: '0.05em',
                           fontStyle: 'italic',
                           fontWeight: 900
                         }}
