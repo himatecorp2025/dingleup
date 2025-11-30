@@ -341,8 +341,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     console.log('[useGameLifecycle] ⚡ INSTANT RESTART initiated');
     toast.dismiss();
     
-    // ATOMIC STATE RESET + PREFETCH MODE
-    // All state changes in batch to prevent flickering
+    // ATOMIC STATE RESET
     resetGameStateHook();
     setCoinsEarned(0);
     setHelp5050UsageCount(0);
@@ -374,11 +373,12 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       });
     }
     
-    // CRITICAL: Start new game with FULL BACKEND MODE (always requests next pool)
-    // Do NOT use prefetch mode - we need fresh questions from next pool
-    await startGame(true, false);
+    // CRITICAL: ALWAYS use prefetch mode if available for instant restart
+    const usePrefetch = prefetchedQuestions && prefetchedQuestions.length > 0;
+    console.log(`[useGameLifecycle] Restart mode: ${usePrefetch ? 'PREFETCH (instant <5ms)' : 'FULL BACKEND'}`);
+    await startGame(true, usePrefetch);
     
-    // Instant transition to new game (no 300ms delay!)
+    // Instant transition to new game
     setTimeout(() => {
       resetTimer(10);
       setQuestionVisible(true);
@@ -386,7 +386,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       console.log('[useGameLifecycle] ✓ Instant restart complete');
     }, 50);
   }, [
-    profile, isStarting, gameCompleted, resetGameStateHook, setCoinsEarned,
+    profile, isStarting, gameCompleted, prefetchedQuestions, resetGameStateHook, setCoinsEarned,
     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
     resetQuestionHelpers, setFirstAttempt, setSecondAttempt, setErrorBannerVisible,
     resetRewardAnimation, startGame, setIsAnimating, setCanSwipe, setQuestionVisible,

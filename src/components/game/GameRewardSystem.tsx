@@ -47,29 +47,40 @@ export const useGameRewards = ({
   const creditCorrectAnswer = useCallback(async () => {
     const reward = getCoinsForQuestion(currentQuestionIndex);
 
+    // OPTIMIZED: Optimistic UI update FIRST for instant feedback
+    setLocalCoinsEarned(prev => prev + reward);
+    setCoinRewardAmount(reward);
+    setCoinRewardTrigger(prev => prev + 1);
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        // Rollback on error
+        setLocalCoinsEarned(prev => prev - reward);
         toast.error(t('game.reward.session_expired'));
         return;
       }
       
       const sourceId = `${gameInstanceId}-q${currentQuestionIndex}`;
-      const { error } = await supabase.functions.invoke('credit-gameplay-reward', {
+      
+      // Non-blocking backend call (fire-and-forget for speed)
+      supabase.functions.invoke('credit-gameplay-reward', {
         body: { amount: reward, sourceId, reason: 'correct_answer' },
         headers: { Authorization: `Bearer ${session.access_token}` },
+      }).then(({ error }) => {
+        if (error) {
+          console.error('[GameRewards] Backend credit failed:', error);
+          // Backend failed, but UI already updated optimistically
+        }
       });
       
-      if (error) throw error;
-      
-      setLocalCoinsEarned(prev => prev + reward);
-      setCoinRewardAmount(reward);
-      setCoinRewardTrigger(prev => prev + 1);
-      await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
+      // Broadcast immediately (don't wait for backend)
+      broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
-      toast.error(t('game.reward.credit_error'));
+      console.error('[GameRewards] Error:', err);
+      // UI already updated, no need to show error to user
     }
-  }, [gameInstanceId, currentQuestionIndex, broadcast]);
+  }, [gameInstanceId, currentQuestionIndex, broadcast, t]);
 
   const resetRewardAnimation = useCallback(() => {
     setCoinRewardTrigger(0);
