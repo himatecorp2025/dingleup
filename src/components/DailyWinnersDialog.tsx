@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
 import { useI18n } from '@/i18n/useI18n';
+import { toast } from '@/hooks/use-toast';
 import laurelWreathGold from '@/assets/laurel_wreath_gold.svg';
 
 interface DailyWinnersDialogProps {
@@ -257,6 +258,86 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
     onClose();
     navigate('/game');
   }, [onClose, navigate]);
+
+  // Handle "Gratulálok" (Accept) button - claim rewards and close
+  const handleAccept = useCallback(async () => {
+    try {
+      // Get authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !isMountedRef.current) {
+        console.error('[DAILY-WINNERS] No authenticated user, cannot claim rewards');
+        onClose();
+        return;
+      }
+
+      // Get user's profile to fetch timezone
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('user_timezone')
+        .eq('id', user.id)
+        .single();
+
+      if (!profileData?.user_timezone) {
+        console.error('[DAILY-WINNERS] No timezone found for user');
+        onClose();
+        return;
+      }
+
+      const userTimezone = profileData.user_timezone;
+
+      // Calculate yesterday's date in user's timezone
+      const nowUtc = new Date();
+      const localNow = new Date(nowUtc.toLocaleString('en-US', { timeZone: userTimezone }));
+      const localYesterday = new Date(localNow);
+      localYesterday.setDate(localYesterday.getDate() - 1);
+      const yesterdayDate = localYesterday.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+
+      console.log('[DAILY-WINNERS] Attempting to claim rewards for date:', yesterdayDate);
+
+      // Check if user has pending reward for yesterday
+      const { data: pendingReward } = await supabase
+        .from('daily_winner_awarded')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('day_date', yesterdayDate)
+        .eq('status', 'pending')
+        .single();
+
+      if (!pendingReward) {
+        console.log('[DAILY-WINNERS] No pending reward for user - either already claimed or user not in winners');
+        onClose();
+        return;
+      }
+
+      // Call claim edge function
+      const { data, error } = await supabase.functions.invoke('claim-daily-rank-reward', {
+        body: { day_date: yesterdayDate }
+      });
+
+      if (error) {
+        console.error('[DAILY-WINNERS] Error claiming reward:', error);
+        // Close anyway - reward may be already claimed or expired
+        onClose();
+        return;
+      }
+
+      if (data?.success) {
+        console.log('[DAILY-WINNERS] Successfully claimed rewards:', data.goldCredited, 'gold,', data.livesCredited, 'lives, rank:', data.rank);
+        toast({
+          title: t('dailyWinners.rewardClaimed'),
+          description: `+${data.goldCredited} ${t('common.gold')}, +${data.livesCredited} ${t('common.lives')}`,
+          duration: 4000,
+        });
+      }
+
+      // Close popup after claiming (or attempting to claim)
+      onClose();
+    } catch (error) {
+      console.error('[DAILY-WINNERS] Exception while claiming:', error);
+      // Close anyway to avoid stuck popup
+      onClose();
+    }
+  }, [onClose, t]);
 
   // Memoize players 4-10 to avoid re-renders
   const rankFourToTen = useMemo(() => topPlayers.slice(3, 10), [topPlayers]);
@@ -991,7 +1072,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   {topPlayers.length > 0 && (
                     <div className="absolute bottom-[8%] left-0 right-0 flex justify-center w-full px-4">
                       <HexAcceptButton 
-                        onClick={onClose}
+                        onClick={handleAccept}
                         className="w-full max-w-[280px]"
                         style={{ transform: 'scale(0.9)' }}
                       >
