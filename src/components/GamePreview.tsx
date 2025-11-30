@@ -46,7 +46,6 @@ const GamePreview = memo(() => {
   
   // OPTIMIZATION: Memoize profile values to prevent unnecessary re-renders
   const lives = profile?.lives ?? 0;
-  const maxLives = 5;
   const coins = walletData?.coinsCurrent ?? 0;
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
@@ -377,11 +376,12 @@ const GamePreview = memo(() => {
           });
           
           // PREFETCH: Start loading next game questions in background at question 10
+          // OPTIMIZED: Use direct edge function for faster prefetch (no translations needed here)
           if (!prefetchTriggeredRef.current) {
             prefetchTriggeredRef.current = true;
             console.log('[GamePreview] 🚀 Triggering prefetch for next game (background)');
             
-            // Trigger prefetch via edge function
+            // Non-blocking prefetch in background
             (async () => {
               try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -397,40 +397,9 @@ const GamePreview = memo(() => {
                   return;
                 }
                 
-                let questionsToUse = data.questions;
-                
-                // Apply translations if needed
-                if (lang !== 'hu' && questionsToUse.length > 0) {
-                  const questionIds = questionsToUse.map((q: any) => q.id);
-                  
-                  const { data: translations } = await supabase
-                    .from('question_translations')
-                    .select('question_id, question_text, answer_a, answer_b, answer_c')
-                    .eq('lang', lang)
-                    .in('question_id', questionIds);
-                  
-                  if (translations && translations.length > 0) {
-                    questionsToUse = questionsToUse.map((question: any) => {
-                      const translation = translations.find((t: any) => t.question_id === question.id);
-                      if (translation) {
-                        return {
-                          ...question,
-                          question: translation.question_text || question.question,
-                          answers: question.answers.map((answer: any, index: number) => ({
-                            ...answer,
-                            text: index === 0 ? (translation.answer_a || answer.text) :
-                                  index === 1 ? (translation.answer_b || answer.text) :
-                                  (translation.answer_c || answer.text)
-                          }))
-                        };
-                      }
-                      return question;
-                    });
-                  }
-                }
-                
-                setPrefetchedQuestions(questionsToUse);
-                console.log('[GamePreview] ✓ Prefetch complete - next game ready (<5ms on restart)');
+                // OPTIMIZATION: Questions already translated by backend, no need for extra DB query
+                setPrefetchedQuestions(data.questions);
+                console.log('[GamePreview] ✓ Prefetch complete - next game ready (instant restart)');
               } catch (error) {
                 console.error('[GamePreview] Prefetch exception:', error);
               }
@@ -443,7 +412,7 @@ const GamePreview = memo(() => {
     };
 
     trackMilestone();
-  }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
+  }, [currentQuestionIndex, userId, isGameReady, correctAnswers, lang]);
 
   // Language change detection - reload questions when user changes language
   // This works both during game AND when not playing (e.g., on Dashboard)
