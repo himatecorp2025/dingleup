@@ -18,6 +18,7 @@ export interface PopupState {
   showWelcomeBonus: boolean;
   showDailyGift: boolean;
   showDailyWinners: boolean;
+  showPersonalWinner: boolean; // NEW: Personal winner popup (when user has pending reward)
   ageGateCompleted: boolean;
   welcomeBonusCompleted: boolean; // Track if user interacted with Welcome Bonus (accepted or closed)
   dailyGiftCompleted: boolean; // Track if user interacted with Daily Gift (accepted or closed)
@@ -54,6 +55,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     showWelcomeBonus: false,
     showDailyGift: false,
     showDailyWinners: false,
+    showPersonalWinner: false,
     ageGateCompleted: false,
     welcomeBonusCompleted: false,
     dailyGiftCompleted: false,
@@ -143,7 +145,9 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, welcomeBonus.canClaim, popupState.welcomeBonusCompleted, dailyGift.canClaim, popupState.showDailyGift]);
 
-  // Priority 5: Daily Winners (after Daily Gift interaction, for non-winners too)
+  // Priority 5: Personal Winner OR Daily Winners (after Daily Gift interaction)
+  // CRITICAL: If user has pending reward (is winner) → show Personal Winner popup
+  // If user has NO pending reward (not winner) → show Daily Winners popup
   useEffect(() => {
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
@@ -151,20 +155,37 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
 
-    // CRITICAL: Daily Winners only appears AFTER Daily Gift is completed (accepted or closed)
+    // CRITICAL: Only show AFTER Daily Gift is completed (accepted or closed)
     // If Daily Gift can be claimed but not completed yet, wait
     if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
 
-    // Only show if can show today and not already showing
-    if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
-      const timer = setTimeout(() => {
-        setPopupState(prev => ({
-          ...prev,
-          showDailyWinners: true,
-        }));
-      }, 500);
+    // Decide which popup to show based on pending reward (winner status)
+    if (rankReward.pendingReward) {
+      // User is a winner → show Personal Winner popup
+      if (!popupState.showPersonalWinner) {
+        const timer = setTimeout(() => {
+          setPopupState(prev => ({
+            ...prev,
+            showPersonalWinner: true,
+            showDailyWinners: false, // Ensure Daily Winners is NOT shown
+          }));
+        }, 500);
 
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      // User is NOT a winner → show Daily Winners popup (if eligible)
+      if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
+        const timer = setTimeout(() => {
+          setPopupState(prev => ({
+            ...prev,
+            showDailyWinners: true,
+            showPersonalWinner: false, // Ensure Personal Winner is NOT shown
+          }));
+        }, 500);
+
+        return () => clearTimeout(timer);
+      }
     }
   }, [
     canMountModals,
@@ -176,10 +197,12 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showWelcomeBonus,
     popupState.showDailyGift,
     rankReward.showRewardPopup,
+    rankReward.pendingReward,
     dailyGift.canClaim,
     popupState.dailyGiftCompleted,
     dailyWinners.canShowToday,
     popupState.showDailyWinners,
+    popupState.showPersonalWinner,
   ]);
 
   // Handlers for closing popups
@@ -224,6 +247,23 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }));
   };
 
+  const closePersonalWinner = async () => {
+    // Close personal winner popup and claim the reward
+    try {
+      await rankReward.claimReward();
+      setPopupState(prev => ({
+        ...prev,
+        showPersonalWinner: false,
+      }));
+    } catch (error) {
+      console.error('[PERSONAL-WINNER] Error closing popup:', error);
+      setPopupState(prev => ({
+        ...prev,
+        showPersonalWinner: false,
+      }));
+    }
+  };
+
   return {
     popupState,
     closeAgeGate,
@@ -231,6 +271,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     closeWelcomeBonus,
     closeDailyGift,
     closeDailyWinners,
+    closePersonalWinner,
     // Export popup hook data and actions (eliminates need for external hook calls)
     dailyGift: {
       canClaim: dailyGift.canClaim,

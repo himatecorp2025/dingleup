@@ -6,11 +6,22 @@ import React, { PropsWithChildren } from 'react';
  * - POINTY-TOP geometria: 165° interior angles at top/bottom vertices
  * - Shield: Magasság -10% (5% fel, 5% le), szélesség +6% (3% bal, 3% jobb)
  * - Kétlépcsős arany keret (külső sötét, belső világos highlight)
- * - Lila kristály belső panel diagonális fénycsíkokkal
+ * - Lila kristály belső panel diagonális fénycsíkokkal (vagy customInnerBackground)
  * - Specular conic highlight a tetején
  * - 3D árnyékok és vastagság
  */
-const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine?: boolean }>> = ({ children, className = '', showShine = true }) => {
+interface HexShieldFrameProps {
+  className?: string;
+  showShine?: boolean;
+  customInnerBackground?: string; // Optional custom background for inner crystal panel
+}
+
+const HexShieldFrame: React.FC<PropsWithChildren<HexShieldFrameProps>> = ({ 
+  children, 
+  className = '', 
+  showShine = true,
+  customInnerBackground
+}) => {
   return (
     <div className={`relative overflow-hidden ${className}`}
          style={{ 
@@ -119,7 +130,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
         {/* Inner Crystal Panel - 165° (inset 16px) */}
         <path
           d="M 180 46 L 326 74.536 L 326 525.464 L 180 554 L 34 525.464 L 34 74.536 Z"
-          fill="url(#crystalRadial)"
+          fill={customInnerBackground || "url(#crystalRadial)"}
         />
 
         {/* Specular Highlight Overlay */}

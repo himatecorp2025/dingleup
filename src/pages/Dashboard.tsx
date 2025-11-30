@@ -44,6 +44,7 @@ const prefetchGameAssets = () => {
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
+import { PersonalWinnerDialog } from '@/components/PersonalWinnerDialog';
 import { DailyRankRewardDialog } from '@/components/DailyRankRewardDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
@@ -729,11 +730,23 @@ const Dashboard = () => {
         claiming={popupManager.dailyGift.claiming}
       />
 
-      {/* Daily Winners Dialog - LAST (ONLY if no rank reward) */}
+      {/* Daily Winners Dialog - LAST (ONLY if user is NOT winner) */}
       <DailyWinnersDialog
         open={popupManager.popupState.showDailyWinners}
         onClose={popupManager.closeDailyWinners}
       />
+
+      {/* Personal Winner Dialog - LAST (ONLY if user IS winner) */}
+      {popupManager.rankReward.pendingReward && (
+        <PersonalWinnerDialog
+          open={popupManager.popupState.showPersonalWinner}
+          onClose={popupManager.closePersonalWinner}
+          rank={popupManager.rankReward.pendingReward.rank}
+          username={popupManager.rankReward.pendingReward.username}
+          goldReward={popupManager.rankReward.pendingReward.gold}
+          livesReward={popupManager.rankReward.pendingReward.lives}
+        />
+      )}
 
       <div data-tutorial="bottom-nav">
         <BottomNav />
