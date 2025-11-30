@@ -46,12 +46,12 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       iconColor: 'hsl(var(--foreground))',
     },
     avatar: {
-      gradientOuter: 'from-purple-900 via-purple-600 to-purple-800',
-      gradientMiddle: 'from-purple-600 via-purple-400 to-purple-700',
-      gradientInner: 'from-purple-400 via-purple-500 to-purple-700',
-      borderColor: 'border-purple-400',
-      shadowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'rgba(168, 85, 247, 0.4)',
+      gradientOuter: 'from-cyan-900 via-cyan-600 to-cyan-800',
+      gradientMiddle: 'from-cyan-600 via-cyan-400 to-cyan-700',
+      gradientInner: 'from-cyan-400 via-cyan-500 to-cyan-700',
+      borderColor: 'border-cyan-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(34,211,238,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'rgba(34, 211, 238, 0.4)',
       iconColor: 'hsl(var(--foreground))',
     },
   };
