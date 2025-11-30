@@ -67,11 +67,19 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
 
   const isAdminTestMode = userRoleData?.role === 'admin';
 
-  // ADMIN TEST MODE: Force Daily Winners popup for admin testing
-  const forceShowDailyWinnersForAdmin = isAdminTestMode;
+  // ADMIN TEST MODE: Mock 1st place rank reward for testing
+  const mockAdminRankReward = isAdminTestMode ? {
+    rank: 1,
+    gold: 1500,
+    lives: 10,
+    isSundayJackpot: false,
+    dayDate: new Date().toISOString().split('T')[0],
+    username: username || 'DingleUP',
+    rewardPayload: null
+  } : null;
   
-  // ADMIN TEST MODE: Disable Personal Winner mock (null = no personal winner for admin)
-  const mockAdminRankReward = null;
+  // ADMIN TEST MODE: Disable Daily Winners force show
+  const forceShowDailyWinnersForAdmin = false;
 
   const [popupState, setPopupState] = useState<PopupState>({
     showAgeGate: false,
