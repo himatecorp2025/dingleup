@@ -31,14 +31,16 @@ export function useAdminMetricsQuery() {
   const query = useQuery({
     queryKey: [ADMIN_METRICS_KEY],
     queryFn: fetchAdminMetrics,
-    staleTime: 1000 * 30, // 30 seconds
-    gcTime: 1000 * 60 * 5, // 5 minutes cache
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
   });
 
   // Real-time subscription for admin metrics updates
   useEffect(() => {
+    console.log('[useAdminMetricsQuery] Setting up realtime subscription');
+
     const channel = supabase
       .channel('admin-metrics-realtime')
       .on(
@@ -48,35 +50,50 @@ export function useAdminMetricsQuery() {
           schema: 'public',
           table: 'profiles',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_METRICS_KEY] });
+        (payload) => {
+          console.log('[useAdminMetricsQuery] Profiles update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_METRICS_KEY],
+            exact: true,
+          });
         }
       )
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'game_results',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_METRICS_KEY] });
+        (payload) => {
+          console.log('[useAdminMetricsQuery] Game results update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_METRICS_KEY],
+            exact: true,
+          });
         }
       )
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'purchases',
         },
-        () => {
-          queryClient.invalidateQueries({ queryKey: [ADMIN_METRICS_KEY] });
+        (payload) => {
+          console.log('[useAdminMetricsQuery] Purchases update received:', payload);
+          queryClient.refetchQueries({
+            queryKey: [ADMIN_METRICS_KEY],
+            exact: true,
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[useAdminMetricsQuery] Subscription status:', status);
+      });
 
     return () => {
+      console.log('[useAdminMetricsQuery] Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
