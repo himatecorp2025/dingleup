@@ -158,6 +158,23 @@ serve(async (req) => {
       }
     });
 
+    // Calculate tier percentages
+    const totalTieredBoxes = Object.values(tierCounts).reduce((sum, count) => sum + count, 0);
+    const tierPercentages = Object.entries(tierCounts).reduce((acc, [tier, count]) => {
+      acc[tier] = totalTieredBoxes > 0 ? Math.round((count / totalTieredBoxes) * 100) : 0;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Tier average rewards (fixed values from configuration)
+    const tierRewards = {
+      A: { gold: 75, life: 4 },
+      B: { gold: 120, life: 5 },
+      C: { gold: 150, life: 6 },
+      D: { gold: 225, life: 8 },
+      E: { gold: 500, life: 15 },
+      F: { gold: 1000, life: 25 }
+    };
+
     // Calculate average rewards only from opened lootboxes
     const openedRewards = rewardsData.filter(r => r.status === 'opened');
 
@@ -242,17 +259,22 @@ serve(async (req) => {
         }
       : null;
 
+    const expiredCount = statusBreakdown.expired || 0;
+    const expiredPercentage = totalDrops > 0 ? Math.round((expiredCount / totalDrops) * 100) : 0;
+
     return new Response(
       JSON.stringify({
         overview: {
           totalDrops,
           openedNow,
           stored,
-          expired: statusBreakdown.expired || 0,
+          expired: expiredCount,
           activeDrop: statusBreakdown.active_drop || 0
         },
         dropsBySource,
         tierDistribution: tierCounts,
+        tierPercentages,
+        tierRewards,
         averageRewards: {
           gold: Math.round(avgGold),
           life: Math.round(avgLife)
@@ -263,7 +285,8 @@ serve(async (req) => {
         topUsers,
         decisionRate: {
           openNowPercentage: totalDrops > 0 ? Math.round((openedNow / totalDrops) * 100) : 0,
-          storePercentage: totalDrops > 0 ? Math.round((stored / totalDrops) * 100) : 0
+          storePercentage: totalDrops > 0 ? Math.round((stored / totalDrops) * 100) : 0,
+          expiredPercentage
         },
         hourlyDistribution: hourlyDistribution.map((count, hour) => ({ hour, count })),
         activityWindow: avgActivityWindow,

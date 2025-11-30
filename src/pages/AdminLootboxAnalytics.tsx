@@ -16,6 +16,8 @@ interface LootboxAnalytics {
   };
   dropsBySource: Record<string, number>;
   tierDistribution: Record<string, number>;
+  tierPercentages: Record<string, number>;
+  tierRewards: Record<string, { gold: number; life: number }>;
   averageRewards: {
     gold: number;
     life: number;
@@ -32,6 +34,7 @@ interface LootboxAnalytics {
   decisionRate: {
     openNowPercentage: number;
     storePercentage: number;
+    expiredPercentage: number;
   };
   hourlyDistribution: Array<{ hour: number; count: number }>;
   activityWindow: {
@@ -174,6 +177,9 @@ const AdminLootboxAnalytics = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{analytics.overview.expired}</div>
+              <p className="text-xs text-white/60 mt-1">
+                {analytics.decisionRate.expiredPercentage}% {t('admin.lootbox.of_total')}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -210,14 +216,26 @@ const AdminLootboxAnalytics = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Object.entries(analytics.tierDistribution).map(([tier, count]) => (
-                  <div key={tier} className="flex items-center justify-between">
-                    <span className="text-white/80">
-                      {t('admin.lootbox.tier')} {tier}
-                    </span>
-                    <span className="text-white font-bold">{count}</span>
-                  </div>
-                ))}
+                {Object.entries(analytics.tierDistribution).map(([tier, count]) => {
+                  const rewards = analytics.tierRewards[tier];
+                  const percentage = analytics.tierPercentages[tier] || 0;
+                  return (
+                    <div key={tier} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/80 font-semibold">
+                          {t('admin.lootbox.tier')} {tier}
+                        </span>
+                        <span className="text-white font-bold">{count}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs pl-4">
+                        <span className="text-white/60">
+                          {rewards.gold} {t('common.gold')} + {rewards.life} {t('common.life')}
+                        </span>
+                        <span className="text-purple-400">{percentage}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between text-sm">
