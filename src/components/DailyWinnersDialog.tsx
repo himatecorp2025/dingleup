@@ -563,6 +563,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             className="flex flex-col items-center" 
                             style={{ 
                               width: 'clamp(55px, 22vw, 90px)',
+                              minWidth: 'clamp(55px, 22vw, 90px)',
                               minHeight: 'clamp(110px, 35vw, 160px)'
                             }}
                           >
@@ -729,6 +730,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             className="flex flex-col items-center" 
                             style={{ 
                               width: 'clamp(55px, 22vw, 90px)',
+                              minWidth: 'clamp(55px, 22vw, 90px)',
                               minHeight: 'clamp(110px, 35vw, 160px)'
                             }}
                           >
