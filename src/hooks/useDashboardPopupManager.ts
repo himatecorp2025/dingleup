@@ -184,10 +184,13 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
     
-    // CRITICAL: Only show AFTER Daily Gift is completed (accepted or closed)
-    // If Daily Gift can be claimed but not completed yet, wait
-    if (popupState.showDailyGift) return;
-    if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    // ADMIN TEST MODE: Skip Daily Gift dependency for admin users
+    if (!isAdminTestMode) {
+      // CRITICAL: Only show AFTER Daily Gift is completed (accepted or closed)
+      // If Daily Gift can be claimed but not completed yet, wait
+      if (popupState.showDailyGift) return;
+      if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    }
 
     // Decide which popup to show based on pending reward (winner status)
     // ADMIN TEST MODE: Use mock reward for admin users
