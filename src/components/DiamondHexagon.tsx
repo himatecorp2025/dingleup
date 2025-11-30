@@ -238,8 +238,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
         {/* Content: avatar esetén külön struktúra közvetlenül inset-[5px]-el, más típusoknál inset-0 + translateY */}
         {type === 'avatar' ? (
-          // Avatar Image - közvetlenül inset-x-[5px] inset-y-[-0.5px], 6px nagyobb vertikálisan mint az eredeti 5px
-          <div className="absolute inset-x-[5px] inset-y-[-0.5px] flex items-center justify-center z-[5]">
+          // Avatar Image - finoman visszavéve 2px-t vertikálisan
+          <div className="absolute inset-x-[5px] inset-y-[0.5px] flex items-center justify-center z-[5]">
             <img
               src={avatarUrl || defaultProfileImage}
               alt={String(value)}
