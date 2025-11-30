@@ -3875,6 +3875,7 @@ export type Database = {
         Returns: Json
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
+      expire_old_lootboxes: { Args: never; Returns: number }
       generate_invitation_code: { Args: never; Returns: string }
       generate_lootbox_daily_plan: {
         Args: {

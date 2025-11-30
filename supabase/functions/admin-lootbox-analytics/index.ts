@@ -106,11 +106,11 @@ serve(async (req) => {
         .in('status', ['opened', 'stored'])
         .then(({ data }) => data || []),
       
-      // Reward tier distribution
+      // Reward tier distribution - include ALL lootboxes that have tier data, not just opened
       supabaseAdmin
         .from('lootbox_instances')
-        .select('rewards_gold, rewards_life, metadata')
-        .eq('status', 'opened')
+        .select('rewards_gold, rewards_life, metadata, status')
+        .not('metadata->tier', 'is', null)
         .then(({ data }) => data || []),
       
       // Daily drop frequency (last 30 days)
@@ -149,7 +149,7 @@ serve(async (req) => {
     const openedNow = decisionsData.filter(d => d.status === 'opened').length;
     const stored = decisionsData.filter(d => d.status === 'stored').length;
 
-    // Calculate reward tier distribution
+    // Calculate reward tier distribution from all lootboxes with tier information
     const tierCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
     rewardsData.forEach(reward => {
       const metadata = reward.metadata as { tier?: string } | null;
@@ -158,11 +158,14 @@ serve(async (req) => {
       }
     });
 
-    const avgGold = rewardsData.length > 0 
-      ? rewardsData.reduce((sum, r) => sum + (r.rewards_gold || 0), 0) / rewardsData.length 
+    // Calculate average rewards only from opened lootboxes
+    const openedRewards = rewardsData.filter(r => r.status === 'opened');
+
+    const avgGold = openedRewards.length > 0 
+      ? openedRewards.reduce((sum, r) => sum + (r.rewards_gold || 0), 0) / openedRewards.length 
       : 0;
-    const avgLife = rewardsData.length > 0 
-      ? rewardsData.reduce((sum, r) => sum + (r.rewards_life || 0), 0) / rewardsData.length 
+    const avgLife = openedRewards.length > 0 
+      ? openedRewards.reduce((sum, r) => sum + (r.rewards_life || 0), 0) / openedRewards.length 
       : 0;
 
     // Daily frequency chart data
