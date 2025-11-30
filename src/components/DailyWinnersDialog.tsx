@@ -645,7 +645,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                         {/* 1ST PLACE - GOLD - MIDDLE (BIGGEST) */}
                         {topPlayers[0] && (
-                          <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
+                          <div 
+                            className="flex flex-col items-center" 
+                            style={{ 
+                              width: 'clamp(55px, 22vw, 90px)',
+                              minWidth: 'clamp(55px, 22vw, 90px)',
+                              minHeight: 'clamp(110px, 35vw, 160px)'
+                            }}
+                          >
                             <div
                               className="w-full flex flex-col items-center"
                               style={{
