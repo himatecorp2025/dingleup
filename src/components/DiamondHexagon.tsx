@@ -236,28 +236,26 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
           aria-hidden
         />
 
-        {/* Content: avatar esetén nincs translateY, hogy kitöltse a hexagont */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: type === 'avatar' ? 'none' : 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
-          {type === 'avatar' ? (
-            // Avatar Image - fills entire hexagon without vertical shift
-            <div className="absolute inset-[5px] flex items-center justify-center z-[5]">
-              <img
-                src={avatarUrl || defaultProfileImage}
-                alt={String(value)}
-                className="w-full h-full object-cover clip-hexagon"
-              />
-            </div>
-          ) : (
-            <>
-              {renderIcon()}
-              <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
-                style={{ fontSize: 'clamp(0.625rem, 1.5vh, 1rem)', marginTop: 'clamp(4px, 1vh, 8px)' }}
-              >
-                {value}
-              </span>
-            </>
-          )}
-        </div>
+        {/* Content: avatar esetén külön struktúra közvetlenül inset-[5px]-el, más típusoknál inset-0 + translateY */}
+        {type === 'avatar' ? (
+          // Avatar Image - közvetlenül inset-[5px], nincs külső wrapper
+          <div className="absolute inset-[5px] flex items-center justify-center z-[5]">
+            <img
+              src={avatarUrl || defaultProfileImage}
+              alt={String(value)}
+              className="w-full h-full object-cover clip-hexagon"
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10" style={{ transform: 'translateY(-4px)', gap: 'clamp(2px, 0.5vh, 4px)' }}>
+            {renderIcon()}
+            <span className="text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              style={{ fontSize: 'clamp(0.625rem, 1.5vh, 1rem)', marginTop: 'clamp(4px, 1vh, 8px)' }}
+            >
+              {value}
+            </span>
+          </div>
+        )}
       </div>
     </>
   );
