@@ -6,14 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Coins, Heart, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const AdminManualCredit = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   const [userId, setUserId] = useState('');
   const [goldAmount, setGoldAmount] = useState('0');
@@ -28,30 +27,24 @@ const AdminManualCredit = () => {
     const lives = parseInt(livesAmount);
     
     if (!userId.trim()) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'User ID is required',
-        variant: 'destructive',
         duration: 4000,
       });
       return;
     }
     
     if (gold === 0 && lives === 0) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'At least one of Gold or Lives must be non-zero',
-        variant: 'destructive',
         duration: 4000,
       });
       return;
     }
     
     if (!reason.trim()) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Reason is required',
-        variant: 'destructive',
         duration: 4000,
       });
       return;
@@ -75,8 +68,7 @@ const AdminManualCredit = () => {
         throw new Error(data.error);
       }
 
-      toast({
-        title: 'Success',
+      toast.success('Success', {
         description: `Manual credit applied successfully`,
         duration: 2000,
       });
@@ -89,10 +81,8 @@ const AdminManualCredit = () => {
       
     } catch (error) {
       console.error('Manual credit error:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: error instanceof Error ? error.message : 'Failed to apply manual credit',
-        variant: 'destructive',
         duration: 4000,
       });
     } finally {
