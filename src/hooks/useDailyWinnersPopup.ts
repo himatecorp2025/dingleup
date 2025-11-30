@@ -5,6 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
  * Hook to manage daily winners popup visibility
  * Shows popup automatically once per day on first dashboard visit
  * Uses timezone-aware edge function (matching Daily Gift behavior)
+ * 
+ * TESTING MODE: When forceAlwaysShow=true, popup appears on every refresh (for admin testing)
  */
 export const useDailyWinnersPopup = (userId: string | undefined, username: string | undefined, forceAlwaysShow = false) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -19,6 +21,13 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
 
     const checkIfCanShowToday = async () => {
       try {
+        // TESTING BYPASS: If forceAlwaysShow=true, always show popup
+        if (forceAlwaysShow) {
+          setCanShowToday(true);
+          console.log('[DAILY-WINNERS-POPUP] TESTING MODE: forceAlwaysShow=true, showing popup');
+          return;
+        }
+
         // Call timezone-aware backend edge function (matching Daily Gift pattern)
         const { data, error } = await supabase.functions.invoke('get-daily-winners-status');
 
@@ -55,6 +64,14 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
     if (!userId) return;
 
     try {
+      // TESTING BYPASS: If forceAlwaysShow=true, don't mark as shown (allow re-appearing)
+      if (forceAlwaysShow) {
+        console.log('[DAILY-WINNERS-POPUP] TESTING MODE: Skipping database update, popup will reappear on next refresh');
+        setShowPopup(false);
+        setCanShowToday(false);
+        return;
+      }
+
       // Get current local date from backend (timezone-aware)
       const { data: statusData } = await supabase.functions.invoke('get-daily-winners-status');
       const localDate = statusData?.localDate || new Date().toISOString().split('T')[0];
