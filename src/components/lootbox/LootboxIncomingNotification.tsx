@@ -63,12 +63,12 @@ export const LootboxIncomingNotification = ({ onComplete }: LootboxIncomingNotif
       }}
     >
       <div
-        className="relative px-2 py-1.5 rounded-lg backdrop-blur-md shadow-xl border"
+        className="relative px-1.5 py-1 rounded-md backdrop-blur-md shadow-lg border"
         style={{
           background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.95) 0%, rgba(202, 138, 4, 0.95) 100%)',
           borderColor: 'rgba(250, 204, 21, 0.8)',
-          boxShadow: '0 0 15px rgba(234, 179, 8, 0.6), inset 0 1px 5px rgba(255, 255, 255, 0.3)',
-          maxWidth: 'min(140px, calc(100vw - 24px))',
+          boxShadow: '0 0 12px rgba(234, 179, 8, 0.6), inset 0 1px 4px rgba(255, 255, 255, 0.3)',
+          maxWidth: 'min(105px, calc(100vw - 24px))',
         }}
       >
         {/* Glow effect */}
@@ -84,19 +84,19 @@ export const LootboxIncomingNotification = ({ onComplete }: LootboxIncomingNotif
         {/* Content */}
         <div className="relative text-center">
           {/* Line 1 */}
-          <p className="text-white font-black text-xs leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+          <p className="text-white font-black text-[9px] leading-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
             {t('lootbox.incoming.title')}
           </p>
 
           {/* Line 2 with countdown */}
-          <p className="text-white/90 font-bold text-[10px] mt-0.5 leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+          <p className="text-white/90 font-bold text-[8px] mt-0.5 leading-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
             {t('lootbox.incoming.subtitle')}:{' '}
             <span
-              className="inline-block font-black text-xs text-yellow-100"
+              className="inline-block font-black text-[9px] text-yellow-100"
               style={{
-                transform: shake ? 'scale(1.2) translateY(-1px)' : 'scale(1)',
+                transform: shake ? 'scale(1.15) translateY(-0.5px)' : 'scale(1)',
                 transition: 'transform 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-                textShadow: '0 0 5px rgba(250, 204, 21, 0.8), 0 1px 2px rgba(0,0,0,0.5)',
+                textShadow: '0 0 4px rgba(250, 204, 21, 0.8), 0 1px 1px rgba(0,0,0,0.5)',
               }}
             >
               {countdown}
