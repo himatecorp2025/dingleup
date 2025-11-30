@@ -9,6 +9,7 @@ interface AppRouteGuardProps {
 export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
+  const [isPWAOrNative, setIsPWAOrNative] = useState(false);
   const location = useLocation();
 
   // Detect device type
@@ -20,6 +21,17 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     checkDevice();
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  // Detect PWA/native mode
+  useEffect(() => {
+    const checkPWAMode = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      const isIOSStandalone = (window.navigator as any).standalone === true;
+      const isNativeApp = !!(window as any).ReactNativeWebView;
+      setIsPWAOrNative(isStandalone || isIOSStandalone || isNativeApp);
+    };
+    checkPWAMode();
   }, []);
 
   // Optimized session check - only check once on mount, then rely on auth state changes
@@ -37,7 +49,16 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Landing page is now accessible on all devices - no automatic redirect
+  // CRITICAL: Mobilon/táblagépen PWA/natív módban mindig login/register legyen az első oldal
+  // Ha a user nincs bejelentkezve ÉS landing page-en van ÉS mobil/tablet ÉS PWA/natív
+  if (
+    isMobileOrTablet && 
+    isPWAOrNative && 
+    hasSession === false && 
+    location.pathname === '/'
+  ) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
   // Admin pages always accessible
   if (location.pathname.startsWith('/admin')) {
