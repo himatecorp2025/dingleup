@@ -559,7 +559,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       >
                         {/* 2ND PLACE - BRONZE - LEFT (was SILVER) */}
                         {topPlayers[2] && (
-                          <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
+                          <div 
+                            className="flex flex-col items-center" 
+                            style={{ 
+                              width: 'clamp(55px, 22vw, 90px)',
+                              minHeight: 'clamp(110px, 35vw, 160px)'
+                            }}
+                          >
                             <div
                               className="w-full flex flex-col items-center"
                               style={{
@@ -719,7 +725,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                         {/* 3RD PLACE - SILVER - RIGHT (was BRONZE) */}
                         {topPlayers[1] && (
-                          <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
+                          <div 
+                            className="flex flex-col items-center" 
+                            style={{ 
+                              width: 'clamp(55px, 22vw, 90px)',
+                              minHeight: 'clamp(110px, 35vw, 160px)'
+                            }}
+                          >
                             <div
                               className="w-full flex flex-col items-center"
                               style={{
