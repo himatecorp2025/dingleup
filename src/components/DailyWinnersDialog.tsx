@@ -557,13 +557,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </p>
                       </div>
 
-                      <HexAcceptButton 
-                        onClick={handlePlayNow}
-                        className="w-full max-w-[280px]"
-                        style={{ transform: 'scale(0.9)' }}
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 flex justify-center pb-10"
+                        style={{ zIndex: 30 }}
                       >
-                        {t('dailyWinners.playNowButton')}
-                      </HexAcceptButton>
+                        <HexAcceptButton 
+                          onClick={handlePlayNow}
+                          className="w-full max-w-[280px]"
+                        >
+                          {t('dailyWinners.playNowButton')}
+                        </HexAcceptButton>
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -978,15 +982,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                       {/* CONGRATULATIONS BUTTON - Fixed at bottom */}
                       <div 
-                        className="w-full flex justify-center px-4" 
-                        style={{ 
-                          marginTop: 'clamp(16px, 4vh, 28px)',
-                          transform: 'translateY(-5%)'
-                        }}
+                        className="absolute bottom-0 left-0 right-0 flex justify-center pb-10"
+                        style={{ zIndex: 30 }}
                       >
                         <HexAcceptButton 
                           onClick={handleAccept}
-                          className="w-full max-w-[100%]"
+                          className="w-full max-w-[280px]"
                           disabled={isClaiming}
                         >
                           <span className="font-bold leading-tight flex items-center justify-center w-full" style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
