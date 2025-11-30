@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { GoldLootboxIcon } from './GoldLootboxIcon';
 import { LootboxDecisionDialog } from './LootboxDecisionDialog';
-
+import { LootboxIncomingNotification } from './LootboxIncomingNotification';
 import { LootboxCountdownTimer } from './LootboxCountdownTimer';
 import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,6 +20,8 @@ export const LootboxDropOverlay = () => {
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
+  const [showNotification, setShowNotification] = useState(false);
+  const [startDrop, setStartDrop] = useState(false);
 
   // Hide overlay on admin pages, auth pages, and landing page
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -65,13 +67,13 @@ export const LootboxDropOverlay = () => {
     }
   }, [activeLootbox, user]);
 
-  // Handle drop lifecycle: immediate drop animation
+  // Handle notification and drop lifecycle
   useEffect(() => {
     if (!activeLootbox || loading || isAdminPage || isAuthPage || isLandingPage || !user) {
       return;
     }
 
-    if (isVisible || isAnimating) {
+    if (showNotification || isVisible || isAnimating) {
       return;
     }
 
@@ -79,9 +81,8 @@ export const LootboxDropOverlay = () => {
       return;
     }
 
-    // Start box drop immediately
-    setIsVisible(true);
-    setIsAnimating(true);
+    // Show notification first (5 seconds before drop)
+    setShowNotification(true);
   }, [
     activeLootbox,
     loading,
@@ -90,9 +91,19 @@ export const LootboxDropOverlay = () => {
     isLandingPage,
     user,
     dismissedLootboxes,
+    showNotification,
     isVisible,
     isAnimating,
   ]);
+
+  // Start drop after notification completes
+  useEffect(() => {
+    if (startDrop && !isVisible && !isAnimating) {
+      setIsVisible(true);
+      setIsAnimating(true);
+      setStartDrop(false);
+    }
+  }, [startDrop, isVisible, isAnimating]);
   
 
   // End drop animation after 2.25s
@@ -105,6 +116,11 @@ export const LootboxDropOverlay = () => {
 
     return () => window.clearTimeout(timer);
   }, [isAnimating]);
+
+  const handleNotificationComplete = () => {
+    setShowNotification(false);
+    setStartDrop(true);
+  };
 
   const handleExpired = () => {
     setIsVisible(false);
@@ -139,6 +155,11 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
+      {/* Incoming Notification - 5 seconds before drop */}
+      {showNotification && (
+        <LootboxIncomingNotification onComplete={handleNotificationComplete} />
+      )}
+
       {/* Lootbox - drops to Speed Booster level */}
       {isVisible && (
         <div
