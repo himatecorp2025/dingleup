@@ -8,6 +8,7 @@ import { useI18n, LangCode } from '@/i18n';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
+import defaultProfileImage from '@/assets/default-profile.png';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -468,17 +469,11 @@ const Profile = () => {
                 after:absolute after:inset-[2px] after:clip-hexagon after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
                 relative transform-gpu"
             >
-              {profile.avatar_url ? (
-                <img 
-                  src={profile.avatar_url} 
-                  alt={profile.username}
-                  className="w-full h-full object-cover clip-hexagon"
-                />
-              ) : (
-                <span className="text-2xl sm:text-3xl font-black text-foreground drop-shadow-lg">
-                  {getInitials(profile.username)}
-                </span>
-              )}
+              <img 
+                src={profile.avatar_url || defaultProfileImage} 
+                alt={profile.username}
+                className="w-full h-full object-cover clip-hexagon"
+              />
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
