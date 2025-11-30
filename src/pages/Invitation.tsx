@@ -50,7 +50,7 @@ const Invitation = () => {
         setUserId(session.user.id);
         fetchInvitationData(session.user.id);
       } else {
-        navigate('/auth/choice');
+        navigate('/auth/login');
       }
     });
   }, [navigate]);

@@ -58,7 +58,7 @@ const Leaderboard = () => {
       if (session?.user) {
         setUserId(session.user.id);
       } else {
-        navigate('/auth/choice');
+        navigate('/auth/login');
       }
     });
   }, [navigate]);

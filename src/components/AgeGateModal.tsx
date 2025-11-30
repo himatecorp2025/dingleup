@@ -100,7 +100,7 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
       // Log out user and redirect
       setTimeout(async () => {
         await supabase.auth.signOut();
-        navigate('/auth/choice');
+        navigate('/auth/login');
       }, 3000);
       return;
     }
