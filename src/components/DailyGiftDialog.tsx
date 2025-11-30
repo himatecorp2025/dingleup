@@ -74,7 +74,7 @@ const DailyGiftDialog = ({
         clearTimeout(t);
         setContentVisible(false);
         setBurstActive(false);
-        setClaimed(false); // Reset claimed state when dialog closes
+        setClaimed(false);
       };
     } else {
       setContentVisible(false);
@@ -210,7 +210,7 @@ const DailyGiftDialog = ({
               aspectRatio: '9 / 16',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
+              transition: 'transform 1.125s cubic-bezier(0.34, 1.56, 0.64, 1) 0ms, opacity 1.125s ease-in-out 0ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
