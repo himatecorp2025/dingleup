@@ -588,16 +588,11 @@ const Dashboard = () => {
         <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col-reverse items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
           {/* Top 100 Leaderboard Carousel + Active Lootbox - legalsó (közvetlenül BottomNav felett) */}
           <div className="w-full" style={{ marginBottom: '2vh' }}>
-            <div className="flex items-center justify-center gap-4 px-3">
-              <div className="flex-1 max-w-screen-lg">
+            {/* LeaderboardCarousel fixed width container - prevents shift when lootbox appears */}
+            <div className="flex justify-center px-3">
+              <div className="w-full max-w-screen-lg">
                 <LeaderboardCarousel />
               </div>
-              {activeLootbox && (
-                <ActiveLootboxDisplay
-                  expiresAt={activeLootbox.expires_at}
-                  onClick={() => setShowLootboxDecision(true)}
-                />
-              )}
             </div>
           </div>
 
