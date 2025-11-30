@@ -51,37 +51,60 @@ export function useLeaderboardQuery(countryCode: string | undefined) {
     queryKey: LEADERBOARD_QUERY_KEY(countryCode || ''),
     queryFn: () => fetchLeaderboard(countryCode!),
     enabled: !!countryCode,
-    staleTime: 1000 * 30, // 30 seconds - optimized cache duration
-    gcTime: 1000 * 60 * 5, // 5 minutes cache
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 0, // No cache - always fetch fresh data
+    gcTime: 0, // No garbage collection delay
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Refetch on component mount
     refetchInterval: false, // Disable polling, rely on real-time subscriptions
   });
 
-  // Real-time subscription for leaderboard updates (optimized)
+  // Real-time subscription for leaderboard updates (optimized for instant updates)
   useEffect(() => {
     if (!countryCode) return;
 
+    console.log('[useLeaderboardQuery] Setting up realtime subscription for country:', countryCode);
+
     const channel = supabase
-      .channel(`leaderboard-${countryCode}`)
+      .channel(`leaderboard-realtime-${countryCode}`)
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*', // Listen to ALL events (INSERT, UPDATE, DELETE)
           schema: 'public',
           table: 'leaderboard_cache',
           filter: `country_code=eq.${countryCode}`,
         },
-        () => {
-          // Invalidate cache only when leaderboard_cache updates for this country
-          queryClient.invalidateQueries({ 
-            queryKey: LEADERBOARD_QUERY_KEY(countryCode) 
+        (payload) => {
+          console.log('[useLeaderboardQuery] Realtime update received:', payload);
+          // Immediately refetch with zero delay
+          queryClient.refetchQueries({ 
+            queryKey: LEADERBOARD_QUERY_KEY(countryCode),
+            exact: true 
           });
         }
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'daily_rankings',
+        },
+        (payload) => {
+          console.log('[useLeaderboardQuery] Daily rankings update received:', payload);
+          // Also refetch when daily_rankings changes
+          queryClient.refetchQueries({ 
+            queryKey: LEADERBOARD_QUERY_KEY(countryCode),
+            exact: true 
+          });
+        }
+      )
+      .subscribe((status) => {
+        console.log('[useLeaderboardQuery] Subscription status:', status);
+      });
 
     return () => {
+      console.log('[useLeaderboardQuery] Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [countryCode, queryClient]);
@@ -94,11 +117,11 @@ export function useLeaderboardQuery(countryCode: string | undefined) {
   };
 }
 
-// Prefetch leaderboard before navigation
+// Prefetch leaderboard before navigation (with zero cache)
 export function prefetchLeaderboard(countryCode: string, queryClient: any) {
   return queryClient.prefetchQuery({
     queryKey: LEADERBOARD_QUERY_KEY(countryCode),
     queryFn: () => fetchLeaderboard(countryCode),
-    staleTime: 1000 * 60,
+    staleTime: 0, // No cache on prefetch either
   });
 }
