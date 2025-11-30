@@ -18,8 +18,8 @@ const generateUniqueId = (prefix: string) => `${prefix}-${Math.random().toString
 // Get shield inner color based on rank
 const getShieldColorByRank = (rank: number): string => {
   if (rank === 1) {
-    // Gold
-    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #FFD700 0%, #FFB700 30%, #FFA500 60%, #DAA520 100%)';
+    // Rich, vibrant gold with more depth
+    return 'radial-gradient(ellipse 100% 80% at 50% -10%, #FFE55C 0%, #FFD700 20%, #FFC700 40%, #FFB700 60%, #FFAA00 80%, #DAA520 100%)';
   } else if (rank === 2) {
     // Silver
     return 'radial-gradient(ellipse 100% 80% at 50% -10%, #F5F5F5 0%, #E8E8E8 30%, #CFCFCF 60%, #A0A0A0 100%)';
@@ -311,22 +311,31 @@ export const PersonalWinnerDialog = ({
                   >
                     <div className="text-center space-y-4">
                       <h2 
-                        className="font-black text-white uppercase"
+                        className="font-black uppercase"
                         style={{
-                          fontSize: 'clamp(1.5rem, 5vw, 2rem)',
-                          WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
-                          letterSpacing: '0.05em',
-                          lineHeight: '1.2'
+                          fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
+                          color: rank === 1 ? '#1a0f00' : '#ffffff',
+                          WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.6)' : '1.5px rgba(0,0,0,0.9)',
+                          textShadow: rank === 1 
+                            ? '4px 4px 8px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.9), 0 0 15px rgba(255,215,0,0.7)' 
+                            : '2px 2px 4px rgba(0,0,0,0.3)',
+                          letterSpacing: '0.08em',
+                          lineHeight: '1.2',
+                          fontWeight: 900
                         }}
                       >
                         Gratulálunk {username}!
                       </h2>
                       
                       <p 
-                        className="text-white font-bold"
+                        className="font-bold"
                         style={{
-                          fontSize: 'clamp(1.1rem, 4vw, 1.5rem)',
-                          WebkitTextStroke: '1px rgba(0,0,0,0.8)',
+                          fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
+                          color: rank === 1 ? '#2d1a00' : '#ffffff',
+                          WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.5)' : '1px rgba(0,0,0,0.8)',
+                          textShadow: rank === 1 
+                            ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 25px rgba(255,215,0,0.7)' 
+                            : '1px 1px 2px rgba(0,0,0,0.3)',
                           lineHeight: '1.4'
                         }}
                       >
@@ -334,25 +343,60 @@ export const PersonalWinnerDialog = ({
                       </p>
                       
                       <div 
-                        className="text-white font-bold space-y-2 mt-6"
+                        className="font-black space-y-3 mt-8 p-6 rounded-xl"
                         style={{
-                          fontSize: 'clamp(1rem, 3.8vw, 1.4rem)',
-                          WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
+                          fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
+                          background: rank === 1 
+                            ? 'linear-gradient(135deg, rgba(139,69,19,0.7) 0%, rgba(101,67,33,0.8) 100%)' 
+                            : 'rgba(0,0,0,0.3)',
+                          backdropFilter: 'blur(6px)',
+                          border: rank === 1 ? '3px solid rgba(255,215,0,0.5)' : 'none',
+                          boxShadow: rank === 1 
+                            ? '0 0 30px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.15)' 
+                            : 'none',
                           lineHeight: '1.4'
                         }}
                       >
-                        <p>Jutalmad:</p>
-                        <p style={{ color: '#ffd700' }}>
+                        <p
+                          style={{
+                            color: rank === 1 ? '#1a0f00' : '#ffffff',
+                            WebkitTextStroke: rank === 1 ? '1.5px rgba(139,69,19,0.4)' : '0.8px rgba(0,0,0,0.8)',
+                            textShadow: rank === 1 
+                              ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6)' 
+                              : '1px 1px 2px rgba(0,0,0,0.3)',
+                            fontWeight: 900,
+                            fontSize: 'clamp(1.3rem, 4.5vw, 1.8rem)',
+                          }}
+                        >
+                          Jutalmad:
+                        </p>
+                        <p 
+                          style={{ 
+                            color: rank === 1 ? '#1a0f00' : '#ffd700',
+                            WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.5)' : '1px rgba(0,0,0,0.8)',
+                            textShadow: rank === 1 
+                              ? '4px 4px 8px rgba(0,0,0,0.6), 0 0 35px rgba(255,215,0,0.8), 0 0 15px rgba(255,215,0,0.6)' 
+                              : '2px 2px 4px rgba(0,0,0,0.4)',
+                            fontWeight: 900,
+                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
+                            letterSpacing: '0.03em'
+                          }}
+                        >
                           {goldReward.toLocaleString()} arany és {livesReward} élet!
                         </p>
                       </div>
                       
                       <p 
-                        className="text-white font-bold mt-6"
+                        className="font-bold mt-8"
                         style={{
-                          fontSize: 'clamp(1rem, 3.8vw, 1.4rem)',
-                          WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
-                          fontStyle: 'italic'
+                          fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
+                          color: rank === 1 ? '#2d1a00' : '#ffffff',
+                          WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.4)' : '0.8px rgba(0,0,0,0.8)',
+                          textShadow: rank === 1 
+                            ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6)' 
+                            : '1px 1px 2px rgba(0,0,0,0.3)',
+                          fontStyle: 'italic',
+                          fontWeight: 700
                         }}
                       >
                         Fogadd örömmel!
@@ -360,14 +404,16 @@ export const PersonalWinnerDialog = ({
                     </div>
                   </div>
 
-                  {/* Bottom button */}
+                  {/* Bottom button - 25% smaller */}
                   <div 
                     className="absolute bottom-0 left-0 right-0 flex justify-center pb-10"
                     style={{ zIndex: 30 }}
                   >
-                    <HexAcceptButton onClick={onClose}>
-                      Köszönöm
-                    </HexAcceptButton>
+                    <div style={{ transform: 'scale(0.75)' }}>
+                      <HexAcceptButton onClick={onClose}>
+                        Köszönöm
+                      </HexAcceptButton>
+                    </div>
                   </div>
                 </HexShieldFrame>
               </div>
