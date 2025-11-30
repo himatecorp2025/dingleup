@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useDailyGift } from './useDailyGift';
 import { useWelcomeBonus } from './useWelcomeBonus';
 import { useDailyWinnersPopup } from './useDailyWinnersPopup';
@@ -46,6 +48,35 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   const welcomeBonus = useWelcomeBonus(userId);
   const dailyWinners = useDailyWinnersPopup(userId, username, false);
   const rankReward = useDailyRankReward(userId);
+
+  // ADMIN TEST MODE: Check if user is admin
+  const { data: userRoleData } = useQuery({
+    queryKey: ['user-role', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!userId,
+  });
+
+  const isAdminTestMode = userRoleData?.role === 'admin';
+
+  // ADMIN TEST MODE: Mock 2nd place rank reward for testing
+  const mockAdminRankReward = isAdminTestMode ? {
+    rank: 2,
+    gold: 800,
+    lives: 8,
+    isSundayJackpot: false,
+    dayDate: new Date().toISOString().split('T')[0],
+    username: username || 'DingleUP',
+    rewardPayload: null
+  } : null;
 
   const [popupState, setPopupState] = useState<PopupState>({
     showAgeGate: false,
@@ -159,8 +190,11 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
 
     // Decide which popup to show based on pending reward (winner status)
-    if (rankReward.pendingReward) {
-      // User is a winner → show Personal Winner popup
+    // ADMIN TEST MODE: Use mock reward for admin users
+    const activePendingReward = mockAdminRankReward || rankReward.pendingReward;
+    
+    if (activePendingReward) {
+      // User is a winner (or admin in test mode) → show Personal Winner popup
       if (!popupState.showPersonalWinner) {
         const timer = setTimeout(() => {
           setPopupState(prev => ({
@@ -291,7 +325,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       canShowToday: dailyWinners.canShowToday,
     },
     rankReward: {
-      pendingReward: rankReward.pendingReward,
+      pendingReward: mockAdminRankReward || rankReward.pendingReward, // ADMIN TEST MODE: Use mock for admin
       isLoading: rankReward.isLoading,
       isClaiming: rankReward.isClaiming,
       claimReward: rankReward.claimReward,
