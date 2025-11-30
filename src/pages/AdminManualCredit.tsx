@@ -78,7 +78,7 @@ const AdminManualCredit = () => {
       toast({
         title: 'Success',
         description: `Manual credit applied successfully`,
-        duration: 3000,
+        duration: 2000,
       });
 
       // Reset form
