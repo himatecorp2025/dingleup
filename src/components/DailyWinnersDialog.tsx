@@ -523,8 +523,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       maxHeight: 'calc(100% - 80px)',
                       overflowY: 'auto',
                       overflowX: 'hidden',
-                      width: '100%',
-                      paddingTop: '8%'
+                      width: '100%'
                     }}
                   >
                     {topPlayers.length === 0 ? (
@@ -636,7 +635,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-6%)' }}>
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(0%)' }}>
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
@@ -875,7 +874,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
-                        <div style={{ transform: 'translateY(0%)' }}>
+                        <div style={{ transform: 'translateY(-4%)' }}>
                           {/* First row: positions 4-7 */}
                           <div className="grid grid-cols-4 gap-2 mb-2">
                             {rankFourToTen.slice(0, 4).map((player) => {
