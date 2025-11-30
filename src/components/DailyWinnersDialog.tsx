@@ -523,7 +523,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       maxHeight: 'calc(100% - 80px)',
                       overflowY: 'auto',
                       overflowX: 'hidden',
-                      width: '100%'
+                      width: '100%',
+                      transform: 'translateY(-8%)'
                     }}
                   >
                     {topPlayers.length === 0 ? (
