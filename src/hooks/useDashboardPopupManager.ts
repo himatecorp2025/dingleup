@@ -67,11 +67,11 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
 
   const isAdminTestMode = userRoleData?.role === 'admin';
 
-  // ADMIN TEST MODE: Mock 2nd place rank reward for testing
+  // ADMIN TEST MODE: Mock 3rd place rank reward for testing
   const mockAdminRankReward = isAdminTestMode ? {
-    rank: 2,
-    gold: 800,
-    lives: 8,
+    rank: 3,
+    gold: 600,
+    lives: 6,
     isSundayJackpot: false,
     dayDate: new Date().toISOString().split('T')[0],
     username: username || 'DingleUP',
