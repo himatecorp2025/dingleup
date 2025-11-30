@@ -203,17 +203,17 @@ export const LootboxDropOverlay = () => {
           className="fixed z-50 cursor-pointer"
           onClick={() => setShowDialog(true)}
           style={{
-            bottom: isAnimating ? '100vh' : 'calc(25vh + 80px)', // Speed Booster button level
+            top: isAnimating ? '-100px' : 'clamp(160px, 22vh, 200px)', // Below 4 hexagons
             right: 'clamp(12px, 4vw, 24px)',
-            transition: 'bottom 2.25s ease-out',
+            transition: 'top 2.25s ease-out',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          {/* Lootbox Icon with countdown timer */}
+          {/* Lootbox Icon with countdown timer - 50% smaller */}
           <div className="relative">
-            <GoldLootboxIcon className="w-16 h-auto md:w-20 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
+            <GoldLootboxIcon className="w-8 h-auto md:w-10 drop-shadow-[0_0_12px_rgba(250,250,250,0.9)]" />
 
             {/* 3D Countdown Timer - same style as life timer */}
             {!isAnimating && (
