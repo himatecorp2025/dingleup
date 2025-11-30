@@ -35,7 +35,16 @@ serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      console.error('[CLAIM-REWARD] Missing bearer token in Authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
     if (authError || !user) {
       console.error('[CLAIM-REWARD] Auth error in getUser:', authError);
       return new Response(
