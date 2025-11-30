@@ -561,7 +561,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {topPlayers[1] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
-                              style={{ transform: 'scale(0.85)' }}
+                              style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}
                               className="w-full flex flex-col items-center"
                             >
                               <div
@@ -717,7 +717,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {topPlayers[2] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
-                              style={{ transform: 'scale(0.85)' }}
+                              style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}
                               className="w-full flex flex-col items-center"
                             >
                               <div
