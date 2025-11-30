@@ -515,7 +515,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center px-[4%] pb-[2%]" style={{ height: '100%', paddingTop: '0' }}>
+                <div className="relative z-10 flex flex-col items-center px-[2%] pb-[2%]" style={{ height: '100%', paddingTop: '0' }}>
                   <div
                     className="w-full mb-2"
                     style={{
@@ -635,7 +635,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-20%)' }}>
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(0%)' }}>
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
@@ -712,8 +712,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '43.47%',
-                              animation: 'pulse-scale 2s ease-in-out infinite'
+                              width: '39.8475%',
+                              transform: 'translateY(-8%)',
+                              animation: 'pulse-scale 2.4s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
                                 <div 
