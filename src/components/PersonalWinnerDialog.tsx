@@ -308,8 +308,8 @@ export const PersonalWinnerDialog = ({
                         className="font-black uppercase"
                         style={{
                           fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
-                          color: rank === 1 ? '#1a0f00' : '#ffffff',
-                          WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.6)' : '1.5px rgba(0,0,0,0.9)',
+                          color: '#f5f5f5',
+                          WebkitTextStroke: '2px rgba(0,0,0,0.9)',
                           letterSpacing: '0.08em',
                           lineHeight: '1.2',
                           fontWeight: 900
@@ -322,8 +322,8 @@ export const PersonalWinnerDialog = ({
                         className="font-bold"
                         style={{
                           fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
-                          color: rank === 1 ? '#2d1a00' : '#ffffff',
-                          WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.5)' : '1px rgba(0,0,0,0.8)',
+                          color: '#f5f5f5',
+                          WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
                           lineHeight: '1.4'
                         }}
                       >
@@ -339,8 +339,8 @@ export const PersonalWinnerDialog = ({
                       >
                         <p
                           style={{
-                            color: rank === 1 ? '#1a0f00' : '#ffffff',
-                            WebkitTextStroke: rank === 1 ? '1.5px rgba(139,69,19,0.4)' : '0.8px rgba(0,0,0,0.8)',
+                            color: '#f5f5f5',
+                            WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
                             fontWeight: 900,
                             fontSize: 'clamp(1.3rem, 4.5vw, 1.8rem)',
                           }}
@@ -349,8 +349,8 @@ export const PersonalWinnerDialog = ({
                         </p>
                         <p 
                           style={{ 
-                            color: rank === 1 ? '#1a0f00' : '#ffd700',
-                            WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.5)' : '1px rgba(0,0,0,0.8)',
+                            color: '#f5f5f5',
+                            WebkitTextStroke: '2px rgba(0,0,0,0.9)',
                             fontWeight: 900,
                             fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
                             letterSpacing: '0.03em'
@@ -364,8 +364,8 @@ export const PersonalWinnerDialog = ({
                         className="font-bold mt-8"
                         style={{
                           fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                            color: rank === 1 ? '#2d1a00' : '#ffffff',
-                            WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.4)' : '0.8px rgba(0,0,0,0.8)',
+                          color: '#f5f5f5',
+                          WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
                           fontStyle: 'italic',
                           fontWeight: 700
                         }}
