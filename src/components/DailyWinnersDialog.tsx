@@ -249,17 +249,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
   useEffect(() => {
     if (open) {
+      setContentVisible(true);
       fetchYesterdayTopPlayers();
-      const timer = setTimeout(() => {
-        if (isMountedRef.current) {
-          setContentVisible(true);
-        }
-      }, 10);
-      
-      return () => {
-        clearTimeout(timer);
-        setContentVisible(false);
-      };
     } else {
       setContentVisible(false);
     }
@@ -317,7 +308,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 transformOrigin: 'center center',
                 position: 'relative',
                 opacity: contentVisible ? 1 : 0,
-                transition: 'opacity 1500ms ease-in-out'
+                transition: 'opacity 0ms'
               }}
             >
               {/* Close X button - Only when no data */}
