@@ -243,7 +243,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
               src={avatarUrl || defaultProfileImage}
               alt={String(value)}
               className="rounded-full object-cover"
-              style={{ width: 'clamp(36px, 6vh, 64px)', height: 'clamp(36px, 6vh, 64px)' }}
+              style={{ width: 'clamp(28px, 5vh, 48px)', height: 'clamp(28px, 5vh, 48px)' }}
             />
           ) : (
             <>
