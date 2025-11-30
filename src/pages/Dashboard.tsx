@@ -52,7 +52,7 @@ import { LootboxDecisionDialog } from '@/components/lootbox/LootboxDecisionDialo
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { usePaymentPolling } from '@/hooks/usePaymentPolling';
-import { LootboxNotificationBanner } from '@/components/lootbox/LootboxNotificationBanner';
+
 
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
@@ -534,7 +534,10 @@ const Dashboard = () => {
             </div>
 
             {/* Right: Purple Users Hexagon Bar with 4 hexagons */}
-            <div className="flex-shrink-0 flex flex-col items-end">
+            <div
+              className="flex-shrink-0 flex flex-col items-end"
+              data-lootbox-banner-anchor
+            >
               <UsersHexagonBar
                 username={profile.username}
                 rank={currentRank}
@@ -554,10 +557,6 @@ const Dashboard = () => {
                 avatarUrl={profile.avatar_url}
                 className="data-tutorial-profile-header"
               />
-              {/* Debug: banner SVG always visible under lives + profile hexagons */}
-              <div className="mt-2">
-                <LootboxNotificationBanner countdown={3} />
-              </div>
             </div>
           </div>
 
