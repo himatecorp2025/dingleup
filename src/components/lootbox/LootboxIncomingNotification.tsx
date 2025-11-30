@@ -63,7 +63,7 @@ export const LootboxIncomingNotification = ({ onComplete }: LootboxIncomingNotif
       }}
     >
       <div
-        className="relative px-1.5 py-1 rounded-md backdrop-blur-md shadow-lg border"
+        className="relative px-1.5 py-1 rounded-xl backdrop-blur-md shadow-lg border"
         style={{
           background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.95) 0%, rgba(202, 138, 4, 0.95) 100%)',
           borderColor: 'rgba(250, 204, 21, 0.8)',
