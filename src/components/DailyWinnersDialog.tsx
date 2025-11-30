@@ -625,14 +625,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
-
-                              <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
-                                fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
-                                WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
-                              }}>
-                                {topPlayers[2].username}
-                              </p>
                             </div>
+
+                            <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
+                              fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                              WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
+                            }}>
+                              {topPlayers[2].username}
+                            </p>
                           </div>
                         )}
 
@@ -785,14 +785,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
-
-                              <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
-                                fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
-                                WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
-                              }}>
-                                {topPlayers[1].username}
-                              </p>
                             </div>
+
+                            <p className="text-white font-bold text-center truncate w-full px-1 mt-1" style={{
+                              fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                              WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
+                            }}>
+                              {topPlayers[1].username}
+                            </p>
                           </div>
                         )}
                       </div>
