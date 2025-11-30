@@ -25,17 +25,20 @@ serve(async (req) => {
       );
     }
 
+    // Extract raw JWT token from "Bearer <token>" header
+    const token = authHeader.replace('Bearer', '').trim();
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { 
-        global: { headers: { Authorization: authHeader } },
         auth: { persistSession: false }
       }
     );
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     if (authError || !user) {
+      console.error('[CLAIM-REWARD] Auth error in getUser:', authError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
