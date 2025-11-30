@@ -48,23 +48,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   const dailyWinners = useDailyWinnersPopup(userId, username, false);
   const rankReward = useDailyRankReward(userId);
 
-  // ADMIN TEST MODE: Check if user is admin
-  const { data: userRoleData } = useQuery({
-    queryKey: ['user-role', userId],
-    queryFn: async () => {
-      if (!userId) return null;
-      const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('role', 'admin')
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!userId,
-  });
-
-  // No test mode - production behavior only
+  // Production behavior only - no test modes
 
   const [popupState, setPopupState] = useState<PopupState>({
     showAgeGate: false,

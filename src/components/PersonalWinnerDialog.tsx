@@ -136,8 +136,18 @@ export const PersonalWinnerDialog = ({
               >
                 {errorMessage && (
                   <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-[60] max-w-[85%]">
-                    <div className="rounded-xl bg-destructive/95 text-destructive-foreground px-4 py-3 shadow-lg text-center font-semibold text-sm md:text-base">
+                    <div className="relative rounded-xl bg-destructive/95 text-destructive-foreground px-4 py-3 pr-10 shadow-lg text-center font-semibold text-sm md:text-base">
                       {errorMessage}
+                      <button
+                        onClick={() => {
+                          // Close popup when X is clicked on error message
+                          onClose();
+                        }}
+                        className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                        aria-label="Bezárás"
+                      >
+                        <span className="text-white text-lg font-bold leading-none">×</span>
+                      </button>
                     </div>
                   </div>
                 )}

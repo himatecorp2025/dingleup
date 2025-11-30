@@ -355,8 +355,8 @@ const Dashboard = () => {
         refreshProfile(),
       ]);
     } else {
-      // Show inline error message in front of the popup
-      setPersonalWinnerError(t('rank_reward.claim_error_desc'));
+      // Show specific error message for failed claim
+      setPersonalWinnerError('Rendszerhiba miatt a jutalom jóváírása sikertelen. Kérlek próbáld meg később!');
     }
   };
 
