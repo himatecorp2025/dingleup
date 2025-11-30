@@ -45,7 +45,6 @@ import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
 import { PersonalWinnerDialog } from '@/components/PersonalWinnerDialog';
-import { DailyRankRewardDialog } from '@/components/DailyRankRewardDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { ActiveLootboxDisplay } from '@/components/lootbox/ActiveLootboxDisplay';
@@ -696,22 +695,7 @@ const Dashboard = () => {
           {/* Ranglista Button (moved above) removed here */}
       </div>
 
-      {/* Rank Reward Dialog - FIRST after age gate (BLOCKS Daily Winners) */}
-      <DailyRankRewardDialog
-        open={popupManager.popupState.showRankReward}
-        reward={popupManager.rankReward.pendingReward}
-        isClaiming={popupManager.rankReward.isClaiming}
-        onClaim={async () => {
-          await popupManager.rankReward.claimReward();
-          popupManager.closeRankReward();
-        }}
-        onDismiss={async () => {
-          await popupManager.rankReward.dismissReward();
-          popupManager.closeRankReward();
-        }}
-      />
-
-      {/* Welcome bonus dialog - SECOND (only after age gate completed) */}
+      {/* Welcome bonus dialog - FIRST (only after age gate completed) */}
         <WelcomeBonusDialog
           open={popupManager.popupState.showWelcomeBonus}
           onClaim={handleClaimWelcomeBonus}
