@@ -516,7 +516,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
-                  <div className="w-full mb-2 overflow-visible" style={{ minHeight: 'calc(100% - 100px)', maxHeight: 'calc(100% - 100px)' }}>
+                  <div
+                    className="w-full mb-2"
+                    style={{
+                      minHeight: 'calc(100% - 120px)',
+                      maxHeight: 'calc(100% - 120px)',
+                      overflowY: 'auto',
+                      overflowX: 'hidden'
+                    }}
+                  >
                     {topPlayers.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center -translate-y-[10%]">
                         <div className="text-center text-white flex flex-col items-center gap-4">
@@ -1027,10 +1035,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   {topPlayers.length > 0 && (
                     <div 
                       className="absolute left-0 right-0 flex justify-center w-full px-4" 
-                      style={{ 
-                        bottom: '-50%',
-                        position: 'absolute'
-                      }}
+                      style={{ bottom: '4%' }}
                     >
                       <HexAcceptButton 
                         onClick={handleAccept}
