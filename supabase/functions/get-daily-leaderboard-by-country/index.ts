@@ -19,48 +19,7 @@ interface RankReward {
   life: number;
 }
 
-// Import reward configuration (copied from shared lib)
 type Weekday = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
-
-const DAILY_BASE_REWARDS: Record<Weekday, { gold: number; life: number }> = {
-  MONDAY:    { gold: 12000,  life: 240 },
-  TUESDAY:   { gold: 18000,  life: 360 },
-  WEDNESDAY: { gold: 27000,  life: 540 },
-  THURSDAY:  { gold: 37500,  life: 750 },
-  FRIDAY:    { gold: 52500,  life: 1050 },
-  SATURDAY:  { gold: 75000,  life: 1500 },
-  SUNDAY:    { gold: 150000, life: 3000 },
-};
-
-const TOP10_MULTIPLIERS = [1.00, 0.70, 0.50, 0.30, 0.25, 0.20, 0.15, 0.12, 0.10, 0.08];
-
-const SUNDAY_JACKPOT_TOP25: RankReward[] = [
-  { rank: 1,  gold: 150000, life: 3000 },
-  { rank: 2,  gold: 105000, life: 2100 },
-  { rank: 3,  gold: 75000,  life: 1500 },
-  { rank: 4,  gold: 45000,  life: 900 },
-  { rank: 5,  gold: 37500,  life: 750 },
-  { rank: 6,  gold: 30000,  life: 600 },
-  { rank: 7,  gold: 22500,  life: 450 },
-  { rank: 8,  gold: 18000,  life: 360 },
-  { rank: 9,  gold: 15000,  life: 300 },
-  { rank: 10, gold: 12000,  life: 240 },
-  { rank: 11, gold: 10000,  life: 200 },
-  { rank: 12, gold: 9000,   life: 180 },
-  { rank: 13, gold: 8000,   life: 160 },
-  { rank: 14, gold: 7000,   life: 140 },
-  { rank: 15, gold: 6000,   life: 120 },
-  { rank: 16, gold: 5000,   life: 100 },
-  { rank: 17, gold: 4000,   life: 80 },
-  { rank: 18, gold: 3500,   life: 70 },
-  { rank: 19, gold: 3000,   life: 60 },
-  { rank: 20, gold: 2500,   life: 50 },
-  { rank: 21, gold: 2000,   life: 40 },
-  { rank: 22, gold: 1800,   life: 36 },
-  { rank: 23, gold: 1500,   life: 30 },
-  { rank: 24, gold: 1300,   life: 26 },
-  { rank: 25, gold: 1200,   life: 24 },
-];
 
 function getWeekday(date: Date): Weekday {
   const dayIndex = date.getDay();
@@ -68,31 +27,53 @@ function getWeekday(date: Date): Weekday {
   return days[dayIndex];
 }
 
-function getDailyRewardsForDate(date: Date): {
+/**
+ * Converts JavaScript day of week (0-6) to database format (1-7)
+ * Database: 1=Monday, 2=Tuesday, ..., 7=Sunday
+ */
+function getDayOfWeekNumber(date: Date): number {
+  const jsDay = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+  return jsDay === 0 ? 7 : jsDay;
+}
+
+/**
+ * Fetch daily rewards from database for given date
+ */
+async function getDailyRewardsForDate(date: Date, supabaseClient: any): Promise<{
   day: Weekday;
   type: 'NORMAL' | 'JACKPOT';
   rewards: RankReward[];
-} {
+}> {
   const day = getWeekday(date);
+  const dayOfWeek = getDayOfWeekNumber(date);
+  const isSunday = day === 'SUNDAY';
 
-  if (day === 'SUNDAY') {
+  // Fetch rewards from database for this day of week
+  const { data: rewardsData, error: rewardsError } = await supabaseClient
+    .from('daily_prize_table')
+    .select('rank, gold, lives, day_of_week')
+    .eq('day_of_week', dayOfWeek)
+    .order('rank', { ascending: true });
+
+  if (rewardsError || !rewardsData || rewardsData.length === 0) {
+    console.error('[getDailyRewardsForDate] Error fetching rewards:', rewardsError);
+    // Fallback to empty rewards if database fails
     return {
       day,
-      type: 'JACKPOT',
-      rewards: SUNDAY_JACKPOT_TOP25,
+      type: isSunday ? 'JACKPOT' : 'NORMAL',
+      rewards: [],
     };
   }
 
-  const base = DAILY_BASE_REWARDS[day];
-  const rewards: RankReward[] = TOP10_MULTIPLIERS.map((multiplier, index) => ({
-    rank: index + 1,
-    gold: Math.round(base.gold * multiplier),
-    life: Math.round(base.life * multiplier),
+  const rewards: RankReward[] = rewardsData.map((r: any) => ({
+    rank: r.rank,
+    gold: r.gold,
+    life: r.lives,
   }));
 
   return {
     day,
-    type: 'NORMAL',
+    type: isSunday ? 'JACKPOT' : 'NORMAL',
     rewards,
   };
 }
@@ -162,9 +143,9 @@ Deno.serve(async (req) => {
 
     console.log('[get-daily-leaderboard-by-country] Current day:', currentDay);
 
-    // Get daily rewards for today
-    const dailyRewards = getDailyRewardsForDate(now);
-    console.log('[get-daily-leaderboard-by-country] Daily rewards type:', dailyRewards.type, 'day:', dailyRewards.day);
+    // Get daily rewards for today from database
+    const dailyRewards = await getDailyRewardsForDate(now, supabase);
+    console.log('[get-daily-leaderboard-by-country] Daily rewards type:', dailyRewards.type, 'day:', dailyRewards.day, 'rewards count:', dailyRewards.rewards.length);
 
     // Determine how many players to fetch based on day type
     const maxPlayers = dailyRewards.type === 'JACKPOT' ? 25 : 10;
