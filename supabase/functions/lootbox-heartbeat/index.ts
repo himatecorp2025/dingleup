@@ -59,7 +59,20 @@ serve(async (req) => {
     const now = new Date();
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
-    // 1. Get or generate today's plan
+    // 1. Expire old lootboxes first
+    try {
+      const { data: expiredCount, error: expireError } = await supabaseAdmin.rpc(
+        'expire_old_lootboxes'
+      );
+      if (!expireError && expiredCount > 0) {
+        console.log('[Lootbox Heartbeat] Expired', expiredCount, 'old lootboxes');
+      }
+    } catch (expireErr) {
+      console.error('[Lootbox Heartbeat] Error expiring old lootboxes:', expireErr);
+      // Continue execution even if expiration fails
+    }
+
+    // 2. Get or generate today's plan
     let { data: plan, error: planError } = await supabaseAdmin
       .from('lootbox_daily_plan')
       .select('*')
