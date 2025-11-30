@@ -225,7 +225,7 @@ serve(async (req) => {
 
         console.log(`[DAILY-WINNERS] Found ${countryRankings.length} winners in ${countryCode} (${timezone})`);
 
-        // Process each winner in this country
+        // Process each real winner in this country
         for (let idx = 0; idx < countryRankings.length; idx++) {
           const ranking = countryRankings[idx];
           const { user_id } = ranking;
@@ -292,6 +292,76 @@ serve(async (req) => {
           }
 
           console.log(`[DAILY-WINNERS] ${countryCode} (${timezone}): Created pending reward rank ${actualRank} for user ${user_id}: ${gold} gold, ${lives} lives`);
+          totalProcessedWinners++;
+        }
+
+        // Fill missing ranks with fake users up to rank 10
+        const realUserRanks = countryRankings.map(r => r.rank);
+        for (let rank = 1; rank <= 10; rank++) {
+          if (realUserRanks.includes(rank)) {
+            continue; // Real user already has this rank
+          }
+
+          // Check if fake user already exists for this rank
+          const fakeUserId = `00000000-0000-0000-0000-0000000000${rank.toString().padStart(2, '0')}`;
+          const { data: existingFake } = await supabaseClient
+            .from('daily_winner_awarded')
+            .select('*')
+            .eq('user_id', fakeUserId)
+            .eq('day_date', yesterdayDate)
+            .eq('country_code', countryCode)
+            .single();
+
+          if (existingFake) {
+            console.log(`[DAILY-WINNERS] Fake user for rank ${rank} already exists in ${countryCode}`);
+            continue;
+          }
+
+          // Get prize configuration for this rank
+          const { data: fakePrize } = await supabaseClient
+            .from('daily_prize_table')
+            .select('*')
+            .eq('rank', rank)
+            .single();
+
+          if (!fakePrize) {
+            console.error(`[DAILY-WINNERS] Prize config missing for fake rank ${rank}`);
+            continue;
+          }
+
+          // Create fake user record
+          const { error: fakeError } = await supabaseClient
+            .from('daily_winner_awarded')
+            .insert({
+              user_id: fakeUserId,
+              day_date: yesterdayDate,
+              rank: rank,
+              gold_awarded: fakePrize.gold,
+              lives_awarded: fakePrize.lives,
+              status: 'pending',
+              is_sunday_jackpot: isSundayJackpot,
+              country_code: countryCode,
+              user_timezone: timezone,
+              username: `Player ${rank}`,
+              avatar_url: null,
+              total_correct_answers: 0,
+              reward_payload: {
+                gold: fakePrize.gold,
+                lives: fakePrize.lives,
+                rank: rank,
+                country_code: countryCode,
+                timezone: timezone,
+                day_type: isSundayJackpot ? 'sunday_jackpot' : 'normal',
+                is_fake: true
+              }
+            });
+
+          if (fakeError) {
+            console.error(`[DAILY-WINNERS] Fake user creation error for rank ${rank}:`, fakeError);
+            continue;
+          }
+
+          console.log(`[DAILY-WINNERS] ${countryCode} (${timezone}): Created fake user for rank ${rank}`);
           totalProcessedWinners++;
         }
       }
