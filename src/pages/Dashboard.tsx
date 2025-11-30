@@ -125,6 +125,7 @@ const Dashboard = () => {
     canMountModals,
     needsAgeVerification: !profile?.age_verified || !profile?.birth_date,
     userId,
+    username: profile?.username,
     profileLoading: profileLoading,
   });
   
