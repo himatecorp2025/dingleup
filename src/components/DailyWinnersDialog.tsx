@@ -126,15 +126,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       console.log('[DAILY-WINNERS] Fetching yesterday winners from daily_winner_awarded, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
 
-      // Fetch ALL winners from yesterday (not just TOP 10)
-      // Display whoever is there, even if it's just 1-2 people
+      // Fetch TOP 10 winners from yesterday (even on Sunday when 25 winners exist in DB)
+      // This general popup always shows maximum 10 winners
       const { data: players, error } = await supabase
         .from('daily_winner_awarded')
         .select('user_id, rank, username, avatar_url, total_correct_answers')
         .eq('country_code', userCountry)
         .eq('day_date', yesterdayDate)
         .order('rank', { ascending: true })
-        .limit(25); // Show up to TOP 25 (Sunday jackpot max)
+        .limit(10); // Always show maximum TOP 10 in general popup
 
       if (!isMountedRef.current) return;
 
@@ -190,12 +190,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               setTopPlayers(refetchedPlayers as TopPlayer[]);
               console.log('[DAILY-WINNERS] Successfully loaded after on-demand processing:', refetchedPlayers.length, 'players');
               
-              // Fetch rewards for the refetched players
+              // Fetch rewards for the refetched players (TOP 10 only)
               const { data: rewards, error: rewardsError } = await supabase
                 .from('daily_winner_awarded')
                 .select('gold_awarded, lives_awarded')
                 .eq('day_date', yesterdayDate)
-                .lte('rank', 25);
+                .lte('rank', 10);
               
               if (!rewardsError && rewards && isMountedRef.current) {
                 const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
@@ -224,12 +224,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       setTopPlayers(players as TopPlayer[]);
       console.log('[DAILY-WINNERS] Loaded yesterday winners from snapshot:', players.length, 'players');
       
-      // Fetch total rewards for ALL yesterday's players (not just TOP 10)
+      // Fetch total rewards for TOP 10 yesterday's players (displayed in popup)
       const { data: rewards, error: rewardsError } = await supabase
         .from('daily_winner_awarded')
         .select('gold_awarded, lives_awarded')
         .eq('day_date', yesterdayDate)
-        .lte('rank', 25); // Include all possible winners (Sunday jackpot max)
+        .lte('rank', 10); // Only TOP 10 rewards for general popup display
       
       if (!rewardsError && rewards && isMountedRef.current) {
         const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
