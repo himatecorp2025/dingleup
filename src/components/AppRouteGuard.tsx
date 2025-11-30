@@ -73,6 +73,15 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     );
   }
 
+  // CRITICAL: PWA/natív módban MINDIG login/register legyen az első oldal
+  // Ha PWA/natív módban van ÉS landing page-en van → átirányít login-ra
+  if (
+    isPWAOrNative && 
+    location.pathname === '/'
+  ) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
   // CRITICAL: Mobilon/táblagépen MINDIG login/register legyen az első oldal
   // Ha a user nincs bejelentkezve ÉS landing page-en van ÉS mobil/tablet
   if (
