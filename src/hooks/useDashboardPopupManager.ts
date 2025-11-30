@@ -27,6 +27,7 @@ interface PopupManagerParams {
   canMountModals: boolean;
   needsAgeVerification: boolean;
   userId: string | undefined;
+  username: string | undefined;
   profileLoading: boolean;
 }
 
@@ -35,13 +36,14 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     canMountModals,
     needsAgeVerification,
     userId,
+    username,
     profileLoading,
   } = params;
 
   // Integrate popup hooks internally (eliminates external duplication)
   const dailyGift = useDailyGift(userId, false);
   const welcomeBonus = useWelcomeBonus(userId);
-  const dailyWinners = useDailyWinnersPopup(userId, false);
+  const dailyWinners = useDailyWinnersPopup(userId, username, false);
   const rankReward = useDailyRankReward(userId); // NEW: rank reward hook
 
   const [popupState, setPopupState] = useState<PopupState>({
