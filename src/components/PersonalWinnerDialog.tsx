@@ -10,6 +10,8 @@ interface PersonalWinnerDialogProps {
   username: string;
   goldReward: number;
   livesReward: number;
+  errorMessage?: string;
+  isClaiming?: boolean;
 }
 
 // Generate unique IDs for SVG gradients to prevent conflicts
@@ -29,7 +31,9 @@ export const PersonalWinnerDialog = ({
   rank, 
   username, 
   goldReward, 
-  livesReward 
+  livesReward,
+  errorMessage,
+  isClaiming = false,
 }: PersonalWinnerDialogProps) => {
   const [contentVisible, setContentVisible] = useState(false);
   const [scale, setScale] = useState(1);
@@ -130,6 +134,13 @@ export const PersonalWinnerDialog = ({
                   height: '100%'
                 }}
               >
+                {errorMessage && (
+                  <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-[60] max-w-[85%]">
+                    <div className="rounded-xl bg-destructive/95 text-destructive-foreground px-4 py-3 shadow-lg text-center font-semibold text-sm md:text-base">
+                      {errorMessage}
+                    </div>
+                  </div>
+                )}
                 <HexShieldFrame 
                   showShine={true}
                   customInnerBackground={shieldInnerGradient}
@@ -397,7 +408,7 @@ export const PersonalWinnerDialog = ({
                     className="absolute bottom-0 left-0 right-0 flex justify-center pb-10"
                     style={{ zIndex: 30 }}
                   >
-                    <HexAcceptButton onClick={onClose}>
+                    <HexAcceptButton onClick={onClose} disabled={isClaiming}>
                       Köszönöm
                     </HexAcceptButton>
                   </div>

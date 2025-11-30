@@ -103,23 +103,20 @@ export const useDailyRankReward = (userId: string | undefined) => {
 
       if (error || !data?.success) {
         console.error('[RANK-REWARD] Error claiming reward:', error);
-        
-        // CRITICAL FIX: Clear state EVEN on error to prevent popup re-appearing
-        setShowRewardPopup(false);
-        setPendingReward(null);
-        
+
         toast({
           title: t('rank_reward.claim_error_title'),
           description: t('rank_reward.claim_error_desc'),
           variant: 'destructive',
           duration: 4000,
         });
+
         return { success: false };
       }
 
       console.log('[RANK-REWARD] Reward claimed successfully:', data);
-      
-      // Close popup and clear state
+
+      // Close popup and clear state on success
       setShowRewardPopup(false);
       setPendingReward(null);
 
@@ -135,11 +132,7 @@ export const useDailyRankReward = (userId: string | undefined) => {
       return { success: true };
     } catch (error) {
       console.error('[RANK-REWARD] Exception claiming reward:', error);
-      
-      // CRITICAL FIX: Clear state on exception too
-      setShowRewardPopup(false);
-      setPendingReward(null);
-      
+
       toast({
         title: t('rank_reward.claim_error_title'),
         description: t('rank_reward.claim_exception_desc'),

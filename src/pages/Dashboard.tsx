@@ -102,6 +102,7 @@ const Dashboard = () => {
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const boosterState = useBoosterState(userId);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  const [personalWinnerError, setPersonalWinnerError] = useState<string | null>(null);
   
   // PHASE 2 HOOKS: Only enabled after critical data loads
   // LOOTBOX HEARTBEAT SYSTEM: Automatic periodic checks for pending slots
@@ -343,12 +344,20 @@ const Dashboard = () => {
   };
   
   const handleClosePersonalWinner = async () => {
-    // Close popup and claim reward
-    await popupManager.closePersonalWinner();
-    
-    // Refresh wallet and profile to show updated gold/lives
-    await refetchWallet();
-    await refreshProfile();
+    // Try to claim reward
+    const result = await popupManager.closePersonalWinner();
+
+    if (result?.success) {
+      // Clear error and refresh wallet/profile when claim succeeds
+      setPersonalWinnerError(null);
+      await Promise.all([
+        refetchWallet(),
+        refreshProfile(),
+      ]);
+    } else {
+      // Show inline error message in front of the popup
+      setPersonalWinnerError(t('rank_reward.claim_error_desc'));
+    }
   };
 
   const handleWelcomeLaterClick = () => {
@@ -738,6 +747,8 @@ const Dashboard = () => {
           username={popupManager.rankReward.pendingReward.username}
           goldReward={popupManager.rankReward.pendingReward.gold}
           livesReward={popupManager.rankReward.pendingReward.lives}
+          errorMessage={personalWinnerError ?? undefined}
+          isClaiming={popupManager.rankReward.isClaiming}
         />
       )}
 
