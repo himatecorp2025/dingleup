@@ -97,6 +97,20 @@ export const useDailyRankReward = (userId: string | undefined) => {
 
     setIsClaiming(true);
     try {
+      // CRITICAL FIX: Verify session exists before calling edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.error('[RANK-REWARD] No active session when claiming reward');
+        toast({
+          title: t('rank_reward.claim_error_title'),
+          description: t('errors.session_expired'),
+          variant: 'destructive',
+          duration: 4000,
+        });
+        return { success: false };
+      }
+
       const { data, error } = await supabase.functions.invoke('claim-daily-rank-reward', {
         body: { day_date: pendingReward.dayDate }
       });
