@@ -1,8 +1,10 @@
 import { useI18n } from '@/i18n';
+import { DiamondHexagon } from './DiamondHexagon';
 
 interface LeaderboardPlayer {
   username: string;
   total_correct_answers: number;
+  avatar_url: string | null;
 }
 
 interface RankReward {
@@ -127,7 +129,7 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                 )}
                 
                 <div className="flex items-center justify-between" style={{ gap: 'clamp(12px, 2vw, 16px)' }}>
-                  {/* BAL OLDAL: emoji + rangsor + név */}
+                  {/* BAL OLDAL: emoji + rangsor + hexagon profilkép + név */}
                   <div className="flex items-center flex-1 min-w-0" style={{ gap: 'clamp(8px, 1.5vw, 12px)' }}>
                     <span className="flex-shrink-0" style={{ filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5))', fontSize: 'clamp(1.5rem, 4vw, 1.875rem)' }}>
                       {getCrownIcon(place)}
@@ -146,6 +148,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                         >
                           #{place}
                         </span>
+                        <div className="flex-shrink-0">
+                          <DiamondHexagon 
+                            type="avatar" 
+                            value={player.username} 
+                            avatarUrl={player.avatar_url} 
+                          />
+                        </div>
                         <span 
                           className="font-bold text-white truncate overflow-hidden whitespace-nowrap" 
                           style={{ 
@@ -298,6 +307,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                       <div className="flex flex-col min-w-0 flex-1">
                         <div className="flex items-center min-w-0" style={{ gap: 'clamp(6px, 1vw, 8px)' }}>
                           <span className="font-black flex-shrink-0" style={{ color: isTop3 ? (place === 1 ? 'hsl(45 100% 88%)' : place === 2 ? 'hsl(0 0% 97%)' : 'hsl(30 78% 88%)') : 'hsl(var(--dup-gold-400))', textShadow: isTop3 ? `0 3px 6px rgba(0, 0, 0, 0.6), 0 0 ${place === 1 ? '15px' : '10px'} ${place === 1 ? 'rgba(255, 215, 0, 0.6)' : 'rgba(255, 255, 255, 0.4)'}` : '0 2px 4px rgba(0, 0, 0, 0.5)', fontSize: 'clamp(1.25rem, 3.5vw, 1.5rem)' }}>#{place}</span>
+                          <div className="flex-shrink-0">
+                            <DiamondHexagon 
+                              type="avatar" 
+                              value={player.username} 
+                              avatarUrl={player.avatar_url} 
+                            />
+                          </div>
                           <span className="font-bold text-white truncate overflow-hidden whitespace-nowrap" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)', textOverflow: 'ellipsis', maxWidth: 'clamp(120px, 25vw, 140px)', fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>{player.username}</span>
                         </div>
                         <span className="font-semibold" style={{ color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)', textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)', fontSize: 'clamp(0.625rem, 1.8vw, 0.75rem)', marginLeft: 'clamp(32px, 7vw, 40px)' }}>

@@ -181,7 +181,8 @@ const Leaderboard = () => {
           <DailyRewards 
             topPlayers={leaderboard.slice(0, 10).map(p => ({
               username: p.username,
-              total_correct_answers: p.total_correct_answers
+              total_correct_answers: p.total_correct_answers,
+              avatar_url: p.avatar_url
             }))}
             userRank={userRank}
             userUsername={userUsername}
