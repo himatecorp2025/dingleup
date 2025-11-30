@@ -67,16 +67,11 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
 
   const isAdminTestMode = userRoleData?.role === 'admin';
 
-  // ADMIN TEST MODE: Mock 3rd place rank reward for testing
-  const mockAdminRankReward = isAdminTestMode ? {
-    rank: 3,
-    gold: 600,
-    lives: 6,
-    isSundayJackpot: false,
-    dayDate: new Date().toISOString().split('T')[0],
-    username: username || 'DingleUP',
-    rewardPayload: null
-  } : null;
+  // ADMIN TEST MODE: Force Daily Winners popup for admin testing
+  const forceShowDailyWinnersForAdmin = isAdminTestMode;
+  
+  // ADMIN TEST MODE: Disable Personal Winner mock (null = no personal winner for admin)
+  const mockAdminRankReward = null;
 
   const [popupState, setPopupState] = useState<PopupState>({
     showAgeGate: false,
@@ -211,7 +206,8 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       }
     } else {
       // User is NOT a winner → show Daily Winners popup (if eligible AND not in TOP 100)
-      if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
+      // ADMIN TEST MODE: Force show for admin users regardless of eligibility
+      if ((forceShowDailyWinnersForAdmin || dailyWinners.canShowToday) && !popupState.showDailyWinners) {
         const timer = setTimeout(() => {
           setPopupState(prev => ({
             ...prev,
@@ -239,6 +235,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     dailyWinners.canShowToday,
     popupState.showDailyWinners,
     popupState.showPersonalWinner,
+    forceShowDailyWinnersForAdmin,
   ]);
 
   // Handlers for closing popups
