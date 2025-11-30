@@ -71,7 +71,6 @@ export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderPr
       <div
         className="flex flex-col items-center"
         style={{ gap: 'clamp(8px, 2vw, 12px)' }}
-        data-lootbox-banner-anchor
       >
         <div className="flex" style={{ gap: 'clamp(8px, 2vw, 12px)' }}>
           <DiamondHexagon

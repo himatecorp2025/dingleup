@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { GoldLootboxIcon } from './GoldLootboxIcon';
 import { LootboxDecisionDialog } from './LootboxDecisionDialog';
-import { LootboxNotificationBanner } from './LootboxNotificationBanner';
+
 import { LootboxCountdownTimer } from './LootboxCountdownTimer';
 import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,11 +20,6 @@ export const LootboxDropOverlay = () => {
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
-  const [showIntroBanner, setShowIntroBanner] = useState(false);
-  const [introCountdown, setIntroCountdown] = useState(3);
-  const [lastShownLootboxId, setLastShownLootboxId] = useState<string | null>(null);
-  const [notificationShown, setNotificationShown] = useState(false);
-  const [bannerPosition, setBannerPosition] = useState<{ top: number; right: number } | null>(null);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -69,35 +64,23 @@ export const LootboxDropOverlay = () => {
     }
   }, [activeLootbox, user]);
 
-  // Handle drop lifecycle: intro banner + drop animation
+  // Handle drop lifecycle: immediate drop animation
   useEffect(() => {
-    // Only react when we actually have an active lootbox in a valid game context
     if (!activeLootbox || loading || isAdminPage || isAuthPage || !user) {
       return;
     }
 
-    // Don't start a new event while another animation/box is visible
-    if (showIntroBanner || isVisible || isAnimating) {
+    if (isVisible || isAnimating) {
       return;
     }
 
-    // Already dismissed → never show again
     if (dismissedLootboxes.has(activeLootbox.id)) {
       return;
     }
 
-    // Notification for this lootbox was already shown
-    if (notificationShown && lastShownLootboxId === activeLootbox.id) {
-      return;
-    }
-
-    // Start notification for this lootbox
-    setLastShownLootboxId(activeLootbox.id);
-    setNotificationShown(true);
-    setShowIntroBanner(true);
-    setIntroCountdown(3);
-    setIsVisible(false);
-    setIsAnimating(false);
+    // Start box drop immediately
+    setIsVisible(true);
+    setIsAnimating(true);
   }, [
     activeLootbox,
     loading,
@@ -105,67 +88,10 @@ export const LootboxDropOverlay = () => {
     isAuthPage,
     user,
     dismissedLootboxes,
-    notificationShown,
-    lastShownLootboxId,
-    showIntroBanner,
     isVisible,
     isAnimating,
   ]);
   
-  // Intro banner 3-2-1 countdown - NOW STAYS VISIBLE FOR DEBUG
-  useEffect(() => {
-    if (!showIntroBanner) return;
-
-    const interval = window.setInterval(() => {
-      setIntroCountdown(prev => {
-        if (prev <= 1) {
-          window.clearInterval(interval);
-          // DON'T HIDE - KEEP VISIBLE FOR DEBUG
-          // setShowIntroBanner(false);
-
-          // Start box drop (countdown starts when it arrives)
-          setIsVisible(true);
-          setIsAnimating(true);
-
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      window.clearInterval(interval);
-    };
-  }, [showIntroBanner]);
-
-  // Position intro banner directly under lives + profile hexagon bar
-  useEffect(() => {
-    if (!showIntroBanner) return;
-
-    const updatePosition = () => {
-      if (typeof window === 'undefined') return;
-      const anchor = document.querySelector('[data-lootbox-banner-anchor]') as HTMLElement | null;
-      if (!anchor) {
-        setBannerPosition(null);
-        return;
-      }
-
-      const rect = anchor.getBoundingClientRect();
-      const offsetY = 8; // px gap under hexagon row
-      const minRight = 12; // px from right edge
-
-      const top = rect.bottom + offsetY;
-      const right = Math.max(window.innerWidth - rect.right, minRight);
-
-      setBannerPosition({ top, right });
-    };
-
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [showIntroBanner]);
 
   // End drop animation after 2.25s
   useEffect(() => {
@@ -205,26 +131,13 @@ export const LootboxDropOverlay = () => {
   };
 
   // Don't render on admin/auth pages, if no user, or if no active lootbox
-  if (isAdminPage || isAuthPage || !user || (!isVisible && !showIntroBanner) || !activeLootbox) {
+  if (isAdminPage || isAuthPage || !user || !isVisible || !activeLootbox) {
     return null;
   }
 
   return (
     <>
-      {/* Intro Banner - RED SVG notification below Lives+Profile hexagons */}
-      {showIntroBanner && (
-        <div
-          className="fixed z-40"
-          style={{
-            top: bannerPosition ? `${bannerPosition.top}px` : 'clamp(140px, 35vh, 180px)',
-            right: bannerPosition ? `${bannerPosition.right}px` : 'clamp(12px, 4vw, 24px)',
-          }}
-        >
-          <LootboxNotificationBanner countdown={introCountdown} />
-        </div>
-      )}
-
-      {/* Lootbox - appears ONLY after banner disappears, drops to Speed Booster level */}
+      {/* Lootbox - drops to Speed Booster level */}
       {isVisible && (
         <div
           className="fixed z-50 cursor-pointer"

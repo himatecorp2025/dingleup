@@ -534,10 +534,7 @@ const Dashboard = () => {
             </div>
 
             {/* Right: Purple Users Hexagon Bar with 4 hexagons */}
-            <div
-              className="flex-shrink-0 flex flex-col items-end"
-              data-lootbox-banner-anchor
-            >
+            <div className="flex-shrink-0">
               <UsersHexagonBar
                 username={profile.username}
                 rank={currentRank}
