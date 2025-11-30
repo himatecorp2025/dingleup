@@ -15,10 +15,6 @@ const AdminProfile = () => {
   const [username, setUsername] = useState('');
   const [lastUsernameChange, setLastUsernameChange] = useState<string | null>(null);
   
-  // Username editing
-  const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [newUsername, setNewUsername] = useState('');
-  
   // PIN changing
   const [currentPin, setCurrentPin] = useState('');
   const [newPin, setNewPin] = useState('');
@@ -54,7 +50,6 @@ const AdminProfile = () => {
       if (profile) {
         setUserId(profile.id);
         setUsername(profile.username);
-        setNewUsername(profile.username);
         setLastUsernameChange(profile.last_username_change);
       }
     } catch (error: any) {
@@ -64,59 +59,6 @@ const AdminProfile = () => {
     }
   };
 
-  const handleUsernameEdit = () => {
-    setIsEditingUsername(true);
-    setNewUsername(username);
-  };
-
-  const handleUsernameSave = async () => {
-    if (!newUsername.trim()) {
-      toast.error(t('admin.error_username_empty'));
-      return;
-    }
-
-    // Check 7-day cooldown
-    if (lastUsernameChange) {
-      const lastChange = new Date(lastUsernameChange);
-      const now = new Date();
-      const daysSinceLastChange = (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
-      
-      if (daysSinceLastChange < 7) {
-        const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(t('admin.username_cooldown').replace('{days}', String(daysRemaining)));
-        setIsEditingUsername(false);
-        return;
-      }
-    }
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error(t('admin.error_not_logged_in'));
-        return;
-      }
-
-      const response = await supabase.functions.invoke('update-username', {
-        body: { newUsername },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (response.error) {
-        throw new Error(response.error.message || t('admin.profile.username_update_error'));
-      }
-
-      setUsername(newUsername);
-      setIsEditingUsername(false);
-      toast.success(t('admin.success_username_updated'));
-      
-      // Refresh to get new last_username_change
-      await fetchProfile();
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
 
   const validatePin = (pin: string): string | null => {
     if (!/^\d{6}$/.test(pin)) {
@@ -265,34 +207,7 @@ const AdminProfile = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>{t('admin.profile.current_username')}</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={isEditingUsername ? newUsername : username}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  disabled={!isEditingUsername}
-                  className="flex-1"
-                />
-                {!isEditingUsername ? (
-                  <Button onClick={handleUsernameEdit} variant="outline">
-                    {t('admin.profile.edit_button')}
-                  </Button>
-                ) : (
-                  <>
-                    <Button onClick={handleUsernameSave}>
-                      {t('admin.profile.save_button')}
-                    </Button>
-                    <Button 
-                      onClick={() => {
-                        setIsEditingUsername(false);
-                        setNewUsername(username);
-                      }}
-                      variant="ghost"
-                    >
-                      {t('admin.profile.cancel_button')}
-                    </Button>
-                  </>
-                )}
-              </div>
+              <p className="text-sm font-medium">{username}</p>
             </div>
           </CardContent>
         </Card>
