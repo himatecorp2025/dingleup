@@ -639,74 +639,78 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
-                              transform: 'scale(0.9)',
-                              animation: 'pulse-scale 2s ease-in-out infinite'
+                              transform: 'scale(0.9)'
                             }}>
-                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                <div 
-                                  className="absolute inset-0"
-                                  style={{
-                                    backgroundImage: `url(${laurelWreathGold})`,
-                                    backgroundSize: 'contain',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                    filter: 'grayscale(100%) brightness(1.2) contrast(1.1) hue-rotate(0deg) saturate(0.3)'
-                                  }}
-                                />
-                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
-                                      boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                      {topPlayers[1].avatar_url ? (
-                                        <img 
-                                          src={topPlayers[1].avatar_url} 
-                                          alt={topPlayers[1].username}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-2xl bg-gray-800">
-                                          {topPlayers[1].username.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
+                              <div
+                                className="flex flex-col items-center w-full"
+                                style={{ animation: 'pulse-scale 2s ease-in-out infinite' }}
+                              >
+                                <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                  <div 
+                                    className="absolute inset-0"
+                                    style={{
+                                      backgroundImage: `url(${laurelWreathGold})`,
+                                      backgroundSize: 'contain',
+                                      backgroundPosition: 'center',
+                                      backgroundRepeat: 'no-repeat',
+                                      filter: 'grayscale(100%) brightness(1.2) contrast(1.1) hue-rotate(0deg) saturate(0.3)'
+                                    }}
+                                  />
+                                  <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                        boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                        {topPlayers[1].avatar_url ? (
+                                          <img 
+                                            src={topPlayers[1].avatar_url} 
+                                            alt={topPlayers[1].username}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-2xl bg-gray-800">
+                                            {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                    <div className="aspect-square rounded-full relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)',
+                                        boxShadow: '0 4px 8px rgba(192,192,192,0.5), 0 2px 4px rgba(0,0,0,0.2)'
+                                      }} />
+                                      <div className="absolute inset-[3px] rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                        boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                        background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
+                                        boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                      }}>
+                                        <span className="font-black relative" style={{ 
+                                          fontSize: '3.5vw',
+                                          background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
+                                          WebkitBackgroundClip: 'text',
+                                          WebkitTextFillColor: 'transparent',
+                                          filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.3))'
+                                        }}>2</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)',
-                                      boxShadow: '0 4px 8px rgba(192,192,192,0.5), 0 2px 4px rgba(0,0,0,0.2)'
-                                    }} />
-                                    <div className="absolute inset-[3px] rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
-                                      boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                      background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
-                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
-                                    }}>
-                                      <span className="font-black relative" style={{ 
-                                        fontSize: '3.5vw',
-                                        background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.3))'
-                                      }}>2</span>
-                                    </div>
-                                  </div>
+                                <div className="text-center w-full" style={{ marginTop: '-4px' }}>
+                                  <p className="text-white font-bold leading-none truncate px-1" style={{
+                                    WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                    fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                                    maxWidth: '100%'
+                                  }}>
+                                    {topPlayers[1].username}
+                                  </p>
                                 </div>
-                              </div>
-                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold leading-none truncate px-1" style={{
-                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
-                                  maxWidth: '100%'
-                                }}>
-                                  {topPlayers[1].username}
-                                </p>
                               </div>
                             </div>
                           )}
@@ -714,73 +718,77 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
-                              transform: 'translateY(-4%) scale(1.2)',
-                              animation: 'pulse-scale 2.4s ease-in-out infinite'
+                              transform: 'translateY(-4%) scale(1.2)'
                             }}>
-                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                <div 
-                                  className="absolute inset-0"
-                                  style={{
-                                    backgroundImage: `url(${laurelWreathGold})`,
-                                    backgroundSize: 'contain',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat'
-                                  }}
-                                />
-                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffb700 50%, #ff9500 75%, #ffd700 100%)',
-                                      boxShadow: '0 8px 16px rgba(218,165,32,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(139,69,0,0.5)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                      {topPlayers[0].avatar_url ? (
-                                        <img 
-                                          src={topPlayers[0].avatar_url} 
-                                          alt={topPlayers[0].username}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-yellow-400 font-bold text-3xl bg-gray-800">
-                                          {topPlayers[0].username.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
+                              <div
+                                className="flex flex-col items-center w-full"
+                                style={{ animation: 'pulse-scale 2.4s ease-in-out infinite' }}
+                              >
+                                <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                  <div 
+                                    className="absolute inset-0"
+                                    style={{
+                                      backgroundImage: `url(${laurelWreathGold})`,
+                                      backgroundSize: 'contain',
+                                      backgroundPosition: 'center',
+                                      backgroundRepeat: 'no-repeat'
+                                    }}
+                                  />
+                                  <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffb700 50%, #ff9500 75%, #ffd700 100%)',
+                                        boxShadow: '0 8px 16px rgba(218,165,32,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(139,69,0,0.5)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                        {topPlayers[0].avatar_url ? (
+                                          <img 
+                                            src={topPlayers[0].avatar_url} 
+                                            alt={topPlayers[0].username}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-yellow-400 font-bold text-3xl bg-gray-800">
+                                            {topPlayers[0].username.substring(0, 2).toUpperCase()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                    <div className="aspect-square rounded-full relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'radial-gradient(circle at 30% 30%, #fffacd 0%, #ffd700 30%, #ffb700 60%, #d4af37 100%)',
+                                        boxShadow: '0 6px 12px rgba(218,165,32,0.6), 0 2px 4px rgba(0,0,0,0.3)'
+                                      }} />
+                                      <div className="absolute inset-[3px] rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #d4af37 100%)',
+                                        boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(139,69,0,0.5)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                        background: 'radial-gradient(circle at 35% 35%, #ffffe0 0%, #ffd700 40%, #daa520 100%)',
+                                        boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -1px 3px rgba(139,69,0,0.3)'
+                                      }}>
+                                        <span className="font-black relative" style={{ 
+                                          fontSize: '4vw',
+                                          background: 'linear-gradient(180deg, #8b4513 0%, #4a2511 100%)',
+                                          WebkitBackgroundClip: 'text',
+                                          WebkitTextFillColor: 'transparent',
+                                          filter: 'drop-shadow(0 1px 2px rgba(255,255,255,0.4))'
+                                        }}>1</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'radial-gradient(circle at 30% 30%, #fffacd 0%, #ffd700 30%, #ffb700 60%, #d4af37 100%)',
-                                      boxShadow: '0 6px 12px rgba(218,165,32,0.6), 0 2px 4px rgba(0,0,0,0.3)'
-                                    }} />
-                                    <div className="absolute inset-[3px] rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #d4af37 100%)',
-                                      boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(139,69,0,0.5)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                      background: 'radial-gradient(circle at 35% 35%, #ffffe0 0%, #ffd700 40%, #daa520 100%)',
-                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -1px 3px rgba(139,69,0,0.3)'
-                                    }}>
-                                      <span className="font-black relative" style={{ 
-                                        fontSize: '4vw',
-                                        background: 'linear-gradient(180deg, #8b4513 0%, #4a2511 100%)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        filter: 'drop-shadow(0 1px 2px rgba(255,255,255,0.4))'
-                                      }}>1</span>
-                                    </div>
-                                  </div>
+                                <div className="text-center w-full" style={{ marginTop: '-4px' }}>
+                                  <p className="text-white font-bold leading-none truncate px-1" style={{
+                                    WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                    fontSize: 'clamp(0.65rem, 3vw, 0.8rem)',
+                                    maxWidth: '100%'
+                                  }}>
+                                    {topPlayers[0].username}
+                                  </p>
                                 </div>
-                              </div>
-                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold leading-none truncate px-1" style={{
-                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  fontSize: 'clamp(0.65rem, 3vw, 0.8rem)',
-                                  maxWidth: '100%'
-                                }}>
-                                  {topPlayers[0].username}
-                                </p>
                               </div>
                             </div>
                           )}
@@ -788,74 +796,78 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
-                              transform: 'scale(0.9)',
-                              animation: 'pulse-scale 2s ease-in-out infinite'
+                              transform: 'scale(0.9)'
                             }}>
-                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                <div 
-                                  className="absolute inset-0"
-                                  style={{
-                                    backgroundImage: `url(${laurelWreathGold})`,
-                                    backgroundSize: 'contain',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                    filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
-                                  }}
-                                />
-                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #cd7f32 0%, #c87533 25%, #b87333 50%, #a0522d 75%, #8b4513 100%)',
-                                      boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                      {topPlayers[2].avatar_url ? (
-                                        <img 
-                                          src={topPlayers[2].avatar_url} 
-                                          alt={topPlayers[2].username}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold text-2xl bg-gray-800">
-                                          {topPlayers[2].username.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
+                              <div
+                                className="flex flex-col items-center w-full"
+                                style={{ animation: 'pulse-scale 2s ease-in-out infinite' }}
+                              >
+                                <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                  <div 
+                                    className="absolute inset-0"
+                                    style={{
+                                      backgroundImage: `url(${laurelWreathGold})`,
+                                      backgroundSize: 'contain',
+                                      backgroundPosition: 'center',
+                                      backgroundRepeat: 'no-repeat',
+                                      filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
+                                    }}
+                                  />
+                                  <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #cd7f32 0%, #c87533 25%, #b87333 50%, #a0522d 75%, #8b4513 100%)',
+                                        boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                        {topPlayers[2].avatar_url ? (
+                                          <img 
+                                            src={topPlayers[2].avatar_url} 
+                                            alt={topPlayers[2].username}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold text-2xl bg-gray-800">
+                                            {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                    <div className="aspect-square rounded-full relative">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'radial-gradient(circle at 30% 30%, #cd7f32 0%, #c87533 30%, #b87333 60%, #a0522d 100%)',
+                                        boxShadow: '0 4px 8px rgba(205,127,50,0.5), 0 2px 4px rgba(0,0,0,0.2)'
+                                      }} />
+                                      <div className="absolute inset-[3px] rounded-full" style={{
+                                        background: 'linear-gradient(135deg, #d2a679 0%, #cd7f32 50%, #b87333 100%)',
+                                        boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                        background: 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)',
+                                        boxShadow: 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                      }}>
+                                        <span className="font-black relative" style={{ 
+                                          fontSize: '3.5vw',
+                                          background: 'linear-gradient(180deg, #4a2511 0%, #2d1506 100%)',
+                                          WebkitBackgroundClip: 'text',
+                                          WebkitTextFillColor: 'transparent',
+                                          filter: 'drop-shadow(0 1px 1px rgba(255,200,150,0.3))'
+                                        }}>3</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full relative">
-                                    <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'radial-gradient(circle at 30% 30%, #cd7f32 0%, #c87533 30%, #b87333 60%, #a0522d 100%)',
-                                      boxShadow: '0 4px 8px rgba(205,127,50,0.5), 0 2px 4px rgba(0,0,0,0.2)'
-                                    }} />
-                                    <div className="absolute inset-[3px] rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #d2a679 0%, #cd7f32 50%, #b87333 100%)',
-                                      boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
-                                    }} />
-                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                      background: 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)',
-                                      boxShadow: 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
-                                    }}>
-                                      <span className="font-black relative" style={{ 
-                                        fontSize: '3.5vw',
-                                        background: 'linear-gradient(180deg, #4a2511 0%, #2d1506 100%)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        filter: 'drop-shadow(0 1px 1px rgba(255,200,150,0.3))'
-                                      }}>3</span>
-                                    </div>
-                                  </div>
+                                <div className="text-center w-full" style={{ marginTop: '-4px' }}>
+                                  <p className="text-white font-bold leading-none truncate px-1" style={{
+                                    WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                    fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                                    maxWidth: '100%'
+                                  }}>
+                                    {topPlayers[2].username}
+                                  </p>
                                 </div>
-                              </div>
-                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold leading-none truncate px-1" style={{
-                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
-                                  maxWidth: '100%'
-                                }}>
-                                  {topPlayers[2].username}
-                                </p>
                               </div>
                             </div>
                           )}
