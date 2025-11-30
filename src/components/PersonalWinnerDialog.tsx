@@ -307,9 +307,6 @@ export const PersonalWinnerDialog = ({
                           fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
                           color: rank === 1 ? '#1a0f00' : '#ffffff',
                           WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.6)' : '1.5px rgba(0,0,0,0.9)',
-                          textShadow: rank === 1 
-                            ? '4px 4px 8px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.9), 0 0 15px rgba(255,215,0,0.7)' 
-                            : '2px 2px 4px rgba(0,0,0,0.3)',
                           letterSpacing: '0.08em',
                           lineHeight: '1.2',
                           fontWeight: 900
@@ -324,29 +321,23 @@ export const PersonalWinnerDialog = ({
                           fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
                           color: rank === 1 ? '#2d1a00' : '#ffffff',
                           WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.5)' : '1px rgba(0,0,0,0.8)',
-                          textShadow: rank === 1 
-                            ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 25px rgba(255,215,0,0.7)' 
-                            : '1px 1px 2px rgba(0,0,0,0.3)',
                           lineHeight: '1.4'
                         }}
                       >
                         {rank}. helyezett lettél a tegnapi versenyen.
                       </p>
                       
-                      <div 
-                        className="font-black space-y-3 mt-8"
-                        style={{
-                          fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                          lineHeight: '1.4'
-                        }}
+                        <div 
+                          className="font-black space-y-3 mt-8 p-6"
+                          style={{
+                            fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
+                            lineHeight: '1.4'
+                          }}
                       >
                         <p
                           style={{
                             color: rank === 1 ? '#1a0f00' : '#ffffff',
                             WebkitTextStroke: rank === 1 ? '1.5px rgba(139,69,19,0.4)' : '0.8px rgba(0,0,0,0.8)',
-                            textShadow: rank === 1 
-                              ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6)' 
-                              : '1px 1px 2px rgba(0,0,0,0.3)',
                             fontWeight: 900,
                             fontSize: 'clamp(1.3rem, 4.5vw, 1.8rem)',
                           }}
@@ -357,9 +348,6 @@ export const PersonalWinnerDialog = ({
                           style={{ 
                             color: rank === 1 ? '#1a0f00' : '#ffd700',
                             WebkitTextStroke: rank === 1 ? '2px rgba(139,69,19,0.5)' : '1px rgba(0,0,0,0.8)',
-                            textShadow: rank === 1 
-                              ? '4px 4px 8px rgba(0,0,0,0.6), 0 0 35px rgba(255,215,0,0.8), 0 0 15px rgba(255,215,0,0.6)' 
-                              : '2px 2px 4px rgba(0,0,0,0.4)',
                             fontWeight: 900,
                             fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
                             letterSpacing: '0.03em'
@@ -373,11 +361,8 @@ export const PersonalWinnerDialog = ({
                         className="font-bold mt-8"
                         style={{
                           fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                          color: rank === 1 ? '#2d1a00' : '#ffffff',
-                          WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.4)' : '0.8px rgba(0,0,0,0.8)',
-                          textShadow: rank === 1 
-                            ? '3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.6)' 
-                            : '1px 1px 2px rgba(0,0,0,0.3)',
+                            color: rank === 1 ? '#2d1a00' : '#ffffff',
+                            WebkitTextStroke: rank === 1 ? '1.5px rgba(101,67,33,0.4)' : '0.8px rgba(0,0,0,0.8)',
                           fontStyle: 'italic',
                           fontWeight: 700
                         }}
