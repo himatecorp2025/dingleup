@@ -43,7 +43,8 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   // Integrate popup hooks internally (eliminates external duplication)
   const dailyGift = useDailyGift(userId, false);
   const welcomeBonus = useWelcomeBonus(userId);
-  const dailyWinners = useDailyWinnersPopup(userId, username, false);
+  // TESTING: Force Daily Winners to always show for Halikababa
+  const dailyWinners = useDailyWinnersPopup(userId, username, true);
   const rankReward = useDailyRankReward(userId); // NEW: rank reward hook
 
   const [popupState, setPopupState] = useState<PopupState>({
@@ -141,8 +142,23 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, welcomeBonus.canClaim, popupState.welcomeBonusCompleted, dailyGift.canClaim, popupState.showDailyGift]);
 
-  // Priority 5: Daily Winners (TEMPORARILY INDEPENDENT from Daily Gift for testing)
+  // Priority 5: Daily Winners (FORCED TESTING MODE for Halikababa)
   useEffect(() => {
+    // TESTING BYPASS: Halikababa user sees popup immediately, ignoring all gates
+    const isTestUser = username === 'Halikababa';
+    
+    if (isTestUser && canMountModals && userId && !profileLoading && dailyWinners.canShowToday && !popupState.showDailyWinners) {
+      const timer = setTimeout(() => {
+        setPopupState(prev => ({
+          ...prev,
+          showDailyWinners: true,
+        }));
+      }, 500); // Short delay for test user
+      
+      return () => clearTimeout(timer);
+    }
+    
+    // Normal flow for other users
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
     
@@ -164,7 +180,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       
       return () => clearTimeout(timer);
     }
-  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyWinners.canShowToday, popupState.showDailyWinners]);
+  }, [canMountModals, userId, username, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyWinners.canShowToday, popupState.showDailyWinners]);
 
   // Handlers for closing popups
   const closeAgeGate = () => {
