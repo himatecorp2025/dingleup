@@ -132,9 +132,21 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       if (!players || players.length === 0) {
         console.log('[DAILY-WINNERS] No snapshot data - triggering on-demand processing for yesterday:', yesterdayDate);
         
-        // Trigger process-daily-winners to process yesterday's winners
+        // Get current session for authentication
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          console.error('[DAILY-WINNERS] No session - cannot trigger on-demand processing');
+          setTopPlayers([]);
+          setTotalRewards({ totalGold: 0, totalLives: 0 });
+          return;
+        }
+        
+        // Trigger process-daily-winners to process yesterday's winners with JWT auth
         try {
           const { error: processError } = await supabase.functions.invoke('process-daily-winners', {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`
+            },
             body: {}
           });
           
