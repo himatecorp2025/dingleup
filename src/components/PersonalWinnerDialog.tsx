@@ -329,7 +329,7 @@ export const PersonalWinnerDialog = ({
                           fontWeight: 900
                         }}
                       >
-                        {rank}. helyezett lettél a tegnapi versenyen.
+                        {rank}. helyezett lettél!
                       </p>
                       
                       <div 
@@ -356,10 +356,23 @@ export const PersonalWinnerDialog = ({
                             textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
                             letterSpacing: '0.05em',
                             fontWeight: 900,
-                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)'
+                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
+                            lineHeight: '1.3'
                           }}
                         >
-                          {goldReward.toLocaleString()} arany és {livesReward} élet!
+                          {goldReward.toLocaleString()} arany
+                        </p>
+                        <p 
+                          style={{ 
+                            color: '#ffffff',
+                            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)',
+                            letterSpacing: '0.05em',
+                            fontWeight: 900,
+                            fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
+                            lineHeight: '1.3'
+                          }}
+                        >
+                          {livesReward} élet!
                         </p>
                       </div>
                       
