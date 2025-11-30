@@ -261,14 +261,11 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
               throw new Error('No questions received from backend');
             }
 
-            // CRITICAL: Questions are already translated by backend based on lang parameter
-            console.log(`[useGameLifecycle] Questions received in language: ${userLang}`);
-
             const shuffledWithVariety = shuffleAnswers(data.questions);
             setQuestions(shuffledWithVariety);
-            
-            // Trigger prefetch for NEXT game (store in parent)
-            onPrefetchComplete(shuffledWithVariety);
+            // NOTE: Do not mark these as prefetched for the next game.
+            // Prefetch for upcoming games is handled separately (e.g. at question 10)
+            // to ensure each new game always uses the NEXT pool in the global rotation.
           } catch (error) {
             console.error('[useGameLifecycle] Failed to load questions:', error);
             toast.error(t('game.error_loading_questions'));
