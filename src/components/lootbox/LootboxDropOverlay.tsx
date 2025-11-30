@@ -11,14 +11,14 @@ import type { User } from '@supabase/supabase-js';
 
 export const LootboxDropOverlay = () => {
   const location = useLocation();
-  const { activeLootbox, loading, refetch } = useActiveLootbox(undefined);
-  const { walletData } = useWallet(undefined);
+  const [user, setUser] = useState<User | null>(null);
+  const { activeLootbox, loading, refetch } = useActiveLootbox(user?.id);
+  const { walletData } = useWallet(user?.id);
   
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [storedCount, setStoredCount] = useState(0);
-  const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [showNotification, setShowNotification] = useState(false);
   const [startDrop, setStartDrop] = useState(false);
