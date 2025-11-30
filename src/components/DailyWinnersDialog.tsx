@@ -515,14 +515,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
+                <div className="relative z-10 flex flex-col items-center px-[4%] pb-[2%]" style={{ height: '100%', paddingTop: '0' }}>
                   <div
                     className="w-full mb-2"
                     style={{
-                      minHeight: 'calc(100% - 120px)',
-                      maxHeight: 'calc(100% - 120px)',
+                      minHeight: 'calc(100% - 80px)',
+                      maxHeight: 'calc(100% - 80px)',
                       overflowY: 'auto',
-                      overflowX: 'hidden'
+                      overflowX: 'hidden',
+                      width: '100%'
                     }}
                   >
                     {topPlayers.length === 0 ? (
@@ -634,7 +635,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-30%)' }}>
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-20%)' }}>
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
@@ -858,7 +859,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
-                        <div style={{ transform: 'translateY(-8%)' }}>
+                        <div style={{ transform: 'translateY(0%)' }}>
                           {/* First row: positions 4-7 */}
                           <div className="grid grid-cols-4 gap-2 mb-2" style={{ transform: 'scale(1.15)' }}>
                             {rankFourToTen.slice(0, 4).map((player) => {
