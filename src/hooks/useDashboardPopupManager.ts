@@ -230,19 +230,22 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   };
 
   const closePersonalWinner = async () => {
-    // Close personal winner popup and claim the reward
+    // CRITICAL FIX: Close popup IMMEDIATELY, then claim reward
+    // This prevents popup re-appearing if claim fails or is slow
+    setPopupState(prev => ({
+      ...prev,
+      showPersonalWinner: false,
+    }));
+    
+    // Claim reward asynchronously (state already cleared)
     try {
-      await rankReward.claimReward();
-      setPopupState(prev => ({
-        ...prev,
-        showPersonalWinner: false,
-      }));
+      const result = await rankReward.claimReward();
+      if (!result?.success) {
+        console.log('[PERSONAL-WINNER] Claim was unsuccessful, but popup already closed');
+      }
     } catch (error) {
-      console.error('[PERSONAL-WINNER] Error closing popup:', error);
-      setPopupState(prev => ({
-        ...prev,
-        showPersonalWinner: false,
-      }));
+      console.error('[PERSONAL-WINNER] Error claiming reward:', error);
+      // Popup already closed, no need to handle further
     }
   };
 
