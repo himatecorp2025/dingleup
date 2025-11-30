@@ -444,18 +444,21 @@ export type Database = {
       daily_prize_table: {
         Row: {
           created_at: string | null
+          day_of_week: number
           gold: number
           lives: number
           rank: number
         }
         Insert: {
           created_at?: string | null
+          day_of_week?: number
           gold?: number
           lives?: number
           rank: number
         }
         Update: {
           created_at?: string | null
+          day_of_week?: number
           gold?: number
           lives?: number
           rank?: number
