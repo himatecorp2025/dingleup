@@ -1047,6 +1047,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                        </>
                     )}
                   </div>
+                </div>
 
                   {/* Gratulálok button - Fixed at shield bottom regardless of player count */}
                   {topPlayers.length > 0 && (
@@ -1069,7 +1070,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </HexAcceptButton>
                     </div>
                   )}
-                </div>
                 </div>
               </HexShieldFrame>
             </div>
