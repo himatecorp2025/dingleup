@@ -141,7 +141,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, welcomeBonus.canClaim, popupState.welcomeBonusCompleted, dailyGift.canClaim, popupState.showDailyGift]);
 
-  // Priority 5: Daily Winners (ONLY AFTER Daily Gift interaction, with 1200ms delay)
+  // Priority 5: Daily Winners (TEMPORARILY INDEPENDENT from Daily Gift for testing)
   useEffect(() => {
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
@@ -149,9 +149,9 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
     
-    // CRITICAL: Daily Winners only appears AFTER Daily Gift is completed (accepted or closed)
-    // If Daily Gift can be claimed but not completed yet, wait
-    if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    // TEMPORARY TESTING: Daily Winners appears independently from Daily Gift
+    // TODO: Restore Daily Gift dependency later when testing is complete
+    // Original logic: if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
     
     // Only show if can show today and not already showing
     if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
@@ -160,11 +160,11 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
           ...prev,
           showDailyWinners: true,
         }));
-      }, 1200); // 1200ms delay to ensure clear separation from Daily Gift
+      }, 1200); // 1200ms delay to ensure clear separation from other popups
       
       return () => clearTimeout(timer);
     }
-  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyGift.canClaim, popupState.dailyGiftCompleted, dailyWinners.canShowToday, popupState.showDailyWinners]);
+  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyWinners.canShowToday, popupState.showDailyWinners]);
 
   // Handlers for closing popups
   const closeAgeGate = () => {
