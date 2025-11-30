@@ -119,32 +119,40 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
       }
 
-      // CRITICAL: Default language is ALWAYS English unless explicitly set by user
-      let targetLang: LangCode = DEFAULT_LANG; // DEFAULT_LANG = 'en'
-
-      // Get user profile with preferred_language
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('preferred_language')
-          .eq('id', user.id)
-          .single();
-
-        if (profile?.preferred_language) {
-          // Use user's explicitly set preferred_language
-          targetLang = resolveInitialLang({ 
-            loggedInUserPreferredLanguage: profile.preferred_language 
-          });
-        }
-        // If no preferred_language set, stay with default English
-        
-        localStorage.setItem(STORAGE_KEY, targetLang);
+      // CRITICAL FIX: Check localStorage FIRST before database
+      // This preserves user's language choice across page refreshes
+      let targetLang: LangCode = DEFAULT_LANG;
+      
+      const storedLang = localStorage.getItem(STORAGE_KEY);
+      if (storedLang && ALLOWED_LANGS.includes(storedLang as LangCode)) {
+        // Use stored language from localStorage (immediate, no database query needed)
+        targetLang = storedLang as LangCode;
+        console.log('[I18n] Using stored language from localStorage:', targetLang);
       } else {
-        // No user logged in - ALWAYS default to English
-        targetLang = 'en';
-        localStorage.setItem(STORAGE_KEY, targetLang);
+        // No stored language - check user profile in database
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('preferred_language')
+            .eq('id', user.id)
+            .single();
+
+          if (profile?.preferred_language) {
+            // Use user's explicitly set preferred_language
+            targetLang = resolveInitialLang({ 
+              loggedInUserPreferredLanguage: profile.preferred_language 
+            });
+          }
+          // If no preferred_language set, stay with default English
+          
+          localStorage.setItem(STORAGE_KEY, targetLang);
+        } else {
+          // No user logged in - ALWAYS default to English
+          targetLang = 'en';
+          localStorage.setItem(STORAGE_KEY, targetLang);
+        }
       }
 
       setLangState(targetLang);
