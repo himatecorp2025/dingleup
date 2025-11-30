@@ -327,7 +327,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   style={{ 
                     width: '80%', 
                     maxWidth: '400px', 
-                    transform: 'translateY(-35%)' 
+                    transform: 'translateY(-60%)' 
                   }}
                 >
                   <div className="absolute inset-0 translate-y-1 translate-x-1"
