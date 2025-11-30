@@ -639,6 +639,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
+                              transform: 'scale(0.9)',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -713,7 +714,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
-                              transform: 'translateY(-8%) scale(1.1)',
+                              transform: 'translateY(-6%) scale(1.2)',
                               animation: 'pulse-scale 2.4s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -787,6 +788,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '36.225%',
+                              transform: 'scale(0.9)',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
