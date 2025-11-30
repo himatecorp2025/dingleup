@@ -28,28 +28,31 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
           return;
         }
 
-        // CRITICAL: Check if user is in TOP 10 (Monday-Saturday) or TOP 25 (Sunday) leaderboard
-        // Determine current day of week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        const isSunday = dayOfWeek === 0;
+        // CRITICAL: Check if user was in YESTERDAY'S TOP 10 (Mon-Sat) or TOP 25 (Sunday)
+        // Calculate yesterday's date
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayDate = yesterday.toISOString().split('T')[0];
+        const yesterdayDayOfWeek = yesterday.getDay();
+        const wasYesterdaySunday = yesterdayDayOfWeek === 0;
         
         // Sunday: TOP 25, Other days: TOP 10
-        const rankThreshold = isSunday ? 25 : 10;
+        const rankThreshold = wasYesterdaySunday ? 25 : 10;
 
-        const { data: leaderboardEntry, error: leaderboardError } = await supabase
-          .from('leaderboard_cache')
+        const { data: yesterdaySnapshot, error: snapshotError } = await supabase
+          .from('daily_leaderboard_snapshot')
           .select('rank')
           .eq('user_id', userId)
+          .eq('snapshot_date', yesterdayDate)
           .maybeSingle();
 
-        if (leaderboardError) {
-          console.error('[DAILY-WINNERS-POPUP] Error checking leaderboard status:', leaderboardError);
+        if (snapshotError) {
+          console.error('[DAILY-WINNERS-POPUP] Error checking yesterday snapshot:', snapshotError);
         }
 
-        if (leaderboardEntry && leaderboardEntry.rank <= rankThreshold) {
+        if (yesterdaySnapshot && yesterdaySnapshot.rank <= rankThreshold) {
           setCanShowToday(false);
-          console.log('[DAILY-WINNERS-POPUP] User is in TOP', rankThreshold, '(rank:', leaderboardEntry.rank, '), skipping popup');
+          console.log('[DAILY-WINNERS-POPUP] User was in YESTERDAY TOP', rankThreshold, '(rank:', yesterdaySnapshot.rank, '), skipping popup');
           return;
         }
 
