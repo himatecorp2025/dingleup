@@ -15,6 +15,7 @@ export const usePaymentPolling = () => {
   const queryClient = useQueryClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isVerifyingRef = useRef(false);
+  const retryCountsRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     const checkPendingPayments = async () => {
@@ -41,10 +42,12 @@ export const usePaymentPolling = () => {
         // Try to verify each pending session
         if (pendingLootbox) {
           const { sessionId, timestamp } = JSON.parse(pendingLootbox);
+          const retryKey = `lootbox_${sessionId}`;
           
           // Skip if session is older than 24 hours
           if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
             localStorage.removeItem('pending_lootbox_session');
+            delete retryCountsRef.current[retryKey];
           } else {
             const { data, error } = await supabase.functions.invoke('verify-lootbox-payment', {
               body: { sessionId },
@@ -53,17 +56,28 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_lootbox_session');
+              delete retryCountsRef.current[retryKey];
               toast.success(t('payment.polling.lootbox_verified'), { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
+            } else {
+              // Ha sikertelen, növeljük a retry számlálót és 3 próbálkozás után töröljük
+              retryCountsRef.current[retryKey] = (retryCountsRef.current[retryKey] || 0) + 1;
+              if (retryCountsRef.current[retryKey] >= 3) {
+                localStorage.removeItem('pending_lootbox_session');
+                delete retryCountsRef.current[retryKey];
+                console.log('[usePaymentPolling] Lootbox payment verification failed after 3 attempts, cleared from localStorage');
+              }
             }
           }
         }
 
         if (pendingSpeed) {
           const { sessionId, timestamp } = JSON.parse(pendingSpeed);
+          const retryKey = `speed_${sessionId}`;
           
           if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
             localStorage.removeItem('pending_speed_session');
+            delete retryCountsRef.current[retryKey];
           } else {
             const { data, error } = await supabase.functions.invoke('verify-speed-boost-payment', {
               body: { sessionId },
@@ -72,17 +86,27 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_speed_session');
+              delete retryCountsRef.current[retryKey];
               toast.success(t('payment.polling.speed_verified'), { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
+            } else {
+              retryCountsRef.current[retryKey] = (retryCountsRef.current[retryKey] || 0) + 1;
+              if (retryCountsRef.current[retryKey] >= 3) {
+                localStorage.removeItem('pending_speed_session');
+                delete retryCountsRef.current[retryKey];
+                console.log('[usePaymentPolling] Speed boost payment verification failed after 3 attempts, cleared from localStorage');
+              }
             }
           }
         }
 
         if (pendingPremium) {
           const { sessionId, timestamp } = JSON.parse(pendingPremium);
+          const retryKey = `premium_${sessionId}`;
           
           if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
             localStorage.removeItem('pending_premium_session');
+            delete retryCountsRef.current[retryKey];
           } else {
             const { data, error } = await supabase.functions.invoke('verify-premium-booster-payment', {
               body: { sessionId },
@@ -91,18 +115,28 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_premium_session');
+              delete retryCountsRef.current[retryKey];
               const successMsg = `${t('payment.success.rewards_prefix')} +${data.grantedRewards?.gold} ${t('payment.success.gold')} ${t('payment.success.and')} +${data.grantedRewards?.lives} ${t('payment.success.lives')} ${t('payment.success.rewards_suffix')}`;
               toast.success(successMsg, { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
+            } else {
+              retryCountsRef.current[retryKey] = (retryCountsRef.current[retryKey] || 0) + 1;
+              if (retryCountsRef.current[retryKey] >= 3) {
+                localStorage.removeItem('pending_premium_session');
+                delete retryCountsRef.current[retryKey];
+                console.log('[usePaymentPolling] Premium booster payment verification failed after 3 attempts, cleared from localStorage');
+              }
             }
           }
         }
 
         if (pendingRescue) {
           const { sessionId, timestamp } = JSON.parse(pendingRescue);
+          const retryKey = `rescue_${sessionId}`;
           
           if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
             localStorage.removeItem('pending_rescue_session');
+            delete retryCountsRef.current[retryKey];
           } else {
             const { data, error } = await supabase.functions.invoke('verify-instant-rescue-payment', {
               body: { sessionId },
@@ -111,9 +145,17 @@ export const usePaymentPolling = () => {
 
             if (!error && data?.success) {
               localStorage.removeItem('pending_rescue_session');
+              delete retryCountsRef.current[retryKey];
               const successMsg = `${t('payment.success.rewards_prefix')} +${data.grantedRewards?.gold} ${t('payment.success.gold')} ${t('payment.success.and')} +${data.grantedRewards?.lives} ${t('payment.success.lives')} ${t('payment.success.rewards_suffix')}`;
               toast.success(successMsg, { duration: 3000 });
               queryClient.invalidateQueries({ queryKey: ['wallet'] });
+            } else {
+              retryCountsRef.current[retryKey] = (retryCountsRef.current[retryKey] || 0) + 1;
+              if (retryCountsRef.current[retryKey] >= 3) {
+                localStorage.removeItem('pending_rescue_session');
+                delete retryCountsRef.current[retryKey];
+                console.log('[usePaymentPolling] Instant rescue payment verification failed after 3 attempts, cleared from localStorage');
+              }
             }
           }
         }
