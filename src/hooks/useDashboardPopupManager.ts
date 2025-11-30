@@ -44,9 +44,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   // Integrate popup hooks internally (eliminates external duplication)
   const dailyGift = useDailyGift(userId, false);
   const welcomeBonus = useWelcomeBonus(userId);
-  // TESTING: Force Daily Winners to always show ONLY for DingleUP (admin user)
-  const isAdminTestUser = username === 'DingleUP';
-  const dailyWinners = useDailyWinnersPopup(userId, username, isAdminTestUser);
+  const dailyWinners = useDailyWinnersPopup(userId, username, false);
   const rankReward = useDailyRankReward(userId); // NEW: rank reward hook
 
   const [popupState, setPopupState] = useState<PopupState>({
