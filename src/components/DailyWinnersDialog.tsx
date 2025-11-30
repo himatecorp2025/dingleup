@@ -557,8 +557,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           marginTop: 'clamp(8px, 2vh, 16px)'
                         }}
                       >
-                        {/* 2ND PLACE - SILVER - LEFT */}
-                        {topPlayers[1] && (
+                        {/* 2ND PLACE - BRONZE - LEFT (was SILVER) */}
+                        {topPlayers[2] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
                               className="w-full flex flex-col items-center"
@@ -586,16 +586,16 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                        {topPlayers[1].avatar_url ? (
+                                        {topPlayers[2].avatar_url ? (
                                           <img 
-                                            src={topPlayers[1].avatar_url} 
-                                            alt={topPlayers[1].username}
+                                            src={topPlayers[2].avatar_url} 
+                                            alt={topPlayers[2].username}
                                             className="w-full h-full object-cover"
                                           />
                                         ) : (
                                           <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold bg-gray-800"
                                                style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>
-                                            {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                            {topPlayers[2].username.substring(0, 2).toUpperCase()}
                                           </div>
                                         )}
                                       </div>
@@ -619,7 +619,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                           background: 'linear-gradient(180deg, #fffacd 0%, #daa520 100%)',
                                           WebkitBackgroundClip: 'text',
                                           WebkitTextFillColor: 'transparent'
-                                        }}>{topPlayers[1].rank}</span>
+                                        }}>{topPlayers[2].rank}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -630,7 +630,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
                               }}>
-                                {topPlayers[1].username}
+                                {topPlayers[2].username}
                               </p>
                             </div>
                           </div>
@@ -717,8 +717,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           </div>
                         )}
 
-                        {/* 3RD PLACE - BRONZE - RIGHT */}
-                        {topPlayers[2] && (
+                        {/* 3RD PLACE - SILVER - RIGHT (was BRONZE) */}
+                        {topPlayers[1] && (
                           <div className="flex flex-col items-center" style={{ width: 'clamp(55px, 22vw, 90px)' }}>
                             <div
                               className="w-full flex flex-col items-center"
@@ -746,16 +746,16 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
                                       }} />
                                       <div className="absolute inset-[6px] rounded-full overflow-hidden">
-                                        {topPlayers[2].avatar_url ? (
+                                        {topPlayers[1].avatar_url ? (
                                           <img 
-                                            src={topPlayers[2].avatar_url} 
-                                            alt={topPlayers[2].username}
+                                            src={topPlayers[1].avatar_url} 
+                                            alt={topPlayers[1].username}
                                             className="w-full h-full object-cover"
                                           />
                                         ) : (
                                           <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-800"
                                                style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>
-                                            {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                            {topPlayers[1].username.substring(0, 2).toUpperCase()}
                                           </div>
                                         )}
                                       </div>
@@ -779,7 +779,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                           background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
                                           WebkitBackgroundClip: 'text',
                                           WebkitTextFillColor: 'transparent'
-                                        }}>{topPlayers[2].rank}</span>
+                                        }}>{topPlayers[1].rank}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -790,7 +790,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
                               }}>
-                                {topPlayers[2].username}
+                                {topPlayers[1].username}
                               </p>
                             </div>
                           </div>
