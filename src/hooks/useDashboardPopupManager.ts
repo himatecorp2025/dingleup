@@ -151,8 +151,9 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     // CRITICAL: block if rank reward exists (mutually exclusive)
     if (rankReward.showRewardPopup) return;
 
-    // TESTING BYPASS: Temporarily disable Daily Gift dependency for admin testing
-    // Original logic: if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
+    // CRITICAL: Daily Winners only appears AFTER Daily Gift is completed (accepted or closed)
+    // If Daily Gift can be claimed but not completed yet, wait
+    if (dailyGift.canClaim && !popupState.dailyGiftCompleted) return;
 
     // Only show if can show today and not already showing
     if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
@@ -161,7 +162,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
           ...prev,
           showDailyWinners: true,
         }));
-      }, 500); // Reduced delay for testing
+      }, 500);
 
       return () => clearTimeout(timer);
     }
@@ -175,6 +176,8 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showWelcomeBonus,
     popupState.showDailyGift,
     rankReward.showRewardPopup,
+    dailyGift.canClaim,
+    popupState.dailyGiftCompleted,
     dailyWinners.canShowToday,
     popupState.showDailyWinners,
   ]);
