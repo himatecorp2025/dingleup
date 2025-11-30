@@ -155,29 +155,30 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                             avatarUrl={player.avatar_url} 
                           />
                         </div>
-                        <span 
-                          className="font-bold text-white truncate overflow-hidden whitespace-nowrap" 
-                          style={{ 
-                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)',
-                            textOverflow: 'ellipsis',
-                            maxWidth: 'clamp(120px, 25vw, 140px)',
-                            fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)'
-                          }}
-                        >
-                          {player.username}
-                        </span>
+                        <div className="flex flex-col min-w-0">
+                          <span 
+                            className="font-bold text-white truncate overflow-hidden whitespace-nowrap" 
+                            style={{ 
+                              textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)',
+                              textOverflow: 'ellipsis',
+                              maxWidth: 'clamp(120px, 25vw, 140px)',
+                              fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)'
+                            }}
+                          >
+                            {player.username}
+                          </span>
+                          <span 
+                            className="font-semibold" 
+                            style={{ 
+                              color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
+                              textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+                              fontSize: 'clamp(0.625rem, 1.8vw, 0.75rem)'
+                            }}
+                          >
+                            {t('daily_rewards.correct_answers').replace('{count}', String(player.total_correct_answers))}
+                          </span>
+                        </div>
                       </div>
-                      <span 
-                        className="font-semibold" 
-                        style={{ 
-                          color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
-                          textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
-                          fontSize: 'clamp(0.625rem, 1.8vw, 0.75rem)',
-                          marginLeft: 'clamp(32px, 7vw, 40px)'
-                        }}
-                      >
-                        {t('daily_rewards.correct_answers').replace('{count}', String(player.total_correct_answers))}
-                      </span>
                     </div>
                   </div>
                   
@@ -314,11 +315,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                               avatarUrl={player.avatar_url} 
                             />
                           </div>
-                          <span className="font-bold text-white truncate overflow-hidden whitespace-nowrap" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)', textOverflow: 'ellipsis', maxWidth: 'clamp(120px, 25vw, 140px)', fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>{player.username}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-white truncate overflow-hidden whitespace-nowrap" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)', textOverflow: 'ellipsis', maxWidth: 'clamp(120px, 25vw, 140px)', fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>{player.username}</span>
+                            <span className="font-semibold" style={{ color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)', textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)', fontSize: 'clamp(0.625rem, 1.8vw, 0.75rem)' }}>
+                              {t('daily_rewards.correct_answers').replace('{count}', String(player.total_correct_answers))}
+                            </span>
+                          </div>
                         </div>
-                        <span className="font-semibold" style={{ color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)', textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)', fontSize: 'clamp(0.625rem, 1.8vw, 0.75rem)', marginLeft: 'clamp(32px, 7vw, 40px)' }}>
-                          {t('daily_rewards.correct_answers').replace('{count}', String(player.total_correct_answers))}
-                        </span>
                       </div>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0" style={{ minWidth: 'clamp(90px, 18vw, 100px)', gap: 'clamp(6px, 1vh, 8px)' }}>
