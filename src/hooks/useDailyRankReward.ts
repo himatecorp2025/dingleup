@@ -93,7 +93,7 @@ export const useDailyRankReward = (userId: string | undefined) => {
   }, [userId]);
 
   const claimReward = async () => {
-    if (!pendingReward || isClaiming) return;
+    if (!pendingReward || isClaiming) return { success: false };
 
     setIsClaiming(true);
     try {
@@ -103,13 +103,18 @@ export const useDailyRankReward = (userId: string | undefined) => {
 
       if (error || !data?.success) {
         console.error('[RANK-REWARD] Error claiming reward:', error);
+        
+        // CRITICAL FIX: Clear state EVEN on error to prevent popup re-appearing
+        setShowRewardPopup(false);
+        setPendingReward(null);
+        
         toast({
           title: t('rank_reward.claim_error_title'),
           description: t('rank_reward.claim_error_desc'),
           variant: 'destructive',
           duration: 4000,
         });
-        return;
+        return { success: false };
       }
 
       console.log('[RANK-REWARD] Reward claimed successfully:', data);
@@ -126,14 +131,23 @@ export const useDailyRankReward = (userId: string | undefined) => {
           .replace('{lives}', data.livesCredited.toString()),
         duration: 3000,
       });
+      
+      return { success: true };
     } catch (error) {
       console.error('[RANK-REWARD] Exception claiming reward:', error);
+      
+      // CRITICAL FIX: Clear state on exception too
+      setShowRewardPopup(false);
+      setPendingReward(null);
+      
       toast({
         title: t('rank_reward.claim_error_title'),
         description: t('rank_reward.claim_exception_desc'),
         variant: 'destructive',
         duration: 4000,
       });
+      
+      return { success: false };
     } finally {
       setIsClaiming(false);
     }

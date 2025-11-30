@@ -341,6 +341,15 @@ const Dashboard = () => {
     }
     return success;
   };
+  
+  const handleClosePersonalWinner = async () => {
+    // Close popup and claim reward
+    await popupManager.closePersonalWinner();
+    
+    // Refresh wallet and profile to show updated gold/lives
+    await refetchWallet();
+    await refreshProfile();
+  };
 
   const handleWelcomeLaterClick = () => {
     popupManager.welcomeBonus.handleLater();
@@ -724,7 +733,7 @@ const Dashboard = () => {
       {popupManager.rankReward.pendingReward && (
         <PersonalWinnerDialog
           open={popupManager.popupState.showPersonalWinner}
-          onClose={popupManager.closePersonalWinner}
+          onClose={handleClosePersonalWinner}
           rank={popupManager.rankReward.pendingReward.rank}
           username={popupManager.rankReward.pendingReward.username}
           goldReward={popupManager.rankReward.pendingReward.gold}
