@@ -124,15 +124,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       
       const yesterdayDate = localYesterday.toLocaleDateString('en-CA'); // YYYY-MM-DD format
 
-      console.log('[DAILY-WINNERS] Fetching yesterday winners from daily_leaderboard_snapshot, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
+      console.log('[DAILY-WINNERS] Fetching yesterday winners from daily_winner_awarded, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
 
-      // Fetch ALL players from yesterday's snapshot (not just TOP 10)
+      // Fetch ALL winners from yesterday (not just TOP 10)
       // Display whoever is there, even if it's just 1-2 people
       const { data: players, error } = await supabase
-        .from('daily_leaderboard_snapshot')
+        .from('daily_winner_awarded')
         .select('user_id, rank, username, avatar_url, total_correct_answers')
         .eq('country_code', userCountry)
-        .eq('snapshot_date', yesterdayDate)
+        .eq('day_date', yesterdayDate)
         .order('rank', { ascending: true })
         .limit(25); // Show up to TOP 25 (Sunday jackpot max)
 
