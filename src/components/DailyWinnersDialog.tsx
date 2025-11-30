@@ -249,8 +249,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
   useEffect(() => {
     if (open) {
-      setContentVisible(true);
+      const t = setTimeout(() => setContentVisible(true), 10);
       fetchYesterdayTopPlayers();
+      return () => {
+        clearTimeout(t);
+        setContentVisible(false);
+      };
     } else {
       setContentVisible(false);
     }
@@ -304,13 +308,20 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               style={{
                 width: BASE_WIDTH,
                 height: BASE_HEIGHT,
-                transform: `scale(${scale})`,
-                transformOrigin: 'center center',
-                position: 'relative',
-                opacity: contentVisible ? 1 : 0,
-                transition: 'opacity 0ms'
+                position: 'relative'
               }}
             >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  transform: contentVisible ? `scale(${scale})` : 'scale(0)',
+                  opacity: contentVisible ? 1 : 0,
+                  transition: 'transform 1.125s cubic-bezier(0.34, 1.56, 0.64, 1) 0ms, opacity 1.125s ease-in-out 0ms',
+                  transformOrigin: 'center center',
+                  willChange: contentVisible ? 'transform, opacity' : 'auto'
+                }}
+              >
               {/* Close X button - Only when no data */}
               {topPlayers.length === 0 && (
                 <button
@@ -1002,9 +1013,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   )}
                 </div>
               </HexShieldFrame>
+              </div>
+              </div>
             </div>
           </div>
-        </div>
         </DialogContent>
       </Dialog>
     </>
