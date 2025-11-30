@@ -226,7 +226,7 @@ const Profile = () => {
       }
 
       const response = await supabase.functions.invoke('update-username', {
-        body: { newUsername },
+        body: { newUsername: newUsername.trim() },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
@@ -236,7 +236,9 @@ const Profile = () => {
         throw new Error(response.error.message || t('profile.error.username_update_failed'));
       }
 
-      await updateProfile({ username: newUsername });
+      // CRITICAL: Refresh profile from backend instead of local update
+      // Edge function already updated the database, we just need to reload the data
+      await refreshProfile();
       setIsEditingUsername(false);
       toast.success(t('profile.username_updated'));
     } catch (error: any) {
