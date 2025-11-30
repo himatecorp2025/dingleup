@@ -16,6 +16,33 @@ async function hashPin(pin: string): Promise<string> {
   return hashHex;
 }
 
+// Generate secure random recovery code (format: XXXX-XXXX-XXXX)
+function generateRecoveryCode(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const segments: string[] = [];
+  
+  for (let i = 0; i < 3; i++) {
+    let segment = '';
+    for (let j = 0; j < 4; j++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      segment += chars[randomIndex];
+    }
+    segments.push(segment);
+  }
+  
+  return segments.join('-');
+}
+
+// Hash recovery code using SHA-256
+async function hashRecoveryCode(code: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(code);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -110,6 +137,10 @@ serve(async (req) => {
     // Hash PIN with SHA-256
     const pinHash = await hashPin(pin);
 
+    // Generate and hash recovery code
+    const recoveryCode = generateRecoveryCode();
+    const recoveryCodeHash = await hashRecoveryCode(recoveryCode);
+
     // Create auth user with admin API - IMMEDIATELY CONFIRMED
     const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
@@ -127,7 +158,7 @@ serve(async (req) => {
       );
     }
 
-    // Save username and pin_hash to profiles
+    // Save username, pin_hash, and recovery_code_hash to profiles
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .upsert({ 
@@ -135,6 +166,8 @@ serve(async (req) => {
         username,
         pin_hash: pinHash,
         email: null,
+        recovery_code_hash: recoveryCodeHash,
+        recovery_code_set_at: new Date().toISOString(),
       }, {
         onConflict: 'id'
       });
@@ -219,7 +252,12 @@ serve(async (req) => {
         user: {
           id: authData.user.id,
           username,
-        }
+        },
+        recovery_code: recoveryCode,
+        // IMPORTANT: Frontend must display this recovery code to the user
+        // with a clear warning to save it securely for PIN reset purposes.
+        // Message: "Írd fel / mentsd el ezt a helyreállítási kódot! Ezzel tudod 
+        // visszaállítani a PIN kódodat, ha elfelejted. A kódot nem küldjük el újra."
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

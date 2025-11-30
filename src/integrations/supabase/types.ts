@@ -2044,9 +2044,13 @@ export type Database = {
           lives_regeneration_rate: number | null
           max_lives: number | null
           pin_hash: string
+          pin_reset_attempts: number | null
+          pin_reset_last_attempt_at: string | null
           preferred_country: string | null
           preferred_language: string | null
           question_swaps_available: number | null
+          recovery_code_hash: string | null
+          recovery_code_set_at: string | null
           terms_accepted_at: string | null
           total_correct_answers: number
           updated_at: string | null
@@ -2090,9 +2094,13 @@ export type Database = {
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           pin_hash: string
+          pin_reset_attempts?: number | null
+          pin_reset_last_attempt_at?: string | null
           preferred_country?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
           terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -2136,9 +2144,13 @@ export type Database = {
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           pin_hash?: string
+          pin_reset_attempts?: number | null
+          pin_reset_last_attempt_at?: string | null
           preferred_country?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
           terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
