@@ -13,7 +13,7 @@ import defaultProfileImage from '@/assets/default-profile.png';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save } from 'lucide-react';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
@@ -39,10 +39,6 @@ const Profile = () => {
 
   // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
   useNativeFullscreen();
-  
-  // Username editing
-  const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [newUsername, setNewUsername] = useState('');
   
   // PIN fields
   const [showCurrentPin, setShowCurrentPin] = useState(false);
@@ -193,58 +189,6 @@ const Profile = () => {
     }
   };
 
-  const handleUsernameEdit = () => {
-    setNewUsername(profile.username);
-    setIsEditingUsername(true);
-  };
-
-  const handleUsernameSave = async () => {
-    if (!newUsername.trim()) {
-      toast.error(t('profile.error.username_empty'));
-      return;
-    }
-
-    // Check 7-day cooldown
-    if (profile.last_username_change) {
-      const lastChange = new Date(profile.last_username_change);
-      const now = new Date();
-      const daysSinceLastChange = (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
-      
-      if (daysSinceLastChange < 7) {
-        const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(`${t('profile.error.username_cooldown')} ${daysRemaining} ${t('profile.error.days_remaining')}`);
-        setIsEditingUsername(false);
-        return;
-      }
-    }
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error(t('errors.not_logged_in'));
-        return;
-      }
-
-      const response = await supabase.functions.invoke('update-username', {
-        body: { newUsername: newUsername.trim() },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (response.error) {
-        throw new Error(response.error.message || t('profile.error.username_update_failed'));
-      }
-
-      // CRITICAL: Refresh profile from backend instead of local update
-      // Edge function already updated the database, we just need to reload the data
-      await refreshProfile();
-      setIsEditingUsername(false);
-      toast.success(t('profile.username_updated'));
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
 
   const validatePin = (pin: string): string | null => {
     if (!/^\d{6}$/.test(pin)) {
@@ -824,37 +768,10 @@ const Profile = () => {
             </h2>
             
             <div className="space-y-3 sm:space-y-4">
-              {/* Username with edit */}
+              {/* Username (read-only) */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.username_label')}</p>
-                {isEditingUsername ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      className="bg-black/30 border-purple-500/30 text-white"
-                      maxLength={30}
-                    />
-                    <Button
-                      size="sm"
-                      onClick={handleUsernameSave}
-                      className="bg-accent hover:bg-accent/90"
-                    >
-                      <Save className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.username}</p>
-                    <button
-                      onClick={handleUsernameEdit}
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-                <p className="text-xs text-white/40 mt-1">{t('profile.username_cooldown')}</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.username}</p>
               </div>
               
               {/* Birth Date (read-only) */}
