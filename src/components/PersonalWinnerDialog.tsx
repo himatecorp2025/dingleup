@@ -312,7 +312,8 @@ export const PersonalWinnerDialog = ({
                           WebkitTextStroke: '2px rgba(0,0,0,0.9)',
                           letterSpacing: '0.08em',
                           lineHeight: '1.2',
-                          fontWeight: 900
+                          fontFamily: 'Poppins, sans-serif',
+                          fontWeight: 700
                         }}
                       >
                         Gratulálunk {username}!
@@ -324,24 +325,28 @@ export const PersonalWinnerDialog = ({
                           fontSize: 'clamp(1.25rem, 4.5vw, 1.75rem)',
                           color: '#f5f5f5',
                           WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
-                          lineHeight: '1.4'
+                          lineHeight: '1.4',
+                          fontFamily: 'Poppins, sans-serif',
+                          fontWeight: 700
                         }}
                       >
                         {rank}. helyezett lettél a tegnapi versenyen.
                       </p>
                       
-                        <div 
-                          className="font-black space-y-3 mt-8 p-6"
-                          style={{
-                            fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
-                            lineHeight: '1.4'
-                          }}
+                      <div 
+                        className="font-black space-y-3 mt-8 p-6"
+                        style={{
+                          fontSize: 'clamp(1.125rem, 4vw, 1.6rem)',
+                          lineHeight: '1.4',
+                          fontFamily: 'Poppins, sans-serif'
+                        }}
                       >
                         <p
                           style={{
                             color: '#f5f5f5',
                             WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
-                            fontWeight: 900,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: 700,
                             fontSize: 'clamp(1.3rem, 4.5vw, 1.8rem)',
                           }}
                         >
@@ -351,7 +356,8 @@ export const PersonalWinnerDialog = ({
                           style={{ 
                             color: '#f5f5f5',
                             WebkitTextStroke: '2px rgba(0,0,0,0.9)',
-                            fontWeight: 900,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: 700,
                             fontSize: 'clamp(1.5rem, 5.5vw, 2.2rem)',
                             letterSpacing: '0.03em'
                           }}
@@ -367,6 +373,7 @@ export const PersonalWinnerDialog = ({
                           color: '#f5f5f5',
                           WebkitTextStroke: '1.5px rgba(0,0,0,0.9)',
                           fontStyle: 'italic',
+                          fontFamily: 'Poppins, sans-serif',
                           fontWeight: 700
                         }}
                       >
