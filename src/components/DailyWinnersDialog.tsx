@@ -1023,8 +1023,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
+                  {/* Gratulálok button - Fixed at shield bottom regardless of player count */}
                   {topPlayers.length > 0 && (
-                    <div className="absolute left-0 right-0 flex justify-center w-full px-4" style={{ bottom: '-50%' }}>
+                    <div 
+                      className="absolute left-0 right-0 flex justify-center w-full px-4" 
+                      style={{ 
+                        bottom: '-50%',
+                        position: 'absolute'
+                      }}
+                    >
                       <HexAcceptButton 
                         onClick={handleAccept}
                         className="w-full max-w-[280px]"
