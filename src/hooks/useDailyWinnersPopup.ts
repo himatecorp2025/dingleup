@@ -5,15 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
  * Hook to manage daily winners popup visibility
  * Shows popup automatically once per day on first dashboard visit
  * Uses timezone-aware edge function (matching Daily Gift behavior)
- * 
- * TESTING: Halikababa user bypasses daily check and shows popup on every refresh
  */
 export const useDailyWinnersPopup = (userId: string | undefined, username: string | undefined, forceAlwaysShow = false) => {
   const [showPopup, setShowPopup] = useState(false);
   const [canShowToday, setCanShowToday] = useState(false);
-  
-  // TESTING BYPASS: Halikababa sees popup on every refresh
-  const isTestUser = username === 'Halikababa';
 
   // Check if popup can be shown today (timezone-aware)
   useEffect(() => {
@@ -24,12 +19,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
 
     const checkIfCanShowToday = async () => {
       try {
-        // TESTING BYPASS: Halikababa always sees popup
-        if (forceAlwaysShow || isTestUser) {
-          setCanShowToday(true);
-          return;
-        }
-
         // Call timezone-aware backend edge function (matching Daily Gift pattern)
         const { data, error } = await supabase.functions.invoke('get-daily-winners-status');
 
@@ -66,14 +55,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, username: strin
     if (!userId) return;
 
     try {
-      // TESTING BYPASS: Halikababa skips marking popup as shown (shows on every refresh)
-      if (isTestUser) {
-        console.log('[DAILY-WINNERS-POPUP] TEST USER: Skipping popup view record for Halikababa');
-        setShowPopup(false);
-        setCanShowToday(false);
-        return;
-      }
-
       // Get current local date from backend (timezone-aware)
       const { data: statusData } = await supabase.functions.invoke('get-daily-winners-status');
       const localDate = statusData?.localDate || new Date().toISOString().split('T')[0];
