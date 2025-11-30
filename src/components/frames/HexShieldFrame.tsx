@@ -101,12 +101,12 @@ const HexShieldFrame: React.FC<PropsWithChildren<HexShieldFrameProps>> = ({
             <stop offset="100%" stopColor="#A0A0A0" />
           </radialGradient>
           
-          {/* Bronze Crystal Panel for rank 3 - Lighter, more orange-bronze tone */}
+          {/* Copper Crystal Panel for rank 3 - Bright copper tone */}
           <radialGradient id="crystalBronze" cx="50%" cy="-10%">
-            <stop offset="0%" stopColor="#E7A861" />
-            <stop offset="30%" stopColor="#D89447" />
-            <stop offset="60%" stopColor="#C67F35" />
-            <stop offset="100%" stopColor="#B8732D" />
+            <stop offset="0%" stopColor="#F0A868" />
+            <stop offset="30%" stopColor="#D89A6A" />
+            <stop offset="60%" stopColor="#C67855" />
+            <stop offset="100%" stopColor="#B8653F" />
           </radialGradient>
           
           {/* Royal Blue Crystal Panel for rank 4-10 */}
