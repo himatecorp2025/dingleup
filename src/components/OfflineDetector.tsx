@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { WifiOff, Wifi } from 'lucide-react';
 import { useI18n } from '@/i18n';
 
@@ -12,8 +12,7 @@ export const OfflineDetector = () => {
     const handleOnline = () => {
       setIsOnline(true);
       if (wasOffline) {
-        toast({
-          title: t('offline.connection_restored'),
+        toast.success(t('offline.connection_restored'), {
           description: t('offline.connection_available'),
           duration: 2000,
         });
@@ -24,11 +23,9 @@ export const OfflineDetector = () => {
     const handleOffline = () => {
       setIsOnline(false);
       setWasOffline(true);
-      toast({
-        title: t('offline.no_internet'),
+      toast.error(t('offline.no_internet'), {
         description: t('offline.some_features_unavailable'),
         duration: 3000,
-        variant: "destructive",
       });
     };
 

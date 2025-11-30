@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
@@ -20,7 +20,7 @@ const createLoginSchema = (t: (key: string) => string) => z.object({
 
 const LoginNew = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
   const { t, setLang, isLoading: i18nLoading } = useI18n();
   
   const loginSchema = createLoginSchema(t);
@@ -62,20 +62,16 @@ const LoginNew = () => {
       });
 
       if (loginError || loginData?.error) {
-        toast({
-          title: t('auth.login.error_title'),
+        toast.error(t('auth.login.error_title'), {
           description: loginData?.error || t('auth.login.errorLoginFailed'),
-          variant: "destructive",
           duration: 4000,
         });
         return;
       }
 
       if (!loginData?.success || !loginData?.user?.email || !loginData?.passwordVariants) {
-        toast({
-          title: t('auth.login.error_title'),
+        toast.error(t('auth.login.error_title'), {
           description: t('auth.login.errorLoginUnsuccessful'),
-          variant: "destructive",
           duration: 4000,
         });
         return;
@@ -96,19 +92,15 @@ const LoginNew = () => {
       }
 
       if (!signInSuccess) {
-        toast({
-          title: t('auth.login.error_title'),
+        toast.error(t('auth.login.error_title'), {
           description: t('auth.login.errorInvalidCredentials'),
-          variant: "destructive",
           duration: 4000,
         });
         return;
       }
 
-      toast({
-        title: t('auth.login.success_title'),
+      toast.success(t('auth.login.success_title'), {
         description: t('auth.login.success_description'),
-        className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
         duration: 2000,
       });
       
@@ -124,10 +116,8 @@ const LoginNew = () => {
         setErrors(fieldErrors);
       } else {
         console.error('Login error:', error);
-        toast({
-          title: t('auth.login.error_title'),
+        toast.error(t('auth.login.error_title'), {
           description: t('auth.login.errorUnexpected'),
-          variant: "destructive",
           duration: 4000,
         });
       }

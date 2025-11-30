@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
@@ -67,7 +67,6 @@ const createRegisterSchema = (t: (key: string) => string) => z.object({
 
 const RegisterNew = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { t, setLang, isLoading: i18nLoading } = useI18n();
   
   const registerSchema = createRegisterSchema(t);
@@ -119,20 +118,16 @@ const RegisterNew = () => {
       });
 
       if (regError || regData?.error) {
-        toast({
-          title: t('auth.register.error_title'),
+        toast.error(t('auth.register.error_title'), {
           description: regData?.error || t('auth.register.errorRegisterFailed'),
-          variant: "destructive",
           duration: 4000,
         });
         return;
       }
 
       if (!regData?.success || !regData?.user) {
-        toast({
-          title: t('auth.register.error_title'),
+        toast.error(t('auth.register.error_title'), {
           description: t('auth.register.errorRegisterUnsuccessful'),
-          variant: "destructive",
           duration: 4000,
         });
         return;
@@ -147,8 +142,7 @@ const RegisterNew = () => {
 
       if (signInError) {
         console.error('Auto-login error:', signInError);
-        toast({
-          title: t('auth.register.success_title'),
+        toast.success(t('auth.register.success_title'), {
           description: t('auth.register.successPleaseLogin'),
           duration: 2000,
         });
@@ -156,8 +150,7 @@ const RegisterNew = () => {
         return;
       }
 
-      toast({
-        title: t('auth.register.success_title'),
+      toast.success(t('auth.register.success_title'), {
         description: t('auth.register.successMessage'),
         duration: 2000,
       });
@@ -173,10 +166,8 @@ const RegisterNew = () => {
         setErrors(fieldErrors);
       } else {
         console.error('Registration error:', error);
-        toast({
-          title: t('auth.register.error_title'),
+        toast.error(t('auth.register.error_title'), {
           description: t('auth.register.errorUnexpected'),
-          variant: "destructive",
           duration: 4000,
         });
       }
