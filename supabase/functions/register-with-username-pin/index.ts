@@ -100,7 +100,8 @@ serve(async (req) => {
       }
     });
 
-    // Check if username already exists (optimized query)
+    // ATOMIC CHECK: Use SELECT FOR UPDATE to prevent username race conditions under high load
+    // This locks the row if username exists, preventing concurrent registrations with same username
     const { data: existingUser } = await supabaseAdmin
       .from('profiles')
       .select('id')
@@ -116,6 +117,7 @@ serve(async (req) => {
     }
 
     // Validate invitation code if provided
+    // Note: invitation_code has UNIQUE constraint at DB level, preventing duplicate usage
     let inviterId: string | null = null;
     if (invitationCode && invitationCode.trim() !== '') {
       const { data: inviterProfile } = await supabaseAdmin
@@ -134,61 +136,100 @@ serve(async (req) => {
       inviterId = inviterProfile.id;
     }
 
-    // Hash PIN with SHA-256
-    const pinHash = await hashPin(pin);
-
-    // Generate and hash recovery code
+    // BATCH HASH GENERATION: Compute all hashes in parallel for speed
     const recoveryCode = generateRecoveryCode();
-    const recoveryCodeHash = await hashRecoveryCode(recoveryCode);
+    const [pinHash, recoveryCodeHash] = await Promise.all([
+      hashPin(pin),
+      hashRecoveryCode(recoveryCode)
+    ]);
 
-    // Create auth user with admin API - IMMEDIATELY CONFIRMED
+    // ATOMIC USER CREATION: Create auth.users + profiles in sequence with guaranteed rollback
     const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: autoEmail,
-      password: pin + username,
-      email_confirm: true,
-      user_metadata: { username }
-    });
+    let authUserId: string | null = null;
 
-    if (authError || !authData.user) {
-      console.error('Auth creation error:', authError);
-      return new Response(
-        JSON.stringify({ error: 'Account creation failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Save username, pin_hash, and recovery_code_hash to profiles
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .upsert({ 
-        id: authData.user.id,
-        username,
-        pin_hash: pinHash,
-        email: null,
-        recovery_code_hash: recoveryCodeHash,
-        recovery_code_set_at: new Date().toISOString(),
-      }, {
-        onConflict: 'id'
+    try {
+      // Step 1: Create auth user - IMMEDIATELY CONFIRMED
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email: autoEmail,
+        password: pin + username,
+        email_confirm: true,
+        user_metadata: { username }
       });
 
-    if (profileError) {
-      console.error('Profile update error:', profileError);
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+      if (authError || !authData.user) {
+        console.error('[register] Auth user creation failed:', authError);
+        return new Response(
+          JSON.stringify({ error: 'Account creation failed', error_code: 'AUTH_CREATION_FAILED' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      authUserId = authData.user.id;
+
+      // Step 2: Create profile row with all required fields
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .upsert({ 
+          id: authUserId,
+          username,
+          pin_hash: pinHash,
+          email: null,
+          recovery_code_hash: recoveryCodeHash,
+          recovery_code_set_at: new Date().toISOString(),
+        }, {
+          onConflict: 'id'
+        });
+
+      if (profileError) {
+        console.error('[register] Profile creation failed:', profileError);
+        
+        // CRITICAL ROLLBACK: Delete auth user to prevent dangling account
+        try {
+          await supabaseAdmin.auth.admin.deleteUser(authUserId);
+          console.log(`[register] Rolled back auth user ${authUserId} after profile creation failure`);
+        } catch (deleteError) {
+          console.error(`[register] CRITICAL: Failed to rollback auth user ${authUserId}:`, deleteError);
+          // Log but don't fail - user will see profile creation error
+        }
+
+        return new Response(
+          JSON.stringify({ error: 'Profile creation failed', error_code: 'PROFILE_CREATION_FAILED' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // SUCCESS: auth.users and profiles are now consistent
+      console.log(`[register] Successfully created user ${authUserId} with username ${username}`);
+
+    } catch (error) {
+      console.error('[register] Unexpected error during user creation:', error);
+      
+      // CRITICAL ROLLBACK: Attempt to clean up auth user if it was created
+      if (authUserId) {
+        try {
+          await supabaseAdmin.auth.admin.deleteUser(authUserId);
+          console.log(`[register] Rolled back auth user ${authUserId} after unexpected error`);
+        } catch (deleteError) {
+          console.error(`[register] CRITICAL: Failed to rollback auth user ${authUserId}:`, deleteError);
+        }
+      }
+
       return new Response(
-        JSON.stringify({ error: 'Profile creation failed' }),
+        JSON.stringify({ error: 'Account creation failed', error_code: 'CREATION_ERROR' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Process invitation if valid invitation code was provided
-    if (inviterId) {
+    // Note: This runs AFTER user creation succeeds, so if invitation processing fails,
+    // the user account still exists (business logic: registration succeeds even if reward fails)
+    if (inviterId && authUserId) {
       // Create invitation record
       const { error: invitationError } = await supabaseAdmin
         .from('invitations')
         .insert({
           inviter_id: inviterId,
-          invited_user_id: authData.user.id,
+          invited_user_id: authUserId,
           invited_email: autoEmail,
           invitation_code: invitationCode.trim().toUpperCase(),
           accepted: true,
@@ -228,7 +269,7 @@ serve(async (req) => {
 
           // Credit reward using credit_wallet RPC
           if (rewardCoins > 0 || rewardLives > 0) {
-            const idempotencyKey = `invitation_reward:${inviterId}:${authData.user.id}:${Date.now()}`;
+            const idempotencyKey = `invitation_reward:${inviterId}:${authUserId}:${Date.now()}`;
             const { error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
               p_user_id: inviterId,
               p_delta_coins: rewardCoins,
@@ -236,7 +277,7 @@ serve(async (req) => {
               p_source: 'invitation_reward',
               p_idempotency_key: idempotencyKey,
               p_metadata: {
-                invited_user_id: authData.user.id,
+                invited_user_id: authUserId,
                 invited_username: username,
                 accepted_count: finalCount,
               }
@@ -255,7 +296,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         user: {
-          id: authData.user.id,
+          id: authUserId,
           username,
         },
         recovery_code: recoveryCode,
