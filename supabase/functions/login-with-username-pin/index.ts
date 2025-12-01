@@ -144,9 +144,15 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('[login-with-username-pin] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return new Response(
-      JSON.stringify({ error: 'Unexpected error occurred' }),
+      JSON.stringify({ 
+        error: 'Unexpected error occurred',
+        error_code: 'LOGIN_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

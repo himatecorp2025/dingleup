@@ -109,9 +109,15 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[submit-dob] Error:', error);
+    console.error('[submit-dob] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
     return new Response(
-      JSON.stringify({ success: false, error: 'Internal server error' }),
+      JSON.stringify({ 
+        success: false, 
+        error: 'Internal server error',
+        error_code: 'DOB_SUBMISSION_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
