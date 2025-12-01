@@ -1,5 +1,9 @@
 project_id = "wdpxmwsxhckazwxufttk"
 
+# Admin cache refresh - runs every hour
+[edge-runtime.cron]
+"0 * * * *" = "refresh-admin-cache"
+
 [functions.generate-question-translations]
 verify_jwt = true
 
