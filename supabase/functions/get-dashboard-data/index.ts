@@ -74,18 +74,27 @@ serve(async (req) => {
       return monday.toISOString().split('T')[0];
     };
 
-    // Parallel fetch all required data
-    const [profileResult, walletLedgerResult, weeklyRankResult, leaderboardResult] = await Promise.all([
-      // 1. User profile with regenerated lives
-      supabaseClient.rpc('regenerate_lives').then(() =>
-        supabaseClient
-          .from('profiles')
-          .select('id, username, avatar_url, coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, total_correct_answers, country_code')
-          .eq('id', user.id)
-          .single()
-      ),
-      
-      // 2. Wallet ledger (last 50 transactions)
+    // Fetch profile first to get country_code for leaderboard
+    const { data: profile, error: profileFetchError } = await supabaseClient.rpc('regenerate_lives').then(() =>
+      supabaseClient
+        .from('profiles')
+        .select('id, username, avatar_url, coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, total_correct_answers, country_code')
+        .eq('id', user.id)
+        .single()
+    );
+
+    if (profileFetchError || !profile) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch profile' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const countryCode = profile.country_code || 'HU';
+
+    // Parallel fetch remaining data using profile.country_code
+    const [walletLedgerResult, weeklyRankResult, leaderboardResult] = await Promise.all([
+      // 1. Wallet ledger (last 50 transactions)
       supabaseClient
         .from('wallet_ledger')
         .select('*')
@@ -93,7 +102,7 @@ serve(async (req) => {
         .order('created_at', { ascending: false })
         .limit(50),
       
-      // 3. User's weekly ranking
+      // 2. User's weekly ranking
       supabaseClient
         .from('weekly_rankings')
         .select('rank, total_correct_answers')
@@ -102,46 +111,28 @@ serve(async (req) => {
         .eq('week_start', getWeekStart())
         .maybeSingle(),
       
-      // 4. Top 100 leaderboard (country-specific)
-      (async () => {
-        const { data: profile } = await supabaseClient
-          .from('profiles')
-          .select('country_code')
-          .eq('id', user.id)
-          .single();
-        
-        const countryCode = profile?.country_code || 'HU';
-        
-        return supabaseClient
-          .from('weekly_rankings')
-          .select(`
-            user_id,
-            total_correct_answers,
-            profiles!inner (
-              username,
-              avatar_url,
-              country_code
-            )
-          `)
-          .eq('week_start', getWeekStart())
-          .eq('category', 'mixed')
-          .eq('profiles.country_code', countryCode)
-          .order('total_correct_answers', { ascending: false })
-          .limit(100);
-      })()
+      // 3. Top 100 leaderboard (country-specific, no redundant query)
+      supabaseClient
+        .from('weekly_rankings')
+        .select(`
+          user_id,
+          total_correct_answers,
+          profiles!inner (
+            username,
+            avatar_url,
+            country_code
+          )
+        `)
+        .eq('week_start', getWeekStart())
+        .eq('category', 'mixed')
+        .eq('profiles.country_code', countryCode)
+        .order('total_correct_answers', { ascending: false })
+        .limit(100)
     ]);
 
-    const { data: profile, error: profileError } = profileResult;
     const { data: ledger, error: ledgerError } = walletLedgerResult;
     const { data: weeklyRank } = weeklyRankResult;
     const { data: leaderboard, error: leaderboardError } = leaderboardResult;
-
-    if (profileError) {
-      return new Response(
-        JSON.stringify({ error: 'Failed to fetch profile' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     // Calculate next life regeneration time
     let nextLifeAt: string | null = null;
@@ -191,8 +182,15 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    console.error('[get-dashboard-data] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ 
+        error: 'Internal server error',
+        error_code: 'DASHBOARD_DATA_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

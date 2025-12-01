@@ -45,8 +45,13 @@ Deno.serve(async (req) => {
       throw profileError;
     }
 
-    // Admin users (DingleUP or DingelUP!) never see Daily Gift
-    if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+    // SECURITY: Admin users (verified by role) never see Daily Gift
+    const { data: isAdmin } = await supabase.rpc('has_role', {
+      _user_id: user.id,
+      _role: 'admin'
+    });
+
+    if (isAdmin) {
       return new Response(
         JSON.stringify({
           canShow: false,
@@ -99,9 +104,16 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in get-daily-gift-status:', error);
+    console.error('[get-daily-gift-status] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      userId: error instanceof Error ? 'hidden' : undefined,
+    });
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(
+      JSON.stringify({ 
+        error: message,
+        error_code: 'DAILY_GIFT_STATUS_ERROR'
+      }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

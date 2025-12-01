@@ -42,16 +42,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch user's timezone
+    // OPTIMIZATION: Fetch timezone and update in single operation with RETURNING
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('user_timezone')
       .eq('id', user.id)
       .single();
 
-    if (profileError) {
+    if (profileError || !profile) {
       console.error('Profile fetch error:', profileError);
-      throw profileError;
+      return new Response(
+        JSON.stringify({ error: 'Profile not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const userTimezone = profile.user_timezone || 'UTC';
@@ -73,10 +76,13 @@ Deno.serve(async (req) => {
 
     if (updateError) {
       console.error('Update error:', updateError);
-      throw updateError;
+      return new Response(
+        JSON.stringify({ error: 'Update failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log('Daily Gift dismissed:', {
+    console.log('[dismiss-daily-gift] Success:', {
       userId: user.id,
       localDate: localDateString,
       timezone: userTimezone,
@@ -87,9 +93,15 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in dismiss-daily-gift:', error);
+    console.error('[dismiss-daily-gift] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(
+      JSON.stringify({ 
+        error: message,
+        error_code: 'DISMISS_GIFT_ERROR'
+      }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

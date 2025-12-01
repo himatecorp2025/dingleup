@@ -199,14 +199,19 @@ serve(async (req) => {
         console.error('Invitation creation error:', invitationError);
         // Continue registration even if invitation fails
       } else {
-        // Calculate and credit reward to inviter
-        const { data: acceptedInvitations } = await supabaseAdmin
+        // OPTIMIZATION: Single aggregated query instead of SELECT + COUNT
+        const { data: inviterStats, error: statsError } = await supabaseAdmin
           .from('invitations')
-          .select('id')
+          .select('id', { count: 'exact', head: false })
           .eq('inviter_id', inviterId)
           .eq('accepted', true);
 
-        const acceptedCount = acceptedInvitations?.length || 0;
+        if (statsError) {
+          console.error('Failed to count accepted invitations:', statsError);
+          // Continue even if stats query fails
+        }
+
+        const acceptedCount = inviterStats?.length || 0;
         
         // Calculate tier reward based on accepted count
         let rewardCoins = 0;
@@ -263,9 +268,15 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('[register-with-username-pin] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return new Response(
-      JSON.stringify({ error: 'Unexpected error occurred' }),
+      JSON.stringify({ 
+        error: 'Unexpected error occurred',
+        error_code: 'REGISTRATION_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
