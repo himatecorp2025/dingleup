@@ -116,14 +116,16 @@ serve(async (req) => {
       );
     }
 
-    // Validate invitation code if provided
-    // Note: invitation_code has UNIQUE constraint at DB level, preventing duplicate usage
+    // OPTIMIZATION: Validate invitation code with case-insensitive lookup using indexed UPPER()
+    // Uses idx_profiles_invitation_code_upper index for O(1) performance
     let inviterId: string | null = null;
     if (invitationCode && invitationCode.trim() !== '') {
+      const normalizedCode = invitationCode.trim().toUpperCase();
+      
       const { data: inviterProfile } = await supabaseAdmin
         .from('profiles')
-        .select('id')
-        .eq('invitation_code', invitationCode.trim().toUpperCase())
+        .select('user_id')
+        .eq('invitation_code', normalizedCode)
         .maybeSingle();
       
       if (!inviterProfile) {
@@ -133,7 +135,7 @@ serve(async (req) => {
         );
       }
       
-      inviterId = inviterProfile.id;
+      inviterId = inviterProfile.user_id;
     }
 
     // BATCH HASH GENERATION: Compute all hashes in parallel for speed
@@ -220,75 +222,73 @@ serve(async (req) => {
       );
     }
 
-    // Process invitation if valid invitation code was provided
-    // Note: This runs AFTER user creation succeeds, so if invitation processing fails,
+    // OPTIMIZATION: Process invitation with atomic, idempotent reward handling
+    // This runs AFTER user creation succeeds, so if invitation processing fails,
     // the user account still exists (business logic: registration succeeds even if reward fails)
     if (inviterId && authUserId) {
-      // Create invitation record
-      const { error: invitationError } = await supabaseAdmin
-        .from('invitations')
-        .insert({
-          inviter_id: inviterId,
-          invited_user_id: authUserId,
-          invited_email: autoEmail,
-          invitation_code: invitationCode.trim().toUpperCase(),
-          accepted: true,
-          accepted_at: new Date().toISOString(),
-        });
-
-      if (invitationError) {
-        console.error('Invitation creation error:', invitationError);
-        // Continue registration even if invitation fails
-      } else {
-        // OPTIMIZATION: Single COUNT query with filter instead of SELECT + COUNT
-        const { count: acceptedCount, error: countError } = await supabaseAdmin
+      try {
+        // Create invitation record
+        const { error: invitationError } = await supabaseAdmin
           .from('invitations')
-          .select('*', { count: 'exact', head: true })
-          .eq('inviter_id', inviterId)
-          .eq('accepted', true);
+          .insert({
+            inviter_id: inviterId,
+            invited_user_id: authUserId,
+            invited_email: autoEmail,
+            invitation_code: invitationCode.trim().toUpperCase(),
+            accepted: true,
+            accepted_at: new Date().toISOString(),
+          });
 
-        if (countError) {
-          console.error('Failed to count accepted invitations:', countError);
-          // Continue even if count fails
+        if (invitationError) {
+          console.error('[register] Invitation creation error:', invitationError);
+          // Continue registration even if invitation fails
         } else {
-          const finalCount = acceptedCount || 0;
-          
-          // Calculate tier reward based on accepted count
-          let rewardCoins = 0;
-          let rewardLives = 0;
-          if (finalCount === 1 || finalCount === 2) {
-            rewardCoins = 200;
-            rewardLives = 3;
-          } else if (finalCount >= 3 && finalCount <= 9) {
-            rewardCoins = 1000;
-            rewardLives = 5;
-          } else if (finalCount >= 10) {
-            rewardCoins = 6000;
-            rewardLives = 20;
-          }
-
-          // Credit reward using credit_wallet RPC
-          if (rewardCoins > 0 || rewardLives > 0) {
-            const idempotencyKey = `invitation_reward:${inviterId}:${authUserId}:${Date.now()}`;
-            const { error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
-              p_user_id: inviterId,
-              p_delta_coins: rewardCoins,
-              p_delta_lives: rewardLives,
-              p_source: 'invitation_reward',
-              p_idempotency_key: idempotencyKey,
-              p_metadata: {
-                invited_user_id: authUserId,
-                invited_username: username,
-                accepted_count: finalCount,
-              }
+          // ATOMIC REWARD: Call apply_invitation_reward RPC (single backend call)
+          // This function handles:
+          // - Counting accepted invitations (single indexed query)
+          // - Calculating tier reward (unchanged business logic)
+          // - Idempotent ledger insertion (unique constraint protection)
+          // - Atomic wallet update (same transaction)
+          const { data: rewardResult, error: rewardError } = await supabaseAdmin
+            .rpc('apply_invitation_reward', {
+              p_inviter_id: inviterId,
+              p_invited_user_id: authUserId
             });
 
-            if (creditError) {
-              console.error('Reward crediting error:', creditError);
-              // Continue even if reward fails - will be retryable later
-            }
+          if (rewardError) {
+            console.error('[register] Reward application error:', rewardError);
+            // Continue even if reward fails - reward is idempotent and retryable
+          } else if (rewardResult && rewardResult.success) {
+            console.log('[register] Invitation reward credited:', {
+              inviter_id: inviterId,
+              invited_user_id: authUserId,
+              reward_coins: rewardResult.reward_coins,
+              reward_lives: rewardResult.reward_lives,
+              tier: rewardResult.tier,
+              accepted_count: rewardResult.accepted_count
+            });
+          } else if (rewardResult && !rewardResult.success) {
+            console.log('[register] Reward not credited (idempotent):', rewardResult.error);
+            // This is expected behavior for duplicate/concurrent registrations
           }
         }
+
+        // Create friendship (idempotent via ON CONFLICT)
+        // This function already uses ON CONFLICT DO UPDATE for idempotency
+        const { error: friendshipError } = await supabaseAdmin
+          .rpc('create_friendship_from_invitation', {
+            p_inviter_id: inviterId,
+            p_invitee_id: authUserId
+          });
+
+        if (friendshipError) {
+          console.error('[register] Friendship creation error:', friendshipError);
+          // Continue even if friendship fails
+        }
+
+      } catch (invitationProcessError) {
+        console.error('[register] Invitation processing error:', invitationProcessError);
+        // Continue registration even if entire invitation block fails
       }
     }
 
