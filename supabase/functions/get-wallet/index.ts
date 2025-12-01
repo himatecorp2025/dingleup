@@ -99,6 +99,9 @@ serve(async (req) => {
     }
 
     // Calculate next life time with proper regeneration tracking + future timestamp guard
+    // TODO FUTURE OPTIMIZATION: Concurrent regeneration risk exists when multiple get-wallet calls
+    // happen simultaneously. Consider moving ALL regeneration to cron-only (regenerate_lives_background)
+    // to eliminate inline regen race conditions. See REWARD_ECONOMY_SYSTEM doc Section 3.2.5.
     let currentLives = Number(profile.lives ?? 0);
     let nextLifeAt = null;
     

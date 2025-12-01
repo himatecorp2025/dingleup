@@ -65,6 +65,10 @@ serve(async (req) => {
       );
     }
 
+    // IDEMPOTENCY KEY CONSTRUCTION: "game_reward:userId:sourceId"
+    // - userId ensures user isolation
+    // - sourceId is session_id + question_index, ensuring per-question uniqueness
+    // - This key MUST remain stable - changing format breaks duplicate detection
     const idempotencyKey = `game_reward:${user.id}:${String(sourceId)}`;
 
     // Credit coins idempotently via trusted RPC

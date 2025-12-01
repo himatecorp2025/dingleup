@@ -60,6 +60,12 @@ serve(async (req) => {
       );
     }
 
+    // LOOTBOX DELIVERY RULES (from REWARD_ECONOMY_SYSTEM doc):
+    // - Daily limit: 20 drops/user/day (hard cap)
+    // - First 3 logins: guaranteed drop ~1 min after login (if cooldown allows)
+    // - From 4th login: 5 min cooldown + 30% random chance per activity
+    // - Offline users: NO accumulation - drops only delivered during active sessions
+    
     // Step 1: Check daily limit (20 drops/day)
     const now = new Date();
     const todayStart = new Date(now);
