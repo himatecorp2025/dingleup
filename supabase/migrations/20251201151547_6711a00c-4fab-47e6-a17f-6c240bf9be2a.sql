@@ -1,0 +1,1 @@
+CREATE INDEX idx_daily_winner_claim_lookup ON daily_winner_awarded (user_id, country_code, day_date, status);

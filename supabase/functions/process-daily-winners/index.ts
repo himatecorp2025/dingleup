@@ -159,6 +159,7 @@ serve(async (req) => {
     const skippedTimezones: string[] = [];
     let totalProcessedWinners = 0;
 
+    // PERFORMANCE OPTIMIZATION: Use set-based RPC instead of N+1 loop pattern
     // Process each timezone separately
     for (const timezone of uniqueTimezones) {
       // For on-demand requests, skip time check - process immediately
@@ -174,7 +175,7 @@ serve(async (req) => {
       const localTime = getLocalTime(timezone);
       console.log(`[DAILY-WINNERS] Processing ${timezone} - Local time: ${localTime.toLocaleString()}, Yesterday: ${yesterdayDate}`);
 
-      // Check if already processed for this date
+      // Check if already processed for this date (idempotency check)
       const { data: logCheck } = await supabaseClient
         .from('daily_winner_processing_log')
         .select('last_processed_date')
@@ -187,137 +188,33 @@ serve(async (req) => {
         continue;
       }
 
-      // Get all users in this timezone
-      const { data: timezoneProfiles, error: profilesError } = await supabaseClient
-        .from('profiles')
-        .select('id, username, avatar_url, country_code, user_timezone')
-        .eq('user_timezone', timezone);
+      // OPTIMIZED: Call set-based RPC for this date
+      // Replaces entire N+1 country/user loop with single window function query
+      const startProcess = Date.now();
+      const { data: processResult, error: processError } = await supabaseClient
+        .rpc('process_daily_winners_for_date', {
+          p_target_date: yesterdayDate
+        });
 
-      if (profilesError || !timezoneProfiles || timezoneProfiles.length === 0) {
-        console.log(`[DAILY-WINNERS] No users in timezone ${timezone}`);
+      const processElapsed = Date.now() - startProcess;
+
+      if (processError) {
+        console.error(`[DAILY-WINNERS] RPC error for ${yesterdayDate}:`, processError);
+        skippedTimezones.push(timezone);
         continue;
       }
 
-      console.log(`[DAILY-WINNERS] Found ${timezoneProfiles.length} users in ${timezone}`);
-
-      // Determine if yesterday was Sunday for jackpot
-      const isSundayJackpot = wasYesterdaySunday(timezone);
-      const topLimit = isSundayJackpot ? 25 : 10;
-
-      // Group users by country (for country-specific leaderboards)
-      const countriesByUsers = new Map<string, typeof timezoneProfiles>();
-      timezoneProfiles.forEach(profile => {
-        const countryCode = profile.country_code || 'UNKNOWN';
-        if (!countriesByUsers.has(countryCode)) {
-          countriesByUsers.set(countryCode, []);
-        }
-        countriesByUsers.get(countryCode)!.push(profile);
-      });
-
-      console.log(`[DAILY-WINNERS] ${timezone}: Processing ${countriesByUsers.size} countries (${isSundayJackpot ? 'Sunday Jackpot TOP25' : 'Daily TOP10'})`);
-
-      // Process each country separately within this timezone
-      for (const [countryCode, countryProfiles] of countriesByUsers) {
-        const countryUserIds = countryProfiles.map(p => p.id);
-
-        // Get top N rankings for this country for yesterday
-        const { data: countryRankings, error: rankError } = await supabaseClient
-          .from('daily_rankings')
-          .select('user_id, total_correct_answers, average_response_time, rank')
-          .eq('day_date', yesterdayDate)
-          .eq('category', 'mixed')
-          .in('user_id', countryUserIds)
-          .order('total_correct_answers', { ascending: false })
-          .order('average_response_time', { ascending: true })
-          .limit(topLimit);
-
-        if (rankError) {
-          console.error(`[DAILY-WINNERS] Rank error for ${countryCode} in ${timezone}:`, rankError);
-          continue;
-        }
-
-        if (!countryRankings || countryRankings.length === 0) {
-          console.log(`[DAILY-WINNERS] No rankings for ${countryCode} in ${timezone}`);
-          continue;
-        }
-
-        console.log(`[DAILY-WINNERS] Found ${countryRankings.length} winners in ${countryCode} (${timezone})`);
-
-        // Process each real winner in this country
-        for (let idx = 0; idx < countryRankings.length; idx++) {
-          const ranking = countryRankings[idx];
-          const { user_id } = ranking;
-          const actualRank = ranking.rank; // Use database rank (includes fake users)
-
-          // Check if already awarded
-          const { data: existing } = await supabaseClient
-            .from('daily_winner_awarded')
-            .select('*')
-            .eq('user_id', user_id)
-            .eq('day_date', yesterdayDate)
-            .eq('country_code', countryCode)
-            .single();
-
-          if (existing) {
-            console.log(`[DAILY-WINNERS] User ${user_id} already awarded in ${countryCode}`);
-            continue;
-          }
-
-          // Get prize configuration for yesterday's day of week
-          const yesterdayDayOfWeek = getYesterdayDayOfWeek(timezone);
-          const { data: prize, error: prizeError } = await supabaseClient
-            .from('daily_prize_table')
-            .select('*')
-            .eq('rank', actualRank)
-            .eq('day_of_week', yesterdayDayOfWeek)
-            .single();
-
-          if (prizeError || !prize) {
-            console.error(`[DAILY-WINNERS] Prize config missing for rank ${actualRank}:`, prizeError);
-            continue;
-          }
-
-          const { gold, lives } = prize;
-          const userProfile = countryProfiles.find(p => p.id === user_id);
-
-          // Create pending reward record with all snapshot data (NO automatic credit)
-          const { error: awardError } = await supabaseClient
-            .from('daily_winner_awarded')
-            .insert({
-              user_id,
-              day_date: yesterdayDate,
-              rank: actualRank,
-              gold_awarded: gold,
-              lives_awarded: lives,
-              status: 'pending',
-              is_sunday_jackpot: isSundayJackpot,
-              country_code: countryCode,
-              user_timezone: timezone,
-              username: userProfile?.username || '',
-              avatar_url: userProfile?.avatar_url || null,
-              total_correct_answers: ranking.total_correct_answers,
-              reward_payload: {
-                gold,
-                lives,
-                rank: actualRank,
-                country_code: countryCode,
-                timezone: timezone,
-                day_type: isSundayJackpot ? 'sunday_jackpot' : 'normal'
-              }
-            });
-
-          if (awardError) {
-            console.error(`[DAILY-WINNERS] Award record error for ${user_id}:`, awardError);
-            continue;
-          }
-
-          console.log(`[DAILY-WINNERS] ${countryCode} (${timezone}): Created pending reward rank ${actualRank} for user ${user_id}: ${gold} gold, ${lives} lives`);
-          totalProcessedWinners++;
-        }
-
-        // NO fake users - only show real winners
-        console.log(`[DAILY-WINNERS] ${countryCode} (${timezone}): Skipping fake user generation - showing only real winners`);
+      if (!processResult?.success) {
+        console.error(`[DAILY-WINNERS] Processing failed for ${yesterdayDate}:`, processResult);
+        skippedTimezones.push(timezone);
+        continue;
       }
+
+      // Log successful processing with metrics
+      const { winners_inserted, snapshots_inserted, is_sunday, top_limit } = processResult;
+      console.log(`[DAILY-WINNERS] ${timezone} (${yesterdayDate}): ${winners_inserted} winners, ${snapshots_inserted} snapshots (${is_sunday ? 'Sunday TOP25' : 'Daily TOP10'}) in ${processElapsed}ms`);
+      
+      totalProcessedWinners += winners_inserted || 0;
 
       // Update processing log for this timezone
       await supabaseClient

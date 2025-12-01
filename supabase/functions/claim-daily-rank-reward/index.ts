@@ -60,14 +60,18 @@ serve(async (req) => {
       );
     }
 
-    // Use service role for transaction
+    // PERFORMANCE OPTIMIZATION: Use atomic RPC instead of multi-step logic
+    // Before: 4 roundtrips (profile, reward, credit_wallet, credit_lives, update)
+    // After: 1 roundtrip (atomic RPC handles everything)
+    const startClaim = Date.now();
+
     const supabaseService = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { auth: { persistSession: false } }
     );
 
-    // Get user profile to determine country_code
+    // Get user country_code (still needed for RPC parameter)
     const { data: userProfile, error: profileError } = await supabaseService
       .from('profiles')
       .select('country_code')
@@ -75,110 +79,67 @@ serve(async (req) => {
       .single();
 
     if (profileError || !userProfile?.country_code) {
+      console.error('[CLAIM-REWARD] Profile fetch error:', profileError);
       return new Response(
         JSON.stringify({ error: 'User profile or country not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Get pending reward and lock for update (with country_code filter)
-    const { data: pendingReward, error: rewardError } = await supabaseService
-      .from('daily_winner_awarded')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('country_code', userProfile.country_code)
-      .eq('day_date', day_date)
-      .eq('status', 'pending')
-      .single();
-
-    if (rewardError || !pendingReward) {
-      return new Response(
-        JSON.stringify({ error: 'No pending reward found or already claimed/lost' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const { gold_awarded, lives_awarded, rank } = pendingReward;
-    const rewardPayload = pendingReward.reward_payload || {};
-    const countryCode = rewardPayload.country_code || 'unknown';
-
-    // Credit gold (coins)
-    const coinCorrelationId = `daily-rank-claim:${userId}:${day_date}:${rank}:${countryCode}`;
-    const { error: coinError } = await supabaseService
-      .rpc('credit_wallet', {
+    // Call atomic RPC (all logic in single transaction with row lock)
+    const { data: claimResult, error: rpcError } = await supabaseService
+      .rpc('claim_daily_winner_reward', {
         p_user_id: userId,
-        p_delta_coins: gold_awarded,
-        p_delta_lives: 0,
-        p_source: 'game_reward',
-        p_idempotency_key: coinCorrelationId,
-        p_metadata: {
-          day_date,
-          rank,
-          country_code: countryCode,
-          gold: gold_awarded,
-          claimed_at: new Date().toISOString()
-        }
+        p_day_date: day_date,
+        p_country_code: userProfile.country_code
       });
 
-    if (coinError) {
-      console.error('[CLAIM-REWARD] Coin credit error:', coinError);
+    const claimElapsed = Date.now() - startClaim;
+
+    if (rpcError) {
+      console.error('[CLAIM-REWARD] RPC error:', rpcError);
       return new Response(
-        JSON.stringify({ error: 'Failed to credit coins' }),
+        JSON.stringify({ error: 'Failed to claim reward' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Credit lives
-    const livesCorrelationId = `daily-rank-lives-claim:${userId}:${day_date}:${rank}:${countryCode}`;
-    const { error: livesError } = await supabaseService
-      .rpc('credit_lives', {
-        p_user_id: userId,
-        p_delta_lives: lives_awarded,
-        p_source: 'game_reward',
-        p_idempotency_key: livesCorrelationId,
-        p_metadata: {
-          day_date,
-          rank,
-          country_code: countryCode,
-          lives: lives_awarded,
-          claimed_at: new Date().toISOString()
-        }
-      });
+    // Handle RPC response
+    if (!claimResult?.success) {
+      const errorCode = claimResult?.error_code;
+      
+      if (errorCode === 'NO_PENDING_REWARD') {
+        return new Response(
+          JSON.stringify({ error: 'No pending reward found or already claimed/lost' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (errorCode === 'LOCK_TIMEOUT') {
+        console.warn('[CLAIM-REWARD] Lock timeout - concurrent claim attempt');
+        return new Response(
+          JSON.stringify({ error: 'Reward claim in progress, please try again' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
 
-    if (livesError) {
-      console.error('[CLAIM-REWARD] Lives credit error:', livesError);
+      // Unknown error
       return new Response(
-        JSON.stringify({ error: 'Failed to credit lives' }),
+        JSON.stringify({ error: claimResult?.message || 'Unknown error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Update status to claimed
-    const { error: updateError } = await supabaseService
-      .from('daily_winner_awarded')
-      .update({ 
-        status: 'claimed',
-        claimed_at: new Date().toISOString()
-      })
-      .eq('user_id', userId)
-      .eq('day_date', day_date)
-      .eq('status', 'pending');
-
-    if (updateError) {
-      console.error('[CLAIM-REWARD] Status update error:', updateError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to update reward status' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log(`[CLAIM-REWARD] User ${userId} claimed rank ${rank} reward: ${gold_awarded} gold, ${lives_awarded} lives`);
+    // Success response (matches existing API contract)
+    const { gold, lives, rank, already_processed } = claimResult;
+    
+    console.log(`[CLAIM-REWARD] User ${userId} claimed rank ${rank}: ${gold} gold, ${lives} lives (${already_processed ? 'idempotent' : 'new'}) in ${claimElapsed}ms`);
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        goldCredited: gold_awarded,
-        livesCredited: lives_awarded,
+        goldCredited: gold,
+        livesCredited: lives,
         rank
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
