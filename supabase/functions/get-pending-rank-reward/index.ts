@@ -3,6 +3,42 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
 /**
+ * Get yesterday's date in user's timezone (timezone-aware)
+ */
+function getYesterdayDateInTimezone(timezone: string): string {
+  try {
+    const nowUtc = new Date();
+    const localTimeString = nowUtc.toLocaleString('en-US', { 
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    
+    const localNow = new Date(localTimeString);
+    const yesterday = new Date(localNow);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const day = String(yesterday.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('[YESTERDAY-DATE] Error:', error);
+    // Fallback: UTC yesterday
+    const utcYesterday = new Date();
+    utcYesterday.setUTCDate(utcYesterday.getUTCDate() - 1);
+    utcYesterday.setUTCHours(0, 0, 0, 0);
+    return utcYesterday.toISOString().split('T')[0];
+  }
+}
+
+/**
  * Get pending rank reward for authenticated user
  * Returns pending reward details if user has unclaimed daily ranking reward
  */
@@ -85,15 +121,14 @@ serve(async (req) => {
       );
     }
 
-    // Calculate yesterday's date (use UTC for now, but rewards are timezone-specific)
-    const yesterday = new Date();
-    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-    yesterday.setUTCHours(0, 0, 0, 0);
-    const yesterdayDate = yesterday.toISOString().split('T')[0];
+    // Calculate yesterday's date using timezone-aware logic
+    const userTimezone = userProfile.user_timezone || 'Europe/Budapest';
+    const yesterdayDate = getYesterdayDateInTimezone(userTimezone);
 
-    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone})`);
+    console.log(`[GET-PENDING-REWARD] Checking user ${user.id}, country: ${userProfile.country_code}, timezone: ${userTimezone}, yesterday: ${yesterdayDate}`);
 
-    // Check for pending reward from yesterday FOR THIS USER (country + timezone specific)
+    // Check for pending reward from yesterday FOR THIS USER
+    // CRITICAL: Filter by user_id, country_code, day_date, status='pending'
     const { data: pendingReward, error: rewardError } = await supabaseClient
       .from('daily_winner_awarded')
       .select('*')

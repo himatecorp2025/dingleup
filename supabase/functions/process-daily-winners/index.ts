@@ -66,6 +66,15 @@ serve(async (req) => {
   
   const corsHeaders = getCorsHeaders(origin);
 
+  // Parse request body for targetDate parameter
+  let targetDate: string | null = null;
+  try {
+    const body = await req.json();
+    targetDate = body.targetDate || null;
+  } catch {
+    // No body or invalid JSON - proceed without targetDate
+  }
+
   // Verify cron secret OR admin authentication OR authenticated user OR test mode in development
   const cronSecret = req.headers.get('x-supabase-cron-secret');
   const expectedSecret = Deno.env.get('CRON_SECRET');

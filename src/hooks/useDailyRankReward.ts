@@ -35,18 +35,18 @@ export const useDailyRankReward = (userId: string | undefined) => {
   const fetchPendingReward = async () => {
     setIsLoading(true);
     try {
-      // CRITICAL FIX: Wait for Supabase session to fully initialize before calling edge function
+      // Ensure valid session
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.log('[RANK-REWARD] No active session, skipping');
+        console.log('[RANK-REWARD] No active session');
         setPendingReward(null);
         setShowRewardPopup(false);
         setIsLoading(false);
         return;
       }
 
-      // Check if profile exists before calling edge function
+      // Check profile exists
       const { data: profileCheck } = await supabase
         .from('profiles')
         .select('id')
@@ -54,40 +54,41 @@ export const useDailyRankReward = (userId: string | undefined) => {
         .single();
 
       if (!profileCheck) {
-        console.log('[RANK-REWARD] Profile not found, skipping');
+        console.log('[RANK-REWARD] Profile not found');
         setPendingReward(null);
         setShowRewardPopup(false);
         setIsLoading(false);
         return;
       }
 
+      // Call edge function to check pending reward
       const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
         body: {}
       });
 
-        if (error) {
-          console.error('[RANK-REWARD] Error fetching pending reward:', error);
-          setPendingReward(null);
-          setShowRewardPopup(false);
-          return;
-        }
-
-        if (data.hasPendingReward && data.reward) {
-          console.log('[RANK-REWARD] Found pending reward:', data.reward);
-          setPendingReward(data.reward);
-          setShowRewardPopup(true);
-        } else {
-          setPendingReward(null);
-          setShowRewardPopup(false);
-        }
-      } catch (error) {
-        console.error('[RANK-REWARD] Exception fetching pending reward:', error);
+      if (error) {
+        console.error('[RANK-REWARD] Error fetching pending reward:', error);
         setPendingReward(null);
         setShowRewardPopup(false);
-      } finally {
-        setIsLoading(false);
+        return;
       }
-    };
+
+      if (data.hasPendingReward && data.reward) {
+        console.log('[RANK-REWARD] Found pending reward:', data.reward);
+        setPendingReward(data.reward);
+        setShowRewardPopup(true);
+      } else {
+        setPendingReward(null);
+        setShowRewardPopup(false);
+      }
+    } catch (error) {
+      console.error('[RANK-REWARD] Exception:', error);
+      setPendingReward(null);
+      setShowRewardPopup(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
     fetchPendingReward();
   }, [userId]);

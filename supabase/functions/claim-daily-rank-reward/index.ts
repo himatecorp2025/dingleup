@@ -67,11 +67,26 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Get pending reward and lock for update
+    // Get user profile to determine country_code
+    const { data: userProfile, error: profileError } = await supabaseService
+      .from('profiles')
+      .select('country_code')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !userProfile?.country_code) {
+      return new Response(
+        JSON.stringify({ error: 'User profile or country not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get pending reward and lock for update (with country_code filter)
     const { data: pendingReward, error: rewardError } = await supabaseService
       .from('daily_winner_awarded')
       .select('*')
       .eq('user_id', userId)
+      .eq('country_code', userProfile.country_code)
       .eq('day_date', day_date)
       .eq('status', 'pending')
       .single();
