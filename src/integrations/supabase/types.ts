@@ -1516,6 +1516,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lives_ledger_archive: {
+        Row: {
+          archived_at: string | null
+          correlation_id: string
+          created_at: string | null
+          delta_lives: number
+          id: string
+          metadata: Json | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          correlation_id: string
+          created_at?: string | null
+          delta_lives: number
+          id?: string
+          metadata?: Json | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          correlation_id?: string
+          created_at?: string | null
+          delta_lives?: number
+          id?: string
+          metadata?: Json | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       login_attempts: {
         Row: {
           email: string
@@ -2012,6 +2045,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_speed_expires_at: string | null
           age_consent: boolean | null
           age_verified: boolean | null
           avatar_url: string | null
@@ -2062,6 +2096,7 @@ export type Database = {
           welcome_bonus_claimed: boolean | null
         }
         Insert: {
+          active_speed_expires_at?: string | null
           age_consent?: boolean | null
           age_verified?: boolean | null
           avatar_url?: string | null
@@ -2112,6 +2147,7 @@ export type Database = {
           welcome_bonus_claimed?: boolean | null
         }
         Update: {
+          active_speed_expires_at?: string | null
           age_consent?: boolean | null
           age_verified?: boolean | null
           avatar_url?: string | null
@@ -3493,6 +3529,42 @@ export type Database = {
           },
         ]
       }
+      wallet_ledger_archive: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          delta_coins: number
+          delta_lives: number
+          id: string
+          idempotency_key: string
+          metadata: Json | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          delta_coins?: number
+          delta_lives?: number
+          id?: string
+          idempotency_key: string
+          metadata?: Json | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          delta_coins?: number
+          delta_lives?: number
+          id?: string
+          idempotency_key?: string
+          metadata?: Json | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       weekly_leaderboard_snapshot: {
         Row: {
           id: string
@@ -3741,6 +3813,21 @@ export type Database = {
         }
         Relationships: []
       }
+      mv_daily_rankings_current: {
+        Row: {
+          avatar_url: string | null
+          average_response_time: number | null
+          category: string | null
+          country_code: string | null
+          day_date: string | null
+          rank: number | null
+          refreshed_at: string | null
+          total_correct_answers: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
       mv_feature_usage_summary: {
         Row: {
           feature_name: string | null
@@ -3829,6 +3916,8 @@ export type Database = {
         Args: { invitation_code_input: string }
         Returns: Json
       }
+      archive_old_lives_ledger: { Args: never; Returns: Json }
+      archive_old_wallet_ledger: { Args: never; Returns: Json }
       archive_thread_for_user: { Args: { p_thread_id: string }; Returns: Json }
       award_coins: { Args: { amount: number }; Returns: undefined }
       check_rate_limit: {
@@ -3841,9 +3930,11 @@ export type Database = {
       }
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
+      cleanup_completed_game_sessions: { Args: never; Returns: Json }
       cleanup_expired_game_sessions: { Args: never; Returns: undefined }
       cleanup_expired_pin_reset_tokens: { Args: never; Returns: undefined }
       cleanup_expired_sessions: { Args: never; Returns: undefined }
+      cleanup_expired_speed_tokens: { Args: never; Returns: undefined }
       cleanup_old_analytics: { Args: never; Returns: undefined }
       cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
@@ -4028,6 +4119,7 @@ export type Database = {
       refresh_leaderboard_cache: { Args: never; Returns: undefined }
       refresh_leaderboard_cache_optimized: { Args: never; Returns: undefined }
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
+      refresh_mv_daily_rankings: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
       regenerate_lives_background: { Args: never; Returns: undefined }
