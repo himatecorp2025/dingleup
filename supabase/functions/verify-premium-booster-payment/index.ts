@@ -83,7 +83,7 @@ serve(async (req) => {
       );
     }
 
-    // Check if payment already processed (idempotency)
+    // **WEBHOOK-FIRST IDEMPOTENCY CHECK**
     const { data: existingPurchase } = await supabaseAdmin
       .from("booster_purchases")
       .select("id")
@@ -91,13 +91,38 @@ serve(async (req) => {
       .single();
 
     if (existingPurchase) {
-      console.log(`[verify-premium-booster-payment] Payment already processed: ${sessionId}`);
+      console.log(`[verify-premium-booster-payment] Already processed by webhook: ${sessionId}`);
+      
+      // Get booster type to return correct values
+      const { data: boosterType } = await supabaseAdmin
+        .from("booster_types")
+        .select("*")
+        .eq("code", "PREMIUM")
+        .single();
+      
+      const rewardGold = boosterType?.reward_gold || 0;
+      const rewardLives = boosterType?.reward_lives || 0;
+      const rewardSpeedCount = boosterType?.reward_speed_count || 0;
+      
       return new Response(
-        JSON.stringify({ success: true, alreadyProcessed: true }),
+        JSON.stringify({ 
+          success: true, 
+          alreadyProcessed: true,
+          grantedRewards: {
+            gold: rewardGold,
+            lives: rewardLives,
+            speedCount: rewardSpeedCount
+          }
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
 
+    // ============================================================
+    // FALLBACK: Webhook hasn't processed → call atomic RPC
+    // ============================================================
+    console.log('[verify-premium-booster-payment] Webhook not processed, calling RPC fallback');
+    
     // Get booster definition
     const { data: boosterType } = await supabaseAdmin
       .from("booster_types")
@@ -109,125 +134,39 @@ serve(async (req) => {
       throw new Error("Booster type not found");
     }
 
-    const rewardGold = boosterType.reward_gold || 0;
-    const rewardLives = boosterType.reward_lives || 0;
+    const payload = {
+      gold_reward: boosterType.reward_gold || 0,
+      lives_reward: boosterType.reward_lives || 0,
+      speed_token_count: boosterType.reward_speed_count || 0,
+      speed_duration_min: boosterType.reward_speed_duration_min || 0,
+      price_usd_cents: 249,
+      purchase_source: 'stripe_checkout',
+      token_source: 'PREMIUM_BOOSTER'
+    };
 
-    // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
-    const idempotencyKey = `premium_booster:${sessionId}`;
-    
-    const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
-      p_user_id: user.id,
-      p_delta_coins: rewardGold,
-      p_delta_lives: rewardLives,
-      p_source: 'booster_purchase',
-      p_idempotency_key: idempotencyKey,
-      p_metadata: {
-        booster_code: "PREMIUM",
-        stripe_session_id: sessionId,
-        timestamp: new Date().toISOString()
-      }
-    });
-
-    if (creditError) {
-      throw new Error(`Failed to credit wallet: ${creditError.message}`);
-    }
-
-    if (!creditResult?.success) {
-      throw new Error(creditResult?.error || 'Wallet credit failed');
-    }
-
-    const newGold = creditResult.new_coins;
-    const newLives = creditResult.new_lives;
-
-    // Log purchase
-    await supabaseAdmin.from("booster_purchases").insert({
-      user_id: user.id,
-      booster_type_id: boosterType.id,
-      purchase_source: "stripe_checkout",
-      usd_cents_spent: 249,
-      gold_spent: 0,
-      iap_transaction_id: sessionId
-    });
-
-    // Set pending premium flag
-    await supabaseAdmin
-      .from("user_premium_booster_state")
-      .upsert({
-        user_id: user.id,
-        has_pending_premium_booster: true,
-        updated_at: new Date().toISOString()
+    const { data: result, error: rpcError } = await supabaseAdmin
+      .rpc('apply_booster_purchase_from_stripe', {
+        p_user_id: user.id,
+        p_session_id: sessionId,
+        p_booster_code: 'PREMIUM',
+        p_payload: payload
       });
 
-    // Create Speed tokens (but don't activate them yet - user must click "Aktiválom")
-    const rewardSpeedCount = boosterType.reward_speed_count || 0;
-    const rewardSpeedDuration = boosterType.reward_speed_duration_min || 0;
-
-    console.log(`[verify-premium-booster-payment] Creating ${rewardSpeedCount} speed tokens of ${rewardSpeedDuration} minutes each`);
-
-    // **SPEED TOKEN COLLISION CHECK** - prevent duplicate token creation
-    const { data: existingTokens } = await supabaseAdmin
-      .from('speed_tokens')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('source', 'PREMIUM_BOOSTER')
-      .filter('metadata->session_id', 'eq', sessionId)
-      .limit(1);
-
-    let actualSpeedCount = 0;
-
-    if (!existingTokens || existingTokens.length === 0) {
-      // Create tokens only if none exist for this session
-      const speedTokens = [];
-      for (let i = 0; i < rewardSpeedCount; i++) {
-        speedTokens.push({
-          user_id: user.id,
-          duration_minutes: rewardSpeedDuration,
-          source: 'PREMIUM_BOOSTER',
-          metadata: {
-            session_id: sessionId,
-            purchased_at: new Date().toISOString()
-          }
-          // used_at and expires_at are NULL - tokens are pending activation
-        });
-      }
-
-      if (speedTokens.length > 0) {
-        const { error: speedError } = await supabaseAdmin
-          .from("speed_tokens")
-          .insert(speedTokens);
-
-        if (speedError) {
-          console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
-        } else {
-          actualSpeedCount = rewardSpeedCount;
-          console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
-        }
-      }
-    } else {
-      console.log('[verify-premium-booster-payment] Speed tokens already exist for session:', sessionId);
-      // Count existing tokens for this session
-      const { count } = await supabaseAdmin
-        .from('speed_tokens')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('source', 'PREMIUM_BOOSTER')
-        .filter('metadata->session_id', 'eq', sessionId);
-      actualSpeedCount = count || 0;
+    if (rpcError) {
+      console.error('[verify-premium-booster-payment] RPC error:', rpcError);
+      throw rpcError;
     }
 
-    console.log(`[verify-premium-booster-payment] Success! User ${user.id} received +${rewardGold} gold, +${rewardLives} lives, ${rewardSpeedCount} speed tokens created, pending premium flag set`);
+    const actualSpeedCount = result?.speed_tokens_granted || 0;
+    console.log(`[verify-premium-booster-payment] RPC success. Gold: ${result?.gold_granted}, Lives: ${result?.lives_granted}, Tokens: ${actualSpeedCount}`);
 
     return new Response(
       JSON.stringify({
         success: true,
         grantedRewards: {
-          gold: rewardGold,
-          lives: rewardLives,
+          gold: result?.gold_granted || 0,
+          lives: result?.lives_granted || 0,
           speedCount: actualSpeedCount
-        },
-        balance: {
-          gold: newGold,
-          lives: newLives
         }
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }

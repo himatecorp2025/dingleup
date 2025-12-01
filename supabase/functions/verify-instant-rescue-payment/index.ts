@@ -121,7 +121,7 @@ serve(async (req) => {
       });
     }
 
-    // **IDEMPOTENCY CHECK** - prevent duplicate processing
+    // **WEBHOOK-FIRST IDEMPOTENCY CHECK**
     const { data: existingPurchase } = await supabaseAdmin
       .from('booster_purchases')
       .select('id')
@@ -129,10 +129,16 @@ serve(async (req) => {
       .single();
 
     if (existingPurchase) {
-      console.log('[verify-instant-rescue-payment] Already processed session:', sessionId);
+      console.log('[verify-instant-rescue-payment] Already processed by webhook:', sessionId);
+      
+      const goldReward = parseInt(session.metadata?.gold_reward || '0');
+      const livesReward = parseInt(session.metadata?.lives_reward || '0');
+      
       return new Response(JSON.stringify({ 
         success: true,
         already_processed: true,
+        gold_granted: goldReward,
+        lives_granted: livesReward,
         message: 'Payment already processed' 
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -140,87 +146,39 @@ serve(async (req) => {
       });
     }
 
-    // Extract metadata
-    const boosterTypeId = session.metadata?.booster_type_id;
-    const gameSessionId = session.metadata?.game_session_id;
-    const goldReward = parseInt(session.metadata?.gold_reward || '0');
-    const livesReward = parseInt(session.metadata?.lives_reward || '0');
-    const priceUsdCents = session.amount_total || 0;
-
-    console.log('[verify-instant-rescue-payment] Rewards:', {
-      boosterTypeId,
-      gameSessionId,
-      goldReward,
-      livesReward,
-      priceUsdCents
-    });
-
-    // Record purchase in booster_purchases
-    const { error: purchaseError } = await supabaseAdmin
-      .from('booster_purchases')
-      .insert({
-        user_id: user.id,
-        booster_type_id: boosterTypeId,
-        purchase_source: 'instant_rescue',
-        purchase_context: 'in_game_rescue',
-        usd_cents_spent: priceUsdCents,
-        gold_spent: 0,
-        iap_transaction_id: sessionId
-      });
-
-    if (purchaseError) {
-      console.error('[verify-instant-rescue-payment] Failed to record purchase:', purchaseError);
-      throw purchaseError;
-    }
-
-    // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
-    const idempotencyKey = `instant-rescue-payment:${sessionId}:wallet`;
+    // ============================================================
+    // FALLBACK: Webhook hasn't processed → call atomic RPC
+    // ============================================================
+    console.log('[verify-instant-rescue-payment] Webhook not processed, calling RPC fallback');
     
-    await withRetry(async () => {
-      const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+    const payload = {
+      booster_type_id: session.metadata?.booster_type_id,
+      gold_reward: session.metadata?.gold_reward,
+      lives_reward: session.metadata?.lives_reward,
+      price_usd_cents: session.amount_total
+    };
+
+    const gameSessionId = session.metadata?.game_session_id || null;
+
+    const { data: result, error: rpcError } = await supabaseAdmin
+      .rpc('apply_instant_rescue_from_stripe', {
         p_user_id: user.id,
-        p_delta_coins: goldReward,
-        p_delta_lives: livesReward,
-        p_source: 'instant_rescue_purchase',
-        p_idempotency_key: idempotencyKey,
-        p_metadata: {
-          session_id: sessionId,
-          booster_type_id: boosterTypeId
-        }
+        p_session_id: sessionId,
+        p_game_session_id: gameSessionId,
+        p_payload: payload
       });
 
-      if (creditError) {
-        throw creditError;
-      }
-
-      if (!creditResult?.success) {
-        throw new Error(creditResult?.error || 'Failed to credit wallet');
-      }
-    });
-
-    // Clear rescue pending flag and mark rescue completed
-    if (gameSessionId) {
-      await supabaseAdmin
-        .from('game_sessions')
-        .update({
-          pending_rescue: false,
-          pending_rescue_session_id: null,
-          rescue_completed_at: new Date().toISOString()
-        })
-        .eq('id', gameSessionId)
-        .eq('user_id', user.id);
-
-      console.log('[verify-instant-rescue-payment] Rescue completed for game session:', gameSessionId);
+    if (rpcError) {
+      console.error('[verify-instant-rescue-payment] RPC error:', rpcError);
+      throw rpcError;
     }
+
+    console.log('[verify-instant-rescue-payment] RPC success. Gold:', result?.gold_granted, 'Lives:', result?.lives_granted);
 
     return new Response(JSON.stringify({
       success: true,
-      gold_granted: goldReward,
-      lives_granted: livesReward,
-      new_balance: {
-        gold: goldReward,
-        lives: livesReward
-      }
+      gold_granted: result?.gold_granted || 0,
+      lives_granted: result?.lives_granted || 0
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

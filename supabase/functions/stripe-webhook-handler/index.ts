@@ -21,40 +21,24 @@ async function handleLootboxWebhook(sessionId: string, session: Stripe.Checkout.
     return;
   }
 
-  // Idempotency check
-  const { data: existingLootboxes } = await supabaseAdmin
-    .from('lootbox_instances')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('source', 'purchase')
-    .eq('metadata->>session_id', sessionId)
-    .limit(1);
+  // Call atomic RPC function (idempotent, bulk insert)
+  const { data: result, error } = await supabaseAdmin
+    .rpc('apply_lootbox_purchase_from_stripe', {
+      p_user_id: userId,
+      p_session_id: sessionId,
+      p_boxes: boxes
+    });
 
-  if (existingLootboxes && existingLootboxes.length > 0) {
+  if (error) {
+    console.error('[webhook/lootbox] RPC error:', error);
+    throw error;
+  }
+
+  if (result?.already_processed) {
     console.log('[webhook/lootbox] Already processed:', sessionId);
-    return;
+  } else {
+    console.log('[webhook/lootbox] Credited', boxes, 'boxes to user:', userId);
   }
-
-  // Credit lootboxes
-  const insertPromises = [];
-  for (let i = 0; i < boxes; i++) {
-    insertPromises.push(
-      supabaseAdmin.from('lootbox_instances').insert({
-        user_id: userId,
-        status: 'stored',
-        source: 'purchase',
-        open_cost_gold: 150,
-        metadata: {
-          session_id: sessionId,
-          purchased_at: new Date().toISOString(),
-          credited_via: 'webhook'
-        }
-      })
-    );
-  }
-
-  await Promise.all(insertPromises);
-  console.log('[webhook/lootbox] Credited', boxes, 'boxes to user:', userId);
 }
 
 // ============= SPEED BOOSTER HANDLER =============
@@ -66,100 +50,35 @@ async function handleSpeedBoosterWebhook(sessionId: string, session: Stripe.Chec
     return;
   }
 
-  // Idempotency check
-  const { data: existingPurchase } = await supabaseAdmin
-    .from('booster_purchases')
-    .select('id')
-    .eq('iap_transaction_id', sessionId)
-    .single();
-
-  if (existingPurchase) {
-    console.log('[webhook/speed] Already processed:', sessionId);
-    return;
-  }
-
-  const speedTokenCount = parseInt(session.metadata?.speed_token_count || '1');
-  const speedDurationMin = parseInt(session.metadata?.speed_duration_min || '10');
-  const goldReward = parseInt(session.metadata?.gold_reward || '0');
-  const livesReward = parseInt(session.metadata?.lives_reward || '0');
-  const priceUsdCents = session.amount_total || 0;
-
-  // Get or create booster_type
-  let { data: boosterType } = await supabaseAdmin
-    .from('booster_types')
-    .select('id')
-    .eq('code', 'SPEED_BOOST')
-    .single();
-
-  if (!boosterType) {
-    const { data: newBoosterType } = await supabaseAdmin
-      .from('booster_types')
-      .insert({
-        code: 'SPEED_BOOST',
-        name: 'GigaSpeed',
-        description: 'Speed boost purchase',
-        price_usd_cents: priceUsdCents,
-        reward_gold: goldReward,
-        reward_lives: livesReward,
-        reward_speed_count: speedTokenCount,
-        reward_speed_duration_min: speedDurationMin,
-        is_active: true
-      })
-      .select('id')
-      .single();
-    boosterType = newBoosterType;
-  }
-
-  // Record purchase
-  await supabaseAdmin.from('booster_purchases').insert({
-    user_id: userId,
-    booster_type_id: boosterType!.id,
+  // Call atomic RPC function
+  const payload = {
+    speed_token_count: session.metadata?.speed_token_count,
+    speed_duration_min: session.metadata?.speed_duration_min,
+    gold_reward: session.metadata?.gold_reward,
+    lives_reward: session.metadata?.lives_reward,
+    price_usd_cents: session.amount_total,
     purchase_source: 'speed_boost_shop',
-    purchase_context: 'webhook_credit',
-    usd_cents_spent: priceUsdCents,
-    gold_spent: 0,
-    iap_transaction_id: sessionId
-  });
+    token_source: 'purchase'
+  };
 
-  // Credit gold/lives
-  if (goldReward > 0 || livesReward > 0) {
-    const idempotencyKey = `speed-boost-webhook:${sessionId}`;
-    await supabaseAdmin.from('wallet_ledger').insert({
-      user_id: userId,
-      delta_coins: goldReward,
-      delta_lives: livesReward,
-      source: 'speed_boost_purchase',
-      idempotency_key: idempotencyKey,
-      metadata: { session_id: sessionId, credited_via: 'webhook' }
+  const { data: result, error } = await supabaseAdmin
+    .rpc('apply_booster_purchase_from_stripe', {
+      p_user_id: userId,
+      p_session_id: sessionId,
+      p_booster_code: 'SPEED_BOOST',
+      p_payload: payload
     });
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('coins, lives')
-      .eq('id', userId)
-      .single();
-
-    if (profile) {
-      await supabaseAdmin.from('profiles').update({
-        coins: (profile.coins || 0) + goldReward,
-        lives: (profile.lives || 0) + livesReward
-      }).eq('id', userId);
-    }
+  if (error) {
+    console.error('[webhook/speed] RPC error:', error);
+    throw error;
   }
 
-  // Create speed tokens
-  const speedTokenInserts = [];
-  for (let i = 0; i < speedTokenCount; i++) {
-    speedTokenInserts.push({
-      user_id: userId,
-      duration_minutes: speedDurationMin,
-      source: 'purchase',
-      metadata: { session_id: sessionId, purchased_at: new Date().toISOString() }
-    });
+  if (result?.already_processed) {
+    console.log('[webhook/speed] Already processed:', sessionId);
+  } else {
+    console.log('[webhook/speed] Success! User:', userId, 'Tokens:', result?.speed_tokens_granted);
   }
-  await supabaseAdmin.from('speed_tokens').insert(speedTokenInserts);
-
-  console.log('[webhook/speed] Credited', speedTokenCount, 'tokens to user:', userId);
 }
 
 // ============= PREMIUM BOOSTER HANDLER =============
@@ -171,19 +90,7 @@ async function handlePremiumBoosterWebhook(sessionId: string, session: Stripe.Ch
     return;
   }
 
-  // Idempotency check
-  const { data: existingPurchase } = await supabaseAdmin
-    .from('booster_purchases')
-    .select('id')
-    .eq('iap_transaction_id', sessionId)
-    .single();
-
-  if (existingPurchase) {
-    console.log('[webhook/premium] Already processed:', sessionId);
-    return;
-  }
-
-  // Get booster definition
+  // Get booster definition (for default values if metadata missing)
   const { data: boosterType } = await supabaseAdmin
     .from('booster_types')
     .select('*')
@@ -195,74 +102,35 @@ async function handlePremiumBoosterWebhook(sessionId: string, session: Stripe.Ch
     return;
   }
 
-  const rewardGold = boosterType.reward_gold || 0;
-  const rewardLives = boosterType.reward_lives || 0;
-
-  // Get current balance
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('coins, lives')
-    .eq('id', userId)
-    .single();
-
-  const currentGold = profile?.coins || 0;
-  const currentLives = profile?.lives || 0;
-
-  // Update balances
-  await supabaseAdmin.from('profiles').update({
-    coins: currentGold + rewardGold,
-    lives: currentLives + rewardLives,
-    updated_at: new Date().toISOString()
-  }).eq('id', userId);
-
-  // Log to wallet_ledger
-  await supabaseAdmin.from('wallet_ledger').insert({
-    user_id: userId,
-    delta_coins: rewardGold,
-    delta_lives: rewardLives,
-    source: 'booster_purchase',
-    idempotency_key: `premium_booster_webhook:${sessionId}`,
-    metadata: {
-      booster_code: 'PREMIUM',
-      stripe_session_id: sessionId,
-      credited_via: 'webhook'
-    }
-  });
-
-  // Log purchase
-  await supabaseAdmin.from('booster_purchases').insert({
-    user_id: userId,
-    booster_type_id: boosterType.id,
+  // Call atomic RPC function
+  const payload = {
+    gold_reward: boosterType.reward_gold || 0,
+    lives_reward: boosterType.reward_lives || 0,
+    speed_token_count: boosterType.reward_speed_count || 0,
+    speed_duration_min: boosterType.reward_speed_duration_min || 0,
+    price_usd_cents: 249,
     purchase_source: 'stripe_checkout',
-    usd_cents_spent: 249,
-    gold_spent: 0,
-    iap_transaction_id: sessionId
-  });
+    token_source: 'PREMIUM_BOOSTER'
+  };
 
-  // Create speed tokens (pending activation)
-  const rewardSpeedCount = boosterType.reward_speed_count || 0;
-  const rewardSpeedDuration = boosterType.reward_speed_duration_min || 0;
+  const { data: result, error } = await supabaseAdmin
+    .rpc('apply_booster_purchase_from_stripe', {
+      p_user_id: userId,
+      p_session_id: sessionId,
+      p_booster_code: 'PREMIUM',
+      p_payload: payload
+    });
 
-  if (rewardSpeedCount > 0) {
-    const speedTokens = [];
-    for (let i = 0; i < rewardSpeedCount; i++) {
-      speedTokens.push({
-        user_id: userId,
-        duration_minutes: rewardSpeedDuration,
-        source: 'PREMIUM_BOOSTER'
-      });
-    }
-    await supabaseAdmin.from('speed_tokens').insert(speedTokens);
+  if (error) {
+    console.error('[webhook/premium] RPC error:', error);
+    throw error;
   }
 
-  // Set pending premium flag
-  await supabaseAdmin.from('user_premium_booster_state').upsert({
-    user_id: userId,
-    has_pending_premium_booster: true,
-    updated_at: new Date().toISOString()
-  });
-
-  console.log('[webhook/premium] Success! User', userId, 'received +', rewardGold, 'gold, +', rewardLives, 'lives');
+  if (result?.already_processed) {
+    console.log('[webhook/premium] Already processed:', sessionId);
+  } else {
+    console.log('[webhook/premium] Success! User:', userId, 'Gold:', result?.gold_granted, 'Lives:', result?.lives_granted);
+  }
 }
 
 // ============= INSTANT RESCUE HANDLER =============
@@ -274,59 +142,34 @@ async function handleInstantRescueWebhook(sessionId: string, session: Stripe.Che
     return;
   }
 
-  // Idempotency check
-  const { data: existingPurchase } = await supabaseAdmin
-    .from('booster_purchases')
-    .select('id')
-    .eq('iap_transaction_id', sessionId)
-    .single();
+  // Call atomic RPC function
+  const payload = {
+    booster_type_id: session.metadata?.booster_type_id,
+    gold_reward: session.metadata?.gold_reward,
+    lives_reward: session.metadata?.lives_reward,
+    price_usd_cents: session.amount_total
+  };
 
-  if (existingPurchase) {
+  const gameSessionId = session.metadata?.game_session_id || null;
+
+  const { data: result, error } = await supabaseAdmin
+    .rpc('apply_instant_rescue_from_stripe', {
+      p_user_id: userId,
+      p_session_id: sessionId,
+      p_game_session_id: gameSessionId,
+      p_payload: payload
+    });
+
+  if (error) {
+    console.error('[webhook/rescue] RPC error:', error);
+    throw error;
+  }
+
+  if (result?.already_processed) {
     console.log('[webhook/rescue] Already processed:', sessionId);
-    return;
+  } else {
+    console.log('[webhook/rescue] Success! User:', userId, 'Gold:', result?.gold_granted, 'Lives:', result?.lives_granted);
   }
-
-  const boosterTypeId = session.metadata?.booster_type_id;
-  const goldReward = parseInt(session.metadata?.gold_reward || '0');
-  const livesReward = parseInt(session.metadata?.lives_reward || '0');
-  const priceUsdCents = session.amount_total || 0;
-
-  // Record purchase
-  await supabaseAdmin.from('booster_purchases').insert({
-    user_id: userId,
-    booster_type_id: boosterTypeId,
-    purchase_source: 'instant_rescue',
-    purchase_context: 'in_game_rescue_webhook',
-    usd_cents_spent: priceUsdCents,
-    gold_spent: 0,
-    iap_transaction_id: sessionId
-  });
-
-  // Credit gold/lives
-  const idempotencyKey = `instant-rescue-webhook:${sessionId}`;
-  await supabaseAdmin.from('wallet_ledger').insert({
-    user_id: userId,
-    delta_coins: goldReward,
-    delta_lives: livesReward,
-    source: 'instant_rescue_purchase',
-    idempotency_key: idempotencyKey,
-    metadata: { session_id: sessionId, credited_via: 'webhook' }
-  });
-
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('coins, lives')
-    .eq('id', userId)
-    .single();
-
-  if (profile) {
-    await supabaseAdmin.from('profiles').update({
-      coins: (profile.coins || 0) + goldReward,
-      lives: (profile.lives || 0) + livesReward
-    }).eq('id', userId);
-  }
-
-  console.log('[webhook/rescue] Credited rewards to user:', userId);
 }
 
 // ============= MAIN WEBHOOK HANDLER =============

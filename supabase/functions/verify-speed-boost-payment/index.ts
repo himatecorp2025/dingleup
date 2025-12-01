@@ -121,7 +121,7 @@ serve(async (req) => {
       });
     }
 
-    // **IDEMPOTENCY CHECK** - prevent duplicate processing
+    // **WEBHOOK-FIRST IDEMPOTENCY CHECK**
     const { data: existingPurchase } = await supabaseAdmin
       .from('booster_purchases')
       .select('id')
@@ -129,10 +129,26 @@ serve(async (req) => {
       .single();
 
     if (existingPurchase) {
-      console.log('[verify-speed-boost-payment] Already processed session:', sessionId);
+      console.log('[verify-speed-boost-payment] Already processed by webhook:', sessionId);
+      
+      // Count existing tokens for reporting
+      const { count } = await supabaseAdmin
+        .from('speed_tokens')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('source', 'purchase')
+        .filter('metadata->session_id', 'eq', sessionId);
+      
+      const speedTokenCount = parseInt(session.metadata?.speed_token_count || '1');
+      const goldReward = parseInt(session.metadata?.gold_reward || '0');
+      const livesReward = parseInt(session.metadata?.lives_reward || '0');
+      
       return new Response(JSON.stringify({ 
         success: true,
         already_processed: true,
+        tokens_granted: count || 0,
+        gold_granted: goldReward,
+        lives_granted: livesReward,
         message: 'Payment already processed' 
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -140,159 +156,42 @@ serve(async (req) => {
       });
     }
 
-    // Extract metadata
-    const speedTokenCount = parseInt(session.metadata?.speed_token_count || '1');
-    const speedDurationMin = parseInt(session.metadata?.speed_duration_min || '10');
-    const goldReward = parseInt(session.metadata?.gold_reward || '0');
-    const livesReward = parseInt(session.metadata?.lives_reward || '0');
-    const priceUsdCents = session.amount_total || 0;
+    // ============================================================
+    // FALLBACK: Webhook hasn't processed → call atomic RPC
+    // ============================================================
+    console.log('[verify-speed-boost-payment] Webhook not processed, calling RPC fallback');
+    
+    const payload = {
+      speed_token_count: session.metadata?.speed_token_count,
+      speed_duration_min: session.metadata?.speed_duration_min,
+      gold_reward: session.metadata?.gold_reward,
+      lives_reward: session.metadata?.lives_reward,
+      price_usd_cents: session.amount_total,
+      purchase_source: 'speed_boost_shop',
+      token_source: 'purchase'
+    };
 
-    console.log('[verify-speed-boost-payment] Rewards:', {
-      speedTokenCount,
-      speedDurationMin,
-      goldReward,
-      livesReward,
-      priceUsdCents
-    });
-
-    // Get or create booster_type for speed boost
-    let { data: boosterType } = await supabaseAdmin
-      .from('booster_types')
-      .select('id')
-      .eq('code', 'SPEED_BOOST')
-      .single();
-
-    if (!boosterType) {
-      const { data: newBoosterType, error: createError } = await supabaseAdmin
-        .from('booster_types')
-        .insert({
-          code: 'SPEED_BOOST',
-          name: 'GigaSpeed',
-          description: 'Speed boost purchase',
-          price_usd_cents: priceUsdCents,
-          reward_gold: goldReward,
-          reward_lives: livesReward,
-          reward_speed_count: speedTokenCount,
-          reward_speed_duration_min: speedDurationMin,
-          is_active: true
-        })
-        .select('id')
-        .single();
-
-      if (createError) {
-        console.error('[verify-speed-boost-payment] Failed to create booster_type:', createError);
-        throw createError;
-      }
-      boosterType = newBoosterType;
-    }
-
-    // Record purchase in booster_purchases
-    const { error: purchaseError } = await supabaseAdmin
-      .from('booster_purchases')
-      .insert({
-        user_id: user.id,
-        booster_type_id: boosterType.id,
-        purchase_source: 'speed_boost_shop',
-        purchase_context: 'direct_purchase',
-        usd_cents_spent: priceUsdCents,
-        gold_spent: 0,
-        iap_transaction_id: sessionId
+    const { data: result, error: rpcError } = await supabaseAdmin
+      .rpc('apply_booster_purchase_from_stripe', {
+        p_user_id: user.id,
+        p_session_id: sessionId,
+        p_booster_code: 'SPEED_BOOST',
+        p_payload: payload
       });
 
-    if (purchaseError) {
-      console.error('[verify-speed-boost-payment] Failed to record purchase:', purchaseError);
-      throw purchaseError;
+    if (rpcError) {
+      console.error('[verify-speed-boost-payment] RPC error:', rpcError);
+      throw rpcError;
     }
 
-    // Credit gold and lives if any
-    if (goldReward > 0 || livesReward > 0) {
-      const idempotencyKey = `speed-boost-payment:${sessionId}:wallet`;
-      
-      // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
-      await withRetry(async () => {
-        const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
-          p_user_id: user.id,
-          p_delta_coins: goldReward,
-          p_delta_lives: livesReward,
-          p_source: 'speed_boost_purchase',
-          p_idempotency_key: idempotencyKey,
-          p_metadata: {
-            session_id: sessionId,
-            speed_token_count: speedTokenCount,
-            speed_duration_min: speedDurationMin
-          }
-        });
-
-        if (creditError) {
-          throw creditError;
-        }
-
-        if (!creditResult?.success) {
-          throw new Error(creditResult?.error || 'Failed to credit wallet');
-        }
-      });
-    }
-
-    // **SPEED TOKEN COLLISION CHECK** - prevent duplicate token creation
-    const { data: existingTokens } = await supabaseAdmin
-      .from('speed_tokens')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('source', 'purchase')
-      .filter('metadata->session_id', 'eq', sessionId)
-      .limit(1);
-
-    let tokensGranted = 0;
-
-    if (!existingTokens || existingTokens.length === 0) {
-      // Create speed tokens only if none exist for this session
-      const speedTokenInserts: Array<{
-        user_id: string;
-        duration_minutes: number;
-        source: string;
-        metadata: Record<string, string>;
-      }> = [];
-      for (let i = 0; i < speedTokenCount; i++) {
-        speedTokenInserts.push({
-          user_id: user.id,
-          duration_minutes: speedDurationMin,
-          source: 'purchase',
-          metadata: {
-            session_id: sessionId,
-            purchased_at: new Date().toISOString()
-          }
-        });
-      }
-
-      await withRetry(async () => {
-        const { error: tokenError } = await supabaseAdmin
-          .from('speed_tokens')
-          .insert(speedTokenInserts);
-
-        if (tokenError) {
-          throw tokenError;
-        }
-      });
-
-      tokensGranted = speedTokenCount;
-      console.log('[verify-speed-boost-payment] Created', tokensGranted, 'speed tokens');
-    } else {
-      console.log('[verify-speed-boost-payment] Speed tokens already exist for session:', sessionId);
-      // Count existing tokens for this session
-      const { count } = await supabaseAdmin
-        .from('speed_tokens')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('source', 'purchase')
-        .filter('metadata->session_id', 'eq', sessionId);
-      tokensGranted = count || 0;
-    }
+    const tokensGranted = result?.speed_tokens_granted || 0;
+    console.log('[verify-speed-boost-payment] RPC success. Tokens:', tokensGranted);
 
     return new Response(JSON.stringify({ 
       success: true,
       tokens_granted: tokensGranted,
-      gold_granted: goldReward,
-      lives_granted: livesReward
+      gold_granted: result?.gold_granted || 0,
+      lives_granted: result?.lives_granted || 0
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
