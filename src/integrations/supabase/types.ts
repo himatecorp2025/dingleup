@@ -3993,6 +3993,15 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       expire_old_lootboxes: { Args: never; Returns: number }
+      forgot_pin_atomic: {
+        Args: {
+          p_new_pin: string
+          p_now: string
+          p_recovery_code_hash: string
+          p_username: string
+        }
+        Returns: Json
+      }
       generate_invitation_code: { Args: never; Returns: string }
       generate_lootbox_daily_plan: {
         Args: {
