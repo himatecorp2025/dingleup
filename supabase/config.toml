@@ -1,87 +1,5 @@
 project_id = "wdpxmwsxhckazwxufttk"
 
-# Admin cache refresh - runs every hour
-[edge-runtime.cron]
-"0 * * * *" = "refresh-admin-cache"
-
-[functions.generate-question-translations]
-verify_jwt = true
-
-[functions.stripe-webhook]
-verify_jwt = false
-
-[functions.customer-portal]
-verify_jwt = true
-
-[functions.send-subscription-expiry-notification]
-verify_jwt = false
-
-[functions.validate-game-session]
-verify_jwt = true
-
-[functions.validate-invitation]
-verify_jwt = false
-
-[functions.accept-invitation]
-verify_jwt = true
-
-[functions.regenerate-lives-background]
-verify_jwt = false
-
-[functions.cleanup-analytics]
-verify_jwt = false
-
-[functions.create-payment]
-verify_jwt = true
-
-[functions.verify-payment]
-verify_jwt = true
-
-[functions.create-subscription]
-verify_jwt = true
-
-[functions.check-subscription]
-verify_jwt = true
-
-[functions.create-ingame-payment]
-verify_jwt = true
-
-[functions.get-friends]
-verify_jwt = true
-
-[functions.send-dm]
-verify_jwt = true
-
-[functions.get-thread-messages]
-verify_jwt = true
-
-[functions.get-threads]
-verify_jwt = true
-
-[functions.get-wallet]
-verify_jwt = true
-
-[functions.get-friend-requests]
-verify_jwt = true
-
-[functions.log-activity-ping]
-verify_jwt = true
-
-[functions.admin-activity]
-verify_jwt = true
-
-[functions.aggregate-daily-activity]
-verify_jwt = false
-
-[functions.complete-game]
-verify_jwt = true
-
-[functions.start-game-session]
-verify_jwt = true
-
-[functions.credit-gameplay-reward]
-verify_jwt = true
-
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
@@ -121,45 +39,39 @@ function = "cleanup-game-sessions"
 schedule = "0 3 1 * *"
 function = "archive-ledgers"
 
-[functions.set-default-country]
-verify_jwt = false
-
-[functions.process-daily-winners]
-verify_jwt = false
-
-[functions.load-questions-from-json]
-verify_jwt = false
-
-[functions.detect-language]
-verify_jwt = false
-
-[functions.translate-text]
+# Core Game Functions
+[functions.start-game-session]
 verify_jwt = true
 
-[functions.translate-text-batch]
+[functions.complete-game]
 verify_jwt = true
 
-[functions.get-translations]
-verify_jwt = false
-
-[functions.auto-translate-all]
-verify_jwt = false
-
-[functions.translate-ui-elements]
-verify_jwt = false
-
-[functions.admin-load-test]
+[functions.credit-gameplay-reward]
 verify_jwt = true
 
-[functions.translate-landing-page]
-verify_jwt = false
-
-[functions.shorten-long-answers]
+[functions.get-game-questions]
 verify_jwt = true
 
-[functions.simple-load-test]
+# Auth Functions
+[functions.register-with-username-pin]
 verify_jwt = false
 
+[functions.login-with-username-pin]
+verify_jwt = false
+
+[functions.forgot-pin]
+verify_jwt = false
+
+[functions.update-pin]
+verify_jwt = true
+
+[functions.update-password]
+verify_jwt = true
+
+[functions.submit-dob]
+verify_jwt = true
+
+# Lootbox Functions
 [functions.lootbox-active]
 verify_jwt = true
 
@@ -175,9 +87,274 @@ verify_jwt = true
 [functions.lootbox-heartbeat]
 verify_jwt = true
 
-[functions.register-activity-and-drop]
+# Daily Gift & Winners Functions
+[functions.get-daily-gift-status]
+verify_jwt = true
+
+[functions.dismiss-daily-gift]
+verify_jwt = true
+
+[functions.get-daily-winners-status]
+verify_jwt = true
+
+[functions.process-daily-winners]
+verify_jwt = false
+
+[functions.claim-daily-rank-reward]
+verify_jwt = true
+
+[functions.dismiss-daily-rank-reward]
+verify_jwt = true
+
+[functions.get-pending-rank-reward]
 verify_jwt = true
 
 [functions.backfill-daily-winners]
+verify_jwt = true
+
+# Wallet & Profile Functions
+[functions.get-wallet]
+verify_jwt = true
+
+[functions.get-user-game-profile]
+verify_jwt = true
+
+[functions.get-dashboard-data]
+verify_jwt = true
+
+[functions.update-user-game-settings]
+verify_jwt = true
+
+# Payment Functions (Stripe)
+[functions.create-lootbox-payment]
+verify_jwt = true
+
+[functions.create-speed-boost-payment]
+verify_jwt = true
+
+[functions.create-premium-booster-payment]
+verify_jwt = true
+
+[functions.create-instant-rescue-payment]
+verify_jwt = true
+
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.verify-lootbox-payment]
+verify_jwt = true
+
+[functions.verify-speed-boost-payment]
+verify_jwt = true
+
+[functions.verify-premium-booster-payment]
+verify_jwt = true
+
+[functions.verify-instant-rescue-payment]
+verify_jwt = true
+
+[functions.verify-payment-intent]
+verify_jwt = true
+
+[functions.stripe-webhook-handler]
+verify_jwt = false
+
+[functions.purchase-booster]
+verify_jwt = true
+
+[functions.activate-speed-token]
+verify_jwt = true
+
+[functions.activate-premium-speed]
+verify_jwt = true
+
+# Social Functions (Friends, DM, etc.)
+[functions.get-friends]
+verify_jwt = true
+
+[functions.get-friend-requests]
+verify_jwt = true
+
+[functions.send-friend-request]
+verify_jwt = true
+
+[functions.accept-friend-request]
+verify_jwt = true
+
+[functions.decline-friend-request]
+verify_jwt = true
+
+[functions.cancel-friend-request]
+verify_jwt = true
+
+[functions.block-user]
+verify_jwt = true
+
+[functions.send-dm]
+verify_jwt = true
+
+[functions.get-thread-messages]
+verify_jwt = true
+
+[functions.get-threads]
+verify_jwt = true
+
+[functions.get-threads-optimized]
+verify_jwt = true
+
+[functions.upsert-thread]
+verify_jwt = true
+
+[functions.upload-chat-image]
+verify_jwt = true
+
+[functions.search-users]
+verify_jwt = true
+
+[functions.unified-search]
+verify_jwt = true
+
+# Leaderboard & Rankings Functions
+[functions.get-daily-leaderboard-by-country]
+verify_jwt = true
+
+[functions.refresh-leaderboard-cache]
+verify_jwt = false
+
+[functions.refresh-daily-rankings-mv]
+verify_jwt = false
+
+# Question & Content Functions
+[functions.get-topic-popularity]
+verify_jwt = false
+
+[functions.get-question-like-status]
+verify_jwt = true
+
+[functions.get-question-reaction-status]
+verify_jwt = true
+
+[functions.toggle-question-like]
+verify_jwt = true
+
+[functions.toggle-question-reaction]
+verify_jwt = true
+
+[functions.check-like-prompt-eligibility]
+verify_jwt = true
+
+[functions.record-like-prompt-view]
+verify_jwt = true
+
+[functions.credit-like-popup-reward]
+verify_jwt = true
+
+[functions.get-translations]
+verify_jwt = false
+
+[functions.populate-question-pools-en]
+verify_jwt = false
+
+[functions.regenerate-question-pools]
+verify_jwt = false
+
+# Tutorial Functions
+[functions.get-tutorial-progress]
+verify_jwt = true
+
+[functions.mark-tutorial-completed]
+verify_jwt = true
+
+# Admin Functions
+[functions.admin-activity]
+verify_jwt = true
+
+[functions.admin-dashboard-data]
+verify_jwt = true
+
+[functions.admin-game-profiles]
+verify_jwt = true
+
+[functions.admin-game-profiles-paginated]
+verify_jwt = true
+
+[functions.admin-game-profile-detail]
+verify_jwt = true
+
+[functions.admin-lootbox-analytics]
+verify_jwt = true
+
+[functions.admin-monetization-analytics]
+verify_jwt = true
+
+[functions.admin-retention-analytics]
+verify_jwt = true
+
+[functions.admin-engagement-analytics]
+verify_jwt = true
+
+[functions.admin-engagement-analytics-optimized]
+verify_jwt = true
+
+[functions.admin-journey-analytics]
+verify_jwt = true
+
+[functions.admin-performance-analytics]
+verify_jwt = true
+
+[functions.admin-player-behaviors]
+verify_jwt = true
+
+[functions.admin-topic-popularity]
+verify_jwt = true
+
+[functions.admin-age-statistics]
+verify_jwt = true
+
+[functions.admin-booster-types]
+verify_jwt = true
+
+[functions.admin-booster-purchases]
+verify_jwt = true
+
+[functions.admin-ad-interests-summary]
+verify_jwt = true
+
+[functions.admin-ad-interests-all-topics]
+verify_jwt = true
+
+[functions.admin-ad-interests-users]
+verify_jwt = true
+
+[functions.admin-ad-interests-recalculate]
+verify_jwt = true
+
+[functions.admin-manual-credit]
+verify_jwt = true
+
+[functions.admin-send-report-notification]
+verify_jwt = true
+
+[functions.admin-all-data]
+verify_jwt = true
+
+# Background Jobs & Maintenance
+[functions.regenerate-lives-background]
+verify_jwt = false
+
+[functions.aggregate-daily-activity]
+verify_jwt = false
+
+[functions.cleanup-game-sessions]
+verify_jwt = false
+
+[functions.archive-ledgers]
+verify_jwt = false
+
+[functions.refresh-admin-cache]
+verify_jwt = false
+
+# Activity & Logging
+[functions.log-activity-ping]
 verify_jwt = true
 
