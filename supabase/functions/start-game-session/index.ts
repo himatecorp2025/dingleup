@@ -2,9 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
+import { startMetrics, measureStage, incDbQuery, logSuccess, logError, shouldSampleSuccessLog } from '../_shared/metrics.ts';
 
 // ============================================================================
-// OPTIMIZED GAME SESSION START - NO NESTED CALLS, DIRECT POOL ACCESS
+// OPTIMIZED GAME SESSION START - CENTRALIZED METRICS & STRUCTURED LOGGING
 // ============================================================================
 
 const TOTAL_POOLS = 15;
@@ -40,61 +41,70 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Initialize dual-language pool cache
+// Initialize dual-language pool cache with structured metrics
 async function initializePoolsCache(supabase: any): Promise<void> {
   if (CACHE_INITIALIZED) return;
   if (CACHE_INIT_PROMISE) return CACHE_INIT_PROMISE;
 
   CACHE_INIT_PROMISE = (async () => {
-    console.log('[POOL CACHE] Initializing all 15 pools (HU + EN) into memory...');
-    const startTime = Date.now();
+    const ctx = startMetrics({ functionName: 'question-pool-cache-init', userId: null });
 
     try {
-      const { data: pools, error } = await supabase
-        .from('question_pools')
-        .select('*')
-        .gte('question_count', MIN_QUESTIONS_PER_POOL)
-        .order('pool_order');
+      await measureStage(ctx, 'cache_load', async () => {
+        incDbQuery(ctx);
+        const { data: pools, error } = await supabase
+          .from('question_pools')
+          .select('*')
+          .gte('question_count', MIN_QUESTIONS_PER_POOL)
+          .order('pool_order');
 
-      if (error) throw error;
-      if (!pools || pools.length < TOTAL_POOLS) {
-        console.warn(`[POOL CACHE] Only ${pools?.length || 0} pools found`);
-      }
+        if (error) throw error;
 
-      for (const poolData of pools || []) {
-        const poolOrder = poolData.pool_order;
+        let totalHuQuestions = 0;
+        let totalEnQuestions = 0;
 
-        // Parse Hungarian questions
-        const questionsRawHu = poolData.questions;
-        let questionsHu: Question[] = [];
-        if (questionsRawHu && Array.isArray(questionsRawHu)) {
-          questionsHu = questionsRawHu.map((q: any) => 
-            typeof q === 'string' ? JSON.parse(q) : q
-          ).filter((q: any) => q !== null);
+        for (const poolData of pools || []) {
+          const poolOrder = poolData.pool_order;
+
+          // Parse Hungarian questions
+          const questionsRawHu = poolData.questions;
+          let questionsHu: Question[] = [];
+          if (questionsRawHu && Array.isArray(questionsRawHu)) {
+            questionsHu = questionsRawHu.map((q: any) => 
+              typeof q === 'string' ? JSON.parse(q) : q
+            ).filter((q: any) => q !== null);
+          }
+
+          // Parse English questions
+          const questionsRawEn = poolData.questions_en;
+          let questionsEn: Question[] = [];
+          if (questionsRawEn && Array.isArray(questionsRawEn)) {
+            questionsEn = questionsRawEn.map((q: any) => 
+              typeof q === 'string' ? JSON.parse(q) : q
+            ).filter((q: any) => q !== null);
+          }
+
+          POOLS_CACHE_HU.set(poolOrder, questionsHu);
+          POOLS_CACHE_EN.set(poolOrder, questionsEn);
+
+          totalHuQuestions += questionsHu.length;
+          totalEnQuestions += questionsEn.length;
         }
 
-        // Parse English questions
-        const questionsRawEn = poolData.questions_en;
-        let questionsEn: Question[] = [];
-        if (questionsRawEn && Array.isArray(questionsRawEn)) {
-          questionsEn = questionsRawEn.map((q: any) => 
-            typeof q === 'string' ? JSON.parse(q) : q
-          ).filter((q: any) => q !== null);
-        }
+        CACHE_INITIALIZED = true;
 
-        POOLS_CACHE_HU.set(poolOrder, questionsHu);
-        POOLS_CACHE_EN.set(poolOrder, questionsEn);
-        
-        console.log(`[POOL CACHE] Pool ${poolOrder}: HU=${questionsHu.length}, EN=${questionsEn.length}`);
-      }
-
-      CACHE_INITIALIZED = true;
-      const elapsed = Date.now() - startTime;
-      console.log(`[POOL CACHE] ✅ Cache loaded in ${elapsed}ms`);
-    } catch (err) {
-      console.error('[POOL CACHE] Init failed:', err);
+        logSuccess(ctx, {
+          label: 'POOL_CACHE',
+          hu_pools: POOLS_CACHE_HU.size,
+          en_pools: POOLS_CACHE_EN.size,
+          total_hu_questions: totalHuQuestions,
+          total_en_questions: totalEnQuestions,
+        });
+      });
+    } catch (error) {
+      logError(ctx, error, { label: 'POOL_CACHE_INIT_FAILED' });
       CACHE_INIT_PROMISE = null;
-      throw err;
+      throw error;
     }
   })();
 
@@ -117,6 +127,8 @@ serve(async (req) => {
   }
   
   const corsHeaders = getCorsHeaders(origin);
+
+  let userId: string | undefined;
 
   try {
     const authHeader = req.headers.get('Authorization');
@@ -150,12 +162,13 @@ serve(async (req) => {
       );
     }
 
+    userId = user.id;
+    const ctx = startMetrics({ functionName: 'start-game-session', userId });
+
     const rateLimitResult = await checkRateLimit(supabaseClient, 'start-game-session', RATE_LIMITS.GAME);
     if (!rateLimitResult.allowed) {
       return rateLimitExceeded(corsHeaders);
     }
-
-    console.log(`[start-game-session] User ${user.id} starting game`);
 
     // Parse request body for lang
     let requestBody: { lang?: string } = {};
@@ -165,108 +178,108 @@ serve(async (req) => {
         requestBody = JSON.parse(bodyText);
       }
     } catch (e) {
-      console.warn('[start-game-session] Could not parse body');
+      // No body or parse error - continue with defaults
     }
 
-    // ========== CRITICAL OPTIMIZATION: PARALLEL DB QUERIES ==========
-    const startParallel = Date.now();
-    
+    // Parallel DB queries for profile and pool session
     const [
       { data: userProfile },
       { data: poolSession }
-    ] = await Promise.all([
-      supabaseClient
-        .from('profiles')
-        .select('preferred_language')
-        .eq('id', user.id)
-        .single(),
-      supabaseClient
-        .from('game_session_pools')
-        .select('last_pool_order')
-        .eq('user_id', user.id)
-        .single()
-    ]);
-
-    const parallelElapsed = Date.now() - startParallel;
-    console.log(`[start-game-session] Parallel queries: ${parallelElapsed}ms`);
+    ] = await measureStage(ctx, 'parallel_queries', async () => {
+      incDbQuery(ctx, 2);
+      return await Promise.all([
+        supabaseClient
+          .from('profiles')
+          .select('preferred_language')
+          .eq('id', user.id)
+          .single(),
+        supabaseClient
+          .from('game_session_pools')
+          .select('last_pool_order')
+          .eq('user_id', user.id)
+          .single()
+      ]);
+    });
 
     const userLang = requestBody.lang || userProfile?.preferred_language || 'en';
     const lastPoolOrder = poolSession?.last_pool_order || null;
-    
-    console.log(`[start-game-session] User ${user.id} pool: ${lastPoolOrder}, lang: ${userLang}`);
 
-    // ========== INITIALIZE CACHE IF NEEDED ==========
+    // Initialize cache if needed
     await initializePoolsCache(supabaseClient);
 
-    // ========== POOL ROTATION LOGIC ==========
+    // Pool rotation logic
     let nextPoolOrder = 1;
     if (lastPoolOrder && typeof lastPoolOrder === 'number') {
       nextPoolOrder = (lastPoolOrder % TOTAL_POOLS) + 1;
     }
 
-    console.log(`[start-game-session] Using pool ${nextPoolOrder}, lang: ${userLang}`);
+    // Select language-specific questions from cache
+    const selectedQuestions = await measureStage(ctx, 'question_selection', async () => {
+      const poolCache = userLang === 'en' ? POOLS_CACHE_EN : POOLS_CACHE_HU;
+      const poolQuestions = poolCache.get(nextPoolOrder);
 
-    // ========== SELECT LANGUAGE-SPECIFIC CACHE ==========
-    const poolCache = userLang === 'en' ? POOLS_CACHE_EN : POOLS_CACHE_HU;
-    const poolQuestions = poolCache.get(nextPoolOrder);
+      if (!poolQuestions || poolQuestions.length < MIN_QUESTIONS_PER_POOL) {
+        throw new Error(`Pool ${nextPoolOrder} (${userLang}) insufficient questions`);
+      }
 
-    if (!poolQuestions || poolQuestions.length < MIN_QUESTIONS_PER_POOL) {
-      console.error(`[start-game-session] Pool ${nextPoolOrder} (${userLang}) insufficient questions`);
-      return new Response(
-        JSON.stringify({ error: `Pool ${nextPoolOrder} not available` }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+      return selectRandomQuestions(poolQuestions, QUESTIONS_PER_GAME);
+    });
 
-    // ========== SELECT 15 RANDOM QUESTIONS (0-5ms, NO DB) ==========
-    const startSelect = Date.now();
-    const selectedQuestions = selectRandomQuestions(poolQuestions, QUESTIONS_PER_GAME);
-    const selectElapsed = Date.now() - startSelect;
-    
-    console.log(`[start-game-session] Selected ${selectedQuestions.length} questions in ${selectElapsed}ms (ZERO DB)`);
+    // Update pool session
+    await measureStage(ctx, 'pool_update', async () => {
+      incDbQuery(ctx);
+      await supabaseClient
+        .from('game_session_pools')
+        .upsert({
+          user_id: user.id,
+          last_pool_order: nextPoolOrder,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id',
+        });
+    });
 
-    // ========== UPDATE POOL SESSION ==========
-    await supabaseClient
-      .from('game_session_pools')
-      .upsert({
-        user_id: user.id,
-        last_pool_order: nextPoolOrder,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      });
-
-    // ========== CREATE GAME SESSION ==========
+    // Create game session
     const sessionId = crypto.randomUUID();
-    const sessionData = {
-      user_id: user.id,
-      session_id: sessionId,
-      category: 'mixed',
-      questions: selectedQuestions.map((q: any) => ({
-        id: q.id,
-        question: q.question,
-        correctAnswer: q.answers.findIndex((a: any) => a.correct),
-        difficulty: 'medium'
-      })),
-      current_question: 0,
-      correct_answers: 0,
-      started_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-    };
+    await measureStage(ctx, 'session_insert', async () => {
+      incDbQuery(ctx);
+      const sessionData = {
+        user_id: user.id,
+        session_id: sessionId,
+        category: 'mixed',
+        questions: selectedQuestions.map((q: any) => ({
+          id: q.id,
+          question: q.question,
+          correctAnswer: q.answers.findIndex((a: any) => a.correct),
+          difficulty: 'medium'
+        })),
+        current_question: 0,
+        correct_answers: 0,
+        started_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      };
 
-    const { error: insertError } = await supabaseClient
-      .from('game_sessions')
-      .insert(sessionData);
+      const { error: insertError } = await supabaseClient
+        .from('game_sessions')
+        .insert(sessionData);
 
-    if (insertError) {
-      console.error('[start-game-session] Insert error:', insertError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create game session' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (insertError) {
+        throw insertError;
+      }
+    });
+
+    const totalElapsed = Date.now() - ctx.startTime;
+
+    // Structured log with sampling (high-frequency endpoint)
+    if (shouldSampleSuccessLog()) {
+      logSuccess(ctx, {
+        session_id: sessionId,
+        cache_status: 'HIT',
+        pool_number: nextPoolOrder,
+        language: userLang,
+        question_count: selectedQuestions.length,
+      });
     }
-
-    console.log(`[start-game-session] ✅ Session ${sessionId} created (pool ${nextPoolOrder}, lang: ${userLang})`);
 
     return new Response(
       JSON.stringify({ 
@@ -275,16 +288,25 @@ serve(async (req) => {
         poolUsed: nextPoolOrder,
         lang: userLang,
         performance: {
-          parallel_queries_ms: parallelElapsed,
-          question_selection_ms: selectElapsed,
-          db_queries_for_questions: 0 // ZERO!
+          elapsed_ms: totalElapsed,
+          parallel_queries_ms: ctx.extra['parallel_queries_ms'],
+          question_selection_ms: ctx.extra['question_selection_ms'],
+          pool_update_ms: ctx.extra['pool_update_ms'],
+          session_insert_ms: ctx.extra['session_insert_ms'],
+          db_queries_count: ctx.dbQueryCount,
+          db_queries_for_questions: 0 // ZERO (cached)
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
-    console.error('[start-game-session] Error:', error);
+  } catch (error: any) {
+    if (userId) {
+      const ctx = startMetrics({ functionName: 'start-game-session', userId });
+      ctx.startTime = Date.now() - 0; // Approximate
+      logError(ctx, error);
+    }
+
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
