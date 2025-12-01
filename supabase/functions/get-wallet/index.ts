@@ -1,13 +1,14 @@
-// get-wallet: Fetches user wallet with inline life regeneration
+// get-wallet: Fetches user wallet with OPTIONAL inline life regeneration
+// Supports ?skipRegen=true query parameter for read-only mode (high-load optimization)
 // Applies regeneration logic during read to provide accurate real-time life counts
 // Supports selective field fetching via ?fields= query parameter for payload optimization
 //
 // TODO FUTURE OPTIMIZATION (NOT IMPLEMENTED YET):
 // - High concurrency issue: inline regeneration causes UPDATE contention at scale (10k+ concurrent users)
+// - Current implementation supports skipRegen=true for read-only mode
 // - Consider moving to cron-only regeneration strategy (regenerate-lives-background only)
 // - If cron-only: get-wallet becomes read-only, nextLifeAt computed from profile data without UPDATE
 // - Trade-off: eliminates contention but introduces slight staleness (~1min cron interval)
-// - Current hybrid model (inline + background cron) works well for current scale but may need revision
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
@@ -38,9 +39,10 @@ serve(async (req) => {
     }
     const token = authHeader.replace('Bearer ', '').trim();
 
-    // Parse query parameters for field filtering (payload optimization)
+    // Parse query parameters for field filtering and regeneration control
     const url = new URL(req.url);
     const fieldsParam = url.searchParams.get('fields');
+    const skipRegen = url.searchParams.get('skipRegen') === 'true'; // HIGH-LOAD OPTIMIZATION
     const requestedFields = fieldsParam ? new Set(fieldsParam.split(',').map(f => f.trim())) : null;
 
     // Client for auth verification (no session persistence)
@@ -109,13 +111,11 @@ serve(async (req) => {
     }
 
     // Calculate next life time with proper regeneration tracking + future timestamp guard
-    // TODO FUTURE OPTIMIZATION: Concurrent regeneration risk exists when multiple get-wallet calls
-    // happen simultaneously. Consider moving ALL regeneration to cron-only (regenerate_lives_background)
-    // to eliminate inline regen race conditions. See REWARD_ECONOMY_SYSTEM doc Section 3.2.5.
+    // HIGH-LOAD OPTIMIZATION: Skip inline regeneration if skipRegen=true query parameter provided
     let currentLives = Number(profile.lives ?? 0);
     let nextLifeAt = null;
     
-    if (currentLives < effectiveMaxLives) {
+    if (currentLives < effectiveMaxLives && !skipRegen) {
       const nowMs = Date.now();
       let lastRegenMs = new Date(profile.last_life_regeneration).getTime();
       const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
@@ -160,6 +160,25 @@ serve(async (req) => {
       } else {
         // No lives added yet, calculate when next life will come
         nextLifeAt = new Date(lastRegenMs + regenIntervalMs).toISOString();
+      }
+    } else if (currentLives < effectiveMaxLives && skipRegen) {
+      // READ-ONLY MODE: Calculate nextLifeAt without UPDATE (high-load optimization)
+      const lastRegenMs = new Date(profile.last_life_regeneration).getTime();
+      const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
+      const nowMs = Date.now();
+      
+      // Guard: if last_life_regeneration is in the future, use now
+      const effectiveLastRegenMs = lastRegenMs > nowMs ? nowMs : lastRegenMs;
+      const timeSinceLastRegen = Math.max(0, nowMs - effectiveLastRegenMs);
+      const livesAvailable = Math.floor(timeSinceLastRegen / regenIntervalMs);
+      
+      if (livesAvailable > 0) {
+        currentLives = Math.min(currentLives + livesAvailable, effectiveMaxLives);
+      }
+      
+      if (currentLives < effectiveMaxLives) {
+        const nextRegenOffset = regenIntervalMs - (timeSinceLastRegen % regenIntervalMs);
+        nextLifeAt = new Date(nowMs + nextRegenOffset).toISOString();
       }
     }
 
