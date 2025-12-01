@@ -1,5 +1,11 @@
 // PHASE 2 OPTIMIZATION: Archive old ledger entries
 // Runs monthly to prevent wallet_ledger and lives_ledger table bloat
+//
+// TODO FUTURE REFACTOR (NOT IMPLEMENTED YET):
+// - lives_ledger is redundant with wallet_ledger (which has delta_lives column)
+// - Consider merging lives_ledger into wallet_ledger completely
+// - This would eliminate duplicate archival logic and simplify schema
+// - Risk: requires migrating all historical lives_ledger entries into wallet_ledger
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
 Deno.serve(async (req) => {

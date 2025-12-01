@@ -49,9 +49,14 @@ const CUMULATIVE_RANGES: Array<{ tier: LootboxTier; max: number }> = [
  * Returns fixed gold and life amounts based on randomly selected tier.
  * Uses weighted random selection with cumulative probability ranges.
  * 
- * IDEMPOTENCY NOTE: This function generates RANDOM rewards each time.
+ * CRITICAL IDEMPOTENCY NOTE: This function generates RANDOM rewards each time.
  * Caller MUST use idempotency_key in open_lootbox_transaction() RPC to ensure
  * the same lootbox cannot be opened twice with different rewards.
+ * 
+ * IDEMPOTENCY KEY FORMAT: "lootbox_open::<lootbox_id>"
+ * - lootbox_id ensures per-lootbox uniqueness
+ * - This key MUST remain stable - changing format breaks duplicate detection
+ * - DO NOT add timestamps, random values, or session IDs to this key
  * 
  * @returns {LootboxReward} Fixed reward values and tier
  */
