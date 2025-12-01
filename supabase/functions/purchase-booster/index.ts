@@ -109,6 +109,10 @@ serve(async (req) => {
   }
 });
 
+// FREE BOOSTER: Pay 900 gold → Net -600 gold, grant +300 gold, +15 lives, 4× 30min speed tokens
+// Total transaction: -900 + 300 = -600 net gold deduction
+// IDEMPOTENCY: Uses timestamp-based idempotency_key - assumes no duplicate rapid clicks
+// TODO FUTURE: Consider using request-scoped idempotency key for absolute protection
 async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boosterType: any) {
   const priceGold = boosterType.price_gold || 0;
   const rewardGold = boosterType.reward_gold || 0;
@@ -487,6 +491,10 @@ async function handlePremiumBoosterPurchase(
   }
 }
 
+// GOLD_SAVER BOOSTER: Pay 500 gold → Net -250 gold, grant +250 gold, +15 lives, NO speed tokens
+// Total transaction: -500 + 250 = -250 net gold deduction
+// IDEMPOTENCY: Uses timestamp-based idempotency_key - assumes no duplicate rapid clicks
+// TODO FUTURE: Consider using request-scoped idempotency key for absolute protection
 async function handleGoldSaverPurchase(supabaseAdmin: any, userId: string, boosterType: any) {
   const priceGold = boosterType.price_gold || 0;
   const rewardGold = boosterType.reward_gold || 0;
