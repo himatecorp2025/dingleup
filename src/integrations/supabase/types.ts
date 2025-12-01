@@ -3732,6 +3732,32 @@ export type Database = {
         }
         Relationships: []
       }
+      mv_daily_engagement_metrics: {
+        Row: {
+          active_users: number | null
+          avg_session_duration_seconds: number | null
+          metric_date: string | null
+          total_sessions: number | null
+        }
+        Relationships: []
+      }
+      mv_feature_usage_summary: {
+        Row: {
+          feature_name: string | null
+          metric_date: string | null
+          unique_users: number | null
+          usage_count: number | null
+        }
+        Relationships: []
+      }
+      mv_hourly_engagement: {
+        Row: {
+          event_count: number | null
+          hour: number | null
+          metric_date: string | null
+        }
+        Relationships: []
+      }
       performance_by_page: {
         Row: {
           avg_lcp_ms: number | null
@@ -3998,6 +4024,7 @@ export type Database = {
         Args: { p_cost?: number; p_help_type: string }
         Returns: Json
       }
+      refresh_admin_materialized_views: { Args: never; Returns: Json }
       refresh_leaderboard_cache: { Args: never; Returns: undefined }
       refresh_leaderboard_cache_optimized: { Args: never; Returns: undefined }
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
