@@ -181,20 +181,35 @@ Deno.serve(async (req) => {
       // Not critical, use default username
     }
 
-    // Update daily_rankings INSTANTLY via RPC (aggregated "mixed" category)
+    // PHASE 1 OPTIMIZATION: Update daily_rankings WITHOUT rank recalculation
+    // Ranks are now computed every 5 minutes by materialized view refresh
+    // This removes the O(N log N) bottleneck from the critical game completion path
     try {
-      const { error: dailyRankError } = await supabaseAdmin.rpc('update_daily_ranking_for_user', {
-        p_user_id: user.id,
-        p_correct_answers: body.correctAnswers,
-        p_average_response_time: body.averageResponseTime
-      });
+      const currentDate = new Date().toISOString().split('T')[0];
+      
+      // Upsert aggregate stats (no rank calculation)
+      const { error: dailyRankError } = await supabaseAdmin
+        .from('daily_rankings')
+        .upsert({
+          user_id: user.id,
+          category: 'mixed',
+          day_date: currentDate,
+          total_correct_answers: body.correctAnswers,
+          average_response_time: body.averageResponseTime,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,category,day_date',
+          ignoreDuplicates: false
+        });
 
       if (dailyRankError) {
-        console.error('[complete-game] Daily ranking update error:', dailyRankError);
+        console.error('[complete-game] Daily ranking upsert error:', dailyRankError);
         // Not critical, continue
       }
+      
+      console.log(`[complete-game] Daily ranking aggregated for user ${user.id} (rank computed in background)`);
     } catch (rankErr) {
-      console.error('[complete-game] Daily ranking RPC exception:', rankErr);
+      console.error('[complete-game] Daily ranking exception:', rankErr);
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
