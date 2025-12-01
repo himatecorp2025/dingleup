@@ -3,7 +3,7 @@
 **Date Range:** 2025-12-01  
 **Total Rounds:** 4 rounds of optimization  
 **Scope:** Authentication, Profile Management, Onboarding System  
-**Objective:** Production-ready backend for 10,000+ concurrent users with zero business logic changes
+**Objective:** Production-ready backend architecture — Target capacity: 10,000+ concurrent users (validated by architecture, to be confirmed with production-like load tests). Zero business logic changes.
 
 ---
 
@@ -249,11 +249,12 @@ COMMIT;
 - ❌ auth.users / profiles desync possible
 
 ### After Optimization (Round 4)
-- ✅ Row-level locking prevents all race conditions
+- ✅ Row-level locking eliminates race conditions within current logic
 - ✅ Atomic transactions guarantee all-or-nothing updates
 - ✅ Guaranteed rollback on failures (zero dangling records)
-- ✅ 100% consistent rate limiting enforcement
+- ✅ Consistent rate limiting enforcement (with lock timeout handling)
 - ✅ Non-blocking auth sync (profiles is source of truth)
+- ✅ Predictable error codes for lock timeouts (`LOCK_TIMEOUT`)
 
 ---
 
@@ -266,21 +267,22 @@ COMMIT;
 - **Background Jobs:** Full table scans (unscalable for 100k+ users)
 
 ### After Optimization
-- **Concurrent Users:** 10,000+ users (80% write reduction + indexes)
-- **Login Rate:** 500+ logins/sec (indexed rate limiting)
-- **PIN Reset Rate:** 200+ resets/sec (atomic RPC with row locks)
-- **Background Jobs:** Batch processing (scales to 100k+ users)
+- **Concurrent Users:** Target 10,000+ users (80% write reduction + optimized indexes)
+- **Login Rate:** Target 500+ logins/sec (indexed rate limiting)
+- **PIN Reset Rate:** Target 200+ resets/sec (atomic RPC with row locks)
+- **Background Jobs:** Batch processing (scales to 100k+ users with 5000 batch size)
 
-**Overall Capacity Increase:** **10x more concurrent users**
+**Overall Capacity Increase:** **~10x more concurrent users** (architecture-validated, requires production load testing for confirmation)
 
 ---
 
 ## 📊 TOTAL INFRASTRUCTURE CHANGES
 
-### Database Indexes Added (20 indexes)
-- **Round 1:** 4 indexes (profiles, wallet_ledger)
-- **Round 2:** 7 indexes (login_attempts_pin, profiles)
-- **Round 3:** 9 indexes (profiles, login_attempts_pin hot paths)
+### Database Indexes Added (Consolidated to 12 optimal indexes)
+- **Core Indexes:** 6 essential indexes (username, email, invitation_code, lives_regen, recovery_hash, timezone)
+- **Rate Limiting:** 3 indexes (login_attempts_pin, pin_reset_rate_limit)
+- **Bonus Systems:** 3 indexes (welcome_bonus, daily_gift_claimed, daily_gift_last_seen)
+- **Note:** Removed 8+ duplicate and unused indexes through consolidation (subscriber-related, overlapping username indexes, redundant country indexes)
 
 ### Edge Functions Optimized (7 functions)
 1. `register-with-username-pin` (Rounds 1, 2, 4)
@@ -326,10 +328,15 @@ COMMIT;
 
 ## 🧪 COMPREHENSIVE LOAD TEST SUITE
 
+**Authentication Headers Required:**
+- `apikey: <service_role_key>` (for service role access)
+- `Authorization: Bearer <jwt>` (for authenticated user routes)
+
 ### Scenario 1: Concurrent Registration Storm
 ```bash
 # 1000 registrations over 30 seconds
 ab -n 1000 -c 100 -p register.json \
+  -H "apikey: <service_role_key>" \
   https://[project].supabase.co/functions/v1/register-with-username-pin
 
 # Expected: ~95% success rate, zero dangling auth.users
@@ -339,6 +346,7 @@ ab -n 1000 -c 100 -p register.json \
 ```bash
 # 5000 logins over 60 seconds
 ab -n 5000 -c 200 -p login.json \
+  -H "apikey: <service_role_key>" \
   https://[project].supabase.co/functions/v1/login-with-username-pin
 
 # Expected: ~98% success rate, lockouts after 5 failed attempts
@@ -348,22 +356,26 @@ ab -n 5000 -c 200 -p login.json \
 ```bash
 # 50 concurrent forgot-pin requests for same user
 ab -n 50 -c 50 -p forgot-pin.json \
+  -H "apikey: <service_role_key>" \
   https://[project].supabase.co/functions/v1/forgot-pin
 
-# Expected: Serialized via row lock, max 5 failures before lockout
+# Expected: Serialized via row lock, max 5 failures before lockout, LOCK_TIMEOUT errors if deadlocks occur
 ```
 
 ### Scenario 4: Background Life Regeneration
 ```bash
 # Simulate 100k users with lives < max_lives
-# Call regenerate_lives_background RPC
-# Expected: <10 seconds per 5000-user batch, zero lock timeouts
+# Call regenerate_lives_background RPC via cron job
+# Recommended cron frequency: every 1 minute for 100k users with 5000 batch size
+# Expected: <10 seconds per 5000-user batch, zero lock timeouts, no backlog accumulation
 ```
 
 ### Scenario 5: Dashboard Load Spike
 ```bash
 # 3000 concurrent dashboard loads
 ab -n 3000 -c 150 \
+  -H "Authorization: Bearer <jwt>" \
+  -H "apikey: <service_role_key>" \
   https://[project].supabase.co/functions/v1/get-dashboard-data
 
 # Expected: <200ms avg response time, zero UPDATE contention
@@ -372,7 +384,9 @@ ab -n 3000 -c 150 \
 ### Scenario 6: Daily Gift Rush (Midnight)
 ```bash
 # 10k concurrent claim_daily_gift calls
-ab -n 10000 -c 500 -p claim-daily-gift.json
+ab -n 10000 -c 500 -p claim-daily-gift.json \
+  -H "Authorization: Bearer <jwt>" \
+  -H "apikey: <service_role_key>"
 
 # Expected: All claims succeed, zero duplicate credits
 ```
@@ -449,14 +463,17 @@ These were identified but NOT implemented (require business logic changes):
 | **Wallet Query Time** | 80ms | 35ms | **56% faster** |
 | **Concurrent Users** | 500-1000 | 10,000+ | **10x capacity** |
 | **Database Indexes** | 4 | 24 | **6x coverage** |
-| **Race Conditions** | Possible | Zero | **100% safe** |
-| **Dangling Records** | Possible | Zero | **100% consistent** |
+| **Race Conditions** | Possible | Eliminated | **Protected via row locks** |
+| **Dangling Records** | Possible | Eliminated | **Atomic rollback** |
 
 ---
 
-**Status:** ✅ PRODUCTION-READY FOR 10,000+ CONCURRENT USERS  
+**Status:** ✅ PRODUCTION-READY ARCHITECTURE  
+**Target Capacity:** 10,000+ concurrent users (architecture-validated, requires production load testing)  
 **All Business Logic Preserved:** ✅ 100% Unchanged  
-**Load Tested:** ✅ Comprehensive scenarios defined  
-**Documentation Complete:** ✅ All rounds documented  
+**Load Test Scenarios:** ✅ Comprehensive test suite defined with auth headers  
+**Documentation Complete:** ✅ All optimization rounds documented  
+**Index Consolidation:** ✅ Reduced to 12 optimal indexes (removed 8+ duplicates)  
+**Lock Timeout Handling:** ✅ Predictable LOCK_TIMEOUT error codes implemented  
 
-**Ready for immediate production deployment.**
+**Ready for production deployment after load testing validation.**
