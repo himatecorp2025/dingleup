@@ -93,6 +93,7 @@ serve(async (req) => {
     const recoveryCodeHash = await hashRecoveryCode(recovery_code.trim().toUpperCase());
     
     // Call PostgreSQL RPC that handles the entire forgot-pin flow atomically with row-level locking
+    // Note: SELECT ... FOR UPDATE can timeout under extreme concurrent load on same user
     const { data: result, error: rpcError } = await supabaseAdmin.rpc('forgot_pin_atomic', {
       p_username: username,
       p_recovery_code_hash: recoveryCodeHash,
@@ -113,6 +114,11 @@ serve(async (req) => {
         statusCode = 401;
       } else if (errorCode === 'RATE_LIMIT_EXCEEDED') {
         statusCode = 429;
+      } else if (errorCode === 'LOCK_TIMEOUT' || errorCode === '55P03') {
+        // PostgreSQL lock_timeout error code (55P03) or custom LOCK_TIMEOUT
+        // This happens when SELECT ... FOR UPDATE times out under extreme concurrent load
+        statusCode = 503; // Service Unavailable - temporary, retry later
+        console.warn(`[forgot-pin] Lock timeout for user ${username} - high concurrent load detected`);
       }
       
       return new Response(
