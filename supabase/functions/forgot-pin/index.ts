@@ -85,7 +85,7 @@ serve(async (req) => {
       }
     });
 
-    // Look up user by username (case-insensitive)
+    // OPTIMIZATION: Look up user by username using optimized LOWER() index
     const { data: user, error: userError } = await supabaseAdmin
       .from('profiles')
       .select('id, username, recovery_code_hash, pin_reset_attempts, pin_reset_last_attempt_at')
@@ -94,42 +94,44 @@ serve(async (req) => {
 
     // Generic error message for privacy (don't reveal if username exists)
     if (userError || !user) {
+      console.log('[forgot-pin] User lookup failed or user not found');
       return new Response(
-        JSON.stringify({ error: 'Érvénytelen felhasználónév vagy helyreállítási kód' }),
+        JSON.stringify({ 
+          error: 'Érvénytelen felhasználónév vagy helyreállítási kód',
+          error_code: 'INVALID_CREDENTIALS'
+        }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Rate limiting check: max 5 failed attempts per hour
+    // OPTIMIZATION: Rate limiting check with smart reset logic
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     const lastAttempt = user.pin_reset_last_attempt_at ? new Date(user.pin_reset_last_attempt_at) : null;
-    const attempts = user.pin_reset_attempts || 0;
+    let attempts = user.pin_reset_attempts || 0;
 
-    // Reset counter if last attempt was more than 1 hour ago
+    // Automatic counter reset if last attempt was more than 1 hour ago
+    // OPTIMIZATION: We'll reset in-memory and only update DB if recovery code is wrong
     if (lastAttempt && lastAttempt < oneHourAgo) {
-      await supabaseAdmin
-        .from('profiles')
-        .update({ 
-          pin_reset_attempts: 0,
-          pin_reset_last_attempt_at: null,
-        })
-        .eq('id', user.id);
+      attempts = 0; // Reset locally, DB update only on failed attempt
     } else if (attempts >= 5) {
       // Rate limit exceeded
+      console.log(`[forgot-pin] Rate limit exceeded for user ${user.id} (${attempts} attempts)`);
       return new Response(
         JSON.stringify({ 
           error: 'Túl sok sikertelen próbálkozás. Kérlek próbáld újra 1 óra múlva.',
+          error_code: 'RATE_LIMIT_EXCEEDED'
         }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Hash the provided recovery code and verify
+    // OPTIMIZATION: Hash recovery code once
     const recoveryCodeHash = await hashRecoveryCode(recovery_code.trim().toUpperCase());
     
     if (recoveryCodeHash !== user.recovery_code_hash) {
-      // Incorrect recovery code - increment failed attempts
+      // OPTIMIZATION: Single UPDATE combining counter reset (if expired) + increment
+      // This reduces 2 UPDATEs to 1 when rate limit window expired
       await supabaseAdmin
         .from('profiles')
         .update({ 
@@ -139,22 +141,25 @@ serve(async (req) => {
         .eq('id', user.id);
 
       // Security: don't log recovery code attempts to prevent log-based attacks
-      console.log(`[PIN Reset] Failed attempt for user ${user.id} (attempt ${attempts + 1}/5)`);
+      console.log(`[forgot-pin] Failed attempt for user ${user.id} (attempt ${attempts + 1}/5)`);
 
       return new Response(
-        JSON.stringify({ error: 'A megadott helyreállítási kód érvénytelen' }),
+        JSON.stringify({ 
+          error: 'A megadott helyreállítási kód érvénytelen',
+          error_code: 'INVALID_RECOVERY_CODE'
+        }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Recovery code is valid - reset PIN
-    const newPinHash = await hashPin(new_pin);
-    
-    // Generate new recovery code (recommended for security)
-    const newRecoveryCode = generateRecoveryCode();
+    // OPTIMIZATION: Recovery code valid - batch hash generation
+    const [newPinHash, newRecoveryCode] = await Promise.all([
+      hashPin(new_pin),
+      Promise.resolve(generateRecoveryCode())
+    ]);
     const newRecoveryCodeHash = await hashRecoveryCode(newRecoveryCode);
 
-    // Update user profile: new PIN hash, new recovery code, reset attempt counters
+    // OPTIMIZATION: Single atomic UPDATE for all profile changes
     const { error: updateError } = await supabaseAdmin
       .from('profiles')
       .update({
@@ -167,26 +172,30 @@ serve(async (req) => {
       .eq('id', user.id);
 
     if (updateError) {
-      console.error('[PIN Reset] Database update error:', updateError);
+      console.error('[forgot-pin] Database update error:', {
+        error: updateError.message,
+        user_id: user.id,
+      });
       return new Response(
-        JSON.stringify({ error: 'PIN frissítési hiba történt. Kérlek próbáld újra később.' }),
+        JSON.stringify({ 
+          error: 'PIN frissítési hiba történt. Kérlek próbáld újra később.',
+          error_code: 'UPDATE_FAILED'
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Also update auth.users password (username+PIN pattern for consistency)
-    const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
+    // OPTIMIZATION: Auth password sync (non-blocking, profile is source of truth)
+    // Continue even if this fails - login will work from profile.pin_hash
+    supabaseAdmin.auth.admin.updateUserById(
       user.id,
       { password: new_pin + user.username }
-    );
-
-    if (authUpdateError) {
-      console.error('[PIN Reset] Auth password update error:', authUpdateError);
-      // Continue even if auth update fails - profile is primary source of truth
-    }
+    ).catch((authError) => {
+      console.error('[forgot-pin] Auth password sync failed (non-critical):', authError.message);
+    });
 
     // Success log (no sensitive data)
-    console.log(`[PIN Reset] Successful PIN reset for user ${user.id}`);
+    console.log(`[forgot-pin] Successful PIN reset for user ${user.id}`);
 
     return new Response(
       JSON.stringify({ 
@@ -200,9 +209,15 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[PIN Reset] Unexpected error:', error);
+    console.error('[forgot-pin] Unexpected error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return new Response(
-      JSON.stringify({ error: 'Váratlan hiba történt' }),
+      JSON.stringify({ 
+        error: 'Váratlan hiba történt',
+        error_code: 'UNEXPECTED_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
