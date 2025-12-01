@@ -59,16 +59,20 @@ serve(async (req) => {
     const now = new Date();
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
-    // 1. Expire old lootboxes first
+    // 1. Optimized expiration: only check for this specific user's expired boxes
     try {
-      const { data: expiredCount, error: expireError } = await supabaseAdmin.rpc(
-        'expire_old_lootboxes'
-      );
-      if (!expireError && expiredCount > 0) {
-        console.log('[Lootbox Heartbeat] Expired', expiredCount, 'old lootboxes');
+      const { error: expireError } = await supabaseAdmin
+        .from('lootbox_instances')
+        .update({ status: 'expired' })
+        .eq('user_id', userId)
+        .eq('status', 'active_drop')
+        .lt('expires_at', now.toISOString());
+      
+      if (expireError) {
+        console.error('[Lootbox Heartbeat] Error expiring user lootboxes:', expireError);
       }
     } catch (expireErr) {
-      console.error('[Lootbox Heartbeat] Error expiring old lootboxes:', expireErr);
+      console.error('[Lootbox Heartbeat] Error in expiration check:', expireErr);
       // Continue execution even if expiration fails
     }
 
@@ -120,18 +124,19 @@ serve(async (req) => {
     // 2. Check if there's already an active drop
     const { data: activeDrop } = await supabaseAdmin
       .from('lootbox_instances')
-      .select('*')
+      .select('id, status, open_cost_gold, expires_at, source, created_at, activated_at')
       .eq('user_id', userId)
       .eq('status', 'active_drop')
       .gt('expires_at', now.toISOString())
       .single();
 
     if (activeDrop) {
-      // Already has active drop, don't create another
+      // Already has active drop, return it with plan status
       return new Response(
         JSON.stringify({
           success: true,
           has_active_drop: true,
+          activeLootbox: activeDrop,
           plan: {
             target_count: plan.target_count,
             delivered_count: plan.delivered_count
@@ -329,7 +334,15 @@ serve(async (req) => {
         success: true,
         has_active_drop: true,
         drop_created: true,
-        lootbox: newDrop,
+        activeLootbox: {
+          id: newDrop.id,
+          status: newDrop.status,
+          open_cost_gold: newDrop.open_cost_gold,
+          expires_at: newDrop.expires_at,
+          source: newDrop.source,
+          created_at: newDrop.created_at,
+          activated_at: newDrop.activated_at
+        },
         plan: {
           target_count: plan.target_count,
           delivered_count: plan.delivered_count + 1,
