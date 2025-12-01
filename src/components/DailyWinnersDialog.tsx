@@ -113,6 +113,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
     
     setIsLoading(true);
     try {
+      // Step 1: Get authenticated user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !isMountedRef.current) {
         console.error('[DAILY-WINNERS] No authenticated user');
@@ -120,16 +121,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         return;
       }
 
+      // Step 2: Get user profile (country_code, user_timezone)
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('country_code, username, user_timezone')
+        .select('country_code, user_timezone')
         .eq('id', user.id)
         .single();
 
       if (!isMountedRef.current) return;
 
       if (profileError || !profileData?.country_code) {
-        console.error('[DAILY-WINNERS] Error fetching user country:', profileError);
+        console.error('[DAILY-WINNERS] Error fetching user profile:', profileError);
         setTopPlayers([]);
         return;
       }
@@ -137,17 +139,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       const userCountry = profileData.country_code;
       const userTimezone = profileData.user_timezone || 'Europe/Budapest';
 
-      // Calculate "yesterday" in user's local timezone
-      const nowUtc = new Date();
-      const localNow = new Date(nowUtc.toLocaleString('en-US', { timeZone: userTimezone }));
-      const localYesterday = new Date(localNow);
-      localYesterday.setDate(localYesterday.getDate() - 1);
-      
-      const yesterdayDate = localYesterday.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+      // Step 3: Calculate yesterday's date using timezone-aware helper
+      const { getYesterdayDateInUserTimezone } = await import('@/lib/dateHelpers');
+      const yesterdayDate = getYesterdayDateInUserTimezone(userTimezone);
 
-      console.log('[DAILY-WINNERS] Fetching yesterday winners from daily_winner_awarded, country:', userCountry, 'timezone:', userTimezone, 'local yesterday date:', yesterdayDate);
+      console.log('[DAILY-WINNERS] Fetching winners for country:', userCountry, 'timezone:', userTimezone, 'yesterday:', yesterdayDate);
 
-      // Fetch TOP 10 winners from yesterday
+      // Step 4: Fetch TOP 10 winners from daily_winner_awarded (truth source)
       const { data: players, error } = await supabase
         .from('daily_winner_awarded')
         .select('user_id, rank, username, avatar_url, total_correct_answers')
@@ -159,47 +157,60 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       if (!isMountedRef.current) return;
 
       if (error) {
-        console.error('[DAILY-WINNERS] Error fetching yesterday TOP 10:', error);
+        console.error('[DAILY-WINNERS] Error fetching winners:', error);
         setTopPlayers([]);
         return;
       }
 
+      // Step 5: If no data, trigger on-demand processing
       if (!players || players.length === 0) {
-        console.log('[DAILY-WINNERS] No snapshot data - triggering on-demand processing');
+        console.log('[DAILY-WINNERS] No data found - triggering process-daily-winners');
         
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          console.error('[DAILY-WINNERS] No session');
+          console.error('[DAILY-WINNERS] No session for processing');
           setTopPlayers([]);
           setTotalRewards({ totalGold: 0, totalLives: 0 });
           return;
         }
         
         try {
+          // Invoke process-daily-winners with targetDate parameter
           const { error: processError } = await supabase.functions.invoke('process-daily-winners', {
             headers: { Authorization: `Bearer ${session.access_token}` },
-            body: {}
+            body: { targetDate: yesterdayDate }
           });
           
-          if (!processError) {
-            await new Promise(resolve => setTimeout(resolve, 3000));
+          if (processError) {
+            console.error('[DAILY-WINNERS] Processing error:', processError);
+            setTopPlayers([]);
+            setTotalRewards({ totalGold: 0, totalLives: 0 });
+            return;
+          }
+          
+          // Poll for data up to 5 times with 1 second intervals
+          for (let i = 0; i < 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
             
             if (!isMountedRef.current) return;
             
             const { data: refetchedPlayers, error: refetchError } = await supabase
-              .from('daily_leaderboard_snapshot')
+              .from('daily_winner_awarded')
               .select('user_id, rank, username, avatar_url, total_correct_answers')
               .eq('country_code', userCountry)
-              .eq('snapshot_date', yesterdayDate)
+              .eq('day_date', yesterdayDate)
               .order('rank', { ascending: true })
-              .limit(25);
+              .limit(10);
             
-            if (!refetchError && refetchedPlayers && refetchedPlayers.length > 0 && isMountedRef.current) {
+            if (!refetchError && refetchedPlayers && refetchedPlayers.length > 0) {
+              console.log(`[DAILY-WINNERS] Data appeared after poll ${i + 1}`);
               setTopPlayers(refetchedPlayers as TopPlayer[]);
               
+              // Calculate total rewards with country_code filter
               const { data: rewards } = await supabase
                 .from('daily_winner_awarded')
                 .select('gold_awarded, lives_awarded')
+                .eq('country_code', userCountry)
                 .eq('day_date', yesterdayDate)
                 .lte('rank', 10);
               
@@ -211,22 +222,32 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               return;
             }
           }
+          
+          // After 5 polls, no data - gracefully handle
+          console.log('[DAILY-WINNERS] No data after 5 polls');
+          if (isMountedRef.current) {
+            setTopPlayers([]);
+            setTotalRewards({ totalGold: 0, totalLives: 0 });
+          }
+          
         } catch (processError) {
-          console.error('[DAILY-WINNERS] Exception:', processError);
-        }
-        
-        if (isMountedRef.current) {
-          setTopPlayers([]);
-          setTotalRewards({ totalGold: 0, totalLives: 0 });
+          console.error('[DAILY-WINNERS] Processing exception:', processError);
+          if (isMountedRef.current) {
+            setTopPlayers([]);
+            setTotalRewards({ totalGold: 0, totalLives: 0 });
+          }
         }
         return;
       }
 
+      // Step 6: Data exists - set players and calculate rewards
       setTopPlayers(players as TopPlayer[]);
       
+      // Calculate total rewards with country_code filter (CRITICAL)
       const { data: rewards } = await supabase
         .from('daily_winner_awarded')
         .select('gold_awarded, lives_awarded')
+        .eq('country_code', userCountry)
         .eq('day_date', yesterdayDate)
         .lte('rank', 10);
       
@@ -235,6 +256,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
         setTotalRewards({ totalGold, totalLives });
       }
+      
     } catch (error) {
       if (isMountedRef.current) {
         console.error('[DAILY-WINNERS] Exception:', error);

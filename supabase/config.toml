@@ -156,3 +156,6 @@ verify_jwt = true
 [functions.register-activity-and-drop]
 verify_jwt = true
 
+[functions.backfill-daily-winners]
+verify_jwt = true
+
