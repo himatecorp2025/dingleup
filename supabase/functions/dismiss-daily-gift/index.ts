@@ -42,10 +42,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // OPTIMIZATION: Fetch timezone and update in single operation with RETURNING
+    // OPTIMIZED: Fetch timezone AND last_seen to avoid unnecessary writes
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('user_timezone')
+      .select('user_timezone, daily_gift_last_seen')
       .eq('id', user.id)
       .single();
 
@@ -68,18 +68,20 @@ Deno.serve(async (req) => {
       day: '2-digit',
     });
 
-    // Update last_seen date (no reward, just mark as seen)
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ daily_gift_last_seen: localDateString })
-      .eq('id', user.id);
+    // OPTIMIZATION: Only update if last_seen is different (reduces redundant writes under high load)
+    if (profile.daily_gift_last_seen !== localDateString) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ daily_gift_last_seen: localDateString })
+        .eq('id', user.id);
 
-    if (updateError) {
-      console.error('Update error:', updateError);
-      return new Response(
-        JSON.stringify({ error: 'Update failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (updateError) {
+        console.error('Update error:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'Update failed' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     console.log('[dismiss-daily-gift] Success:', {

@@ -33,10 +33,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch user's timezone and last_seen date
+    // OPTIMIZED: Fetch only necessary fields (no username needed)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('user_timezone, daily_gift_last_seen, daily_gift_streak, username')
+      .select('user_timezone, daily_gift_last_seen, daily_gift_streak')
       .eq('id', user.id)
       .single();
 
