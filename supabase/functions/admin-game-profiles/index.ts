@@ -109,9 +109,9 @@ Deno.serve(async (req) => {
       const aiEnabled = settingsMap.get(userId) ?? true;
       const personalizationActive = stats.totalAnswered >= 1000 && aiEnabled;
       const topTopics = stats.topicScores
-        .sort((a, b) => b.score - a.score)
+        .sort((a: { topicId: any; score: number }, b: { topicId: any; score: number }) => b.score - a.score)
         .slice(0, 3)
-        .map(t => ({
+        .map((t: { topicId: any; score: number }) => ({
           topicId: String(t.topicId),
           topicName: topicMap.get(t.topicId) || `Topic ${t.topicId}`,
           score: t.score,
