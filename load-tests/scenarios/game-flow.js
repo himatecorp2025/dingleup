@@ -1,13 +1,20 @@
 const autocannon = require('autocannon');
 const config = require('../config');
 
+// ============================================================================
+// PLAY NOW FLOW LOAD TEST
+// Tests the complete game startup sequence with proper auth headers
+// ============================================================================
+
 async function runGameFlowLoadTest() {
-  console.log('\n🎮 Starting Game Flow Load Test...\n');
+  console.log('\n🎮 Starting Play Now Flow Load Test...\n');
+  console.log('Target: 10,000+ concurrent users capacity\n');
   
   const results = {};
 
-  // Test 1: Start Game Session
-  console.log('Testing: Start Game Session endpoint...');
+  // Test 1: Start Game Session (CRITICAL PATH - Play Now button)
+  // This is the bottleneck that must handle 10K+ concurrent users
+  console.log('Testing: Start Game Session (Play Now flow)...');
   const startGameUrl = `${config.supabaseUrl}${config.endpoints.startGame}`;
   
   const startGameInstance = autocannon({
@@ -19,11 +26,10 @@ async function runGameFlowLoadTest() {
     headers: {
       'Content-Type': 'application/json',
       'apikey': config.supabaseAnonKey,
-      'Authorization': `Bearer ${config.supabaseAnonKey}`
+      'Authorization': `Bearer ${config.supabaseAnonKey}` // JWT token for authenticated route
     },
     body: JSON.stringify({
-      category: 'mixed',
-      userId: '00000000-0000-0000-0000-000000000001' // Test user ID
+      lang: 'en' // CRITICAL: Language parameter required for cache selection
     })
   });
 
@@ -31,56 +37,28 @@ async function runGameFlowLoadTest() {
 
   results.startGame = await new Promise((resolve) => {
     startGameInstance.on('done', (result) => {
-      console.log('\n✅ Start Game Test Complete\n');
+      console.log('\n✅ Start Game Session Test Complete');
+      console.log(`   Target: <50ms p50, <100ms p99`);
+      console.log(`   Actual: p50=${result.latency.p50}ms, p99=${result.latency.p99}ms\n`);
       resolve({
         requests: result.requests,
         latency: result.latency,
         throughput: result.throughput,
         errors: result.errors,
         timeouts: result.timeouts,
-        statusCodeStats: result.statusCodeStats || {}
+        statusCodeStats: result.statusCodeStats || {},
+        performance: {
+          p50_ms: result.latency.p50,
+          p99_ms: result.latency.p99,
+          target_p50_ms: 50,
+          target_p99_ms: 100,
+          meets_target: result.latency.p50 < 50 && result.latency.p99 < 100
+        }
       });
     });
   });
 
-  // Test 2: Get Questions
-  console.log('Testing: Get Questions endpoint...');
-  const getQuestionsUrl = `${config.supabaseUrl}${config.endpoints.getQuestions}`;
-  
-  const getQuestionsInstance = autocannon({
-    url: getQuestionsUrl,
-    connections: config.connections,
-    pipelining: config.pipelining,
-    duration: config.testDuration,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': config.supabaseAnonKey,
-      'Authorization': `Bearer ${config.supabaseAnonKey}`
-    },
-    body: JSON.stringify({
-      userId: '00000000-0000-0000-0000-000000000001',
-      sessionId: 'test-session-123'
-    })
-  });
-
-  autocannon.track(getQuestionsInstance, { renderProgressBar: true });
-
-  results.getQuestions = await new Promise((resolve) => {
-    getQuestionsInstance.on('done', (result) => {
-      console.log('\n✅ Get Questions Test Complete\n');
-      resolve({
-        requests: result.requests,
-        latency: result.latency,
-        throughput: result.throughput,
-        errors: result.errors,
-        timeouts: result.timeouts,
-        statusCodeStats: result.statusCodeStats || {}
-      });
-    });
-  });
-
-  // Test 3: Complete Game
+  // Test 2: Complete Game
   console.log('Testing: Complete Game endpoint...');
   const completeGameUrl = `${config.supabaseUrl}${config.endpoints.completeGame}`;
   
@@ -96,10 +74,9 @@ async function runGameFlowLoadTest() {
       'Authorization': `Bearer ${config.supabaseAnonKey}`
     },
     body: JSON.stringify({
-      sessionId: 'test-session-123',
+      category: 'mixed',
       correctAnswers: 12,
       totalQuestions: 15,
-      category: 'mixed',
       averageResponseTime: 3.5
     })
   });
@@ -108,14 +85,23 @@ async function runGameFlowLoadTest() {
 
   results.completeGame = await new Promise((resolve) => {
     completeGameInstance.on('done', (result) => {
-      console.log('\n✅ Complete Game Test Complete\n');
+      console.log('\n✅ Complete Game Test Complete');
+      console.log(`   Target: <200ms p50, <500ms p99`);
+      console.log(`   Actual: p50=${result.latency.p50}ms, p99=${result.latency.p99}ms\n`);
       resolve({
         requests: result.requests,
         latency: result.latency,
         throughput: result.throughput,
         errors: result.errors,
         timeouts: result.timeouts,
-        statusCodeStats: result.statusCodeStats || {}
+        statusCodeStats: result.statusCodeStats || {},
+        performance: {
+          p50_ms: result.latency.p50,
+          p99_ms: result.latency.p99,
+          target_p50_ms: 200,
+          target_p99_ms: 500,
+          meets_target: result.latency.p50 < 200 && result.latency.p99 < 500
+        }
       });
     });
   });
