@@ -52,25 +52,31 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Credit +10 coins and +1 life via wallet_ledger (automatic profile update via trigger)
-    const { error: creditError } = await supabase
-      .from('wallet_ledger')
-      .insert({
-        user_id: user.id,
-        delta_coins: 10,
-        delta_lives: 1,
-        source: 'like_popup_reward',
-        idempotency_key: idempotencyKey,
-        metadata: {
-          question_id: questionId,
-          date: today,
-        }
-      });
+    // Credit +10 coins and +1 life via credit_wallet RPC (atomic, idempotent)
+    const { data: creditResult, error: creditError } = await supabase.rpc('credit_wallet', {
+      p_user_id: user.id,
+      p_delta_coins: 10,
+      p_delta_lives: 1,
+      p_source: 'like_popup_reward',
+      p_idempotency_key: idempotencyKey,
+      p_metadata: {
+        question_id: questionId,
+        date: today,
+      }
+    });
 
     if (creditError) {
-      console.error('[credit-like-popup-reward] Error crediting coins:', creditError);
+      console.error('[credit-like-popup-reward] RPC error:', creditError);
       return new Response(
         JSON.stringify({ success: false, error: 'Failed to credit coins' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!creditResult?.success) {
+      console.error('[credit-like-popup-reward] Credit wallet failed:', creditResult);
+      return new Response(
+        JSON.stringify({ success: false, error: creditResult?.error || 'Failed to credit coins' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
