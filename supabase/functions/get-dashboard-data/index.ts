@@ -74,14 +74,13 @@ serve(async (req) => {
       return monday.toISOString().split('T')[0];
     };
 
-    // Fetch profile first to get country_code for leaderboard
-    const { data: profile, error: profileFetchError } = await supabaseClient.rpc('regenerate_lives').then(() =>
-      supabaseClient
-        .from('profiles')
-        .select('id, username, avatar_url, coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, total_correct_answers, country_code')
-        .eq('id', user.id)
-        .single()
-    );
+    // OPTIMIZATION: Fetch profile directly with necessary fields only
+    // Removed redundant regenerate_lives() RPC call - inline regen happens in get-wallet
+    const { data: profile, error: profileFetchError } = await supabaseClient
+      .from('profiles')
+      .select('id, username, avatar_url, coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, total_correct_answers, country_code, active_speed_expires_at')
+      .eq('id', user.id)
+      .single();
 
     if (profileFetchError || !profile) {
       return new Response(

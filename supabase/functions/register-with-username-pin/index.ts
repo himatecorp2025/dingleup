@@ -199,53 +199,53 @@ serve(async (req) => {
         console.error('Invitation creation error:', invitationError);
         // Continue registration even if invitation fails
       } else {
-        // OPTIMIZATION: Single aggregated query instead of SELECT + COUNT
-        const { data: inviterStats, error: statsError } = await supabaseAdmin
+        // OPTIMIZATION: Single COUNT query with filter instead of SELECT + COUNT
+        const { count: acceptedCount, error: countError } = await supabaseAdmin
           .from('invitations')
-          .select('id', { count: 'exact', head: false })
+          .select('*', { count: 'exact', head: true })
           .eq('inviter_id', inviterId)
           .eq('accepted', true);
 
-        if (statsError) {
-          console.error('Failed to count accepted invitations:', statsError);
-          // Continue even if stats query fails
-        }
+        if (countError) {
+          console.error('Failed to count accepted invitations:', countError);
+          // Continue even if count fails
+        } else {
+          const finalCount = acceptedCount || 0;
+          
+          // Calculate tier reward based on accepted count
+          let rewardCoins = 0;
+          let rewardLives = 0;
+          if (finalCount === 1 || finalCount === 2) {
+            rewardCoins = 200;
+            rewardLives = 3;
+          } else if (finalCount >= 3 && finalCount <= 9) {
+            rewardCoins = 1000;
+            rewardLives = 5;
+          } else if (finalCount >= 10) {
+            rewardCoins = 6000;
+            rewardLives = 20;
+          }
 
-        const acceptedCount = inviterStats?.length || 0;
-        
-        // Calculate tier reward based on accepted count
-        let rewardCoins = 0;
-        let rewardLives = 0;
-        if (acceptedCount === 1 || acceptedCount === 2) {
-          rewardCoins = 200;
-          rewardLives = 3;
-        } else if (acceptedCount >= 3 && acceptedCount <= 9) {
-          rewardCoins = 1000;
-          rewardLives = 5;
-        } else if (acceptedCount >= 10) {
-          rewardCoins = 6000;
-          rewardLives = 20;
-        }
+          // Credit reward using credit_wallet RPC
+          if (rewardCoins > 0 || rewardLives > 0) {
+            const idempotencyKey = `invitation_reward:${inviterId}:${authData.user.id}:${Date.now()}`;
+            const { error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+              p_user_id: inviterId,
+              p_delta_coins: rewardCoins,
+              p_delta_lives: rewardLives,
+              p_source: 'invitation_reward',
+              p_idempotency_key: idempotencyKey,
+              p_metadata: {
+                invited_user_id: authData.user.id,
+                invited_username: username,
+                accepted_count: finalCount,
+              }
+            });
 
-        // Credit reward using credit_wallet RPC
-        if (rewardCoins > 0 || rewardLives > 0) {
-          const idempotencyKey = `invitation_reward:${inviterId}:${authData.user.id}:${Date.now()}`;
-          const { error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
-            p_user_id: inviterId,
-            p_delta_coins: rewardCoins,
-            p_delta_lives: rewardLives,
-            p_source: 'invitation_reward',
-            p_idempotency_key: idempotencyKey,
-            p_metadata: {
-              invited_user_id: authData.user.id,
-              invited_username: username,
-              accepted_count: acceptedCount,
+            if (creditError) {
+              console.error('Reward crediting error:', creditError);
+              // Continue even if reward fails - will be retryable later
             }
-          });
-
-          if (creditError) {
-            console.error('Reward crediting error:', creditError);
-            // Continue even if reward fails - will be retryable later
           }
         }
       }

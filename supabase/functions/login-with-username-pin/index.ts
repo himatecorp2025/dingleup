@@ -103,19 +103,32 @@ serve(async (req) => {
       );
     }
 
-    // Sync Supabase Auth password to current PIN + username so username+PIN login always works
-    try {
-      await supabaseAdmin.auth.admin.updateUserById(profile.id, {
-        password: pin + profile.username,
-      });
-    } catch (syncError) {
-      console.error('Failed to sync auth password from PIN:', syncError);
-      // Do not block login if password sync fails; frontend will still try variants
-    }
-
-    // Get actual auth email from auth.users (legacy users have gmail, new users have @dingleup.auto)
+    // Get actual auth email (legacy users may have gmail, new users have @dingleup.auto)
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(profile.id);
     const authEmail = authUser?.user?.email || `${profile.username.toLowerCase()}@dingleup.auto`;
+    
+    // OPTIMIZATION: Conditional password sync - only update if auth password doesn't match
+    // This reduces unnecessary auth.users writes on every login (high-load optimization)
+    const expectedPassword = pin + profile.username;
+    
+    // Try signin with expected password to check if sync needed
+    const { error: signinTestError } = await supabaseAdmin.auth.signInWithPassword({
+      email: authEmail,
+      password: expectedPassword,
+    });
+    
+    // Only sync password if signin failed (password mismatch)
+    if (signinTestError) {
+      try {
+        await supabaseAdmin.auth.admin.updateUserById(profile.id, {
+          password: expectedPassword,
+        });
+        console.log(`[login] Password synced for user ${profile.id}`);
+      } catch (syncError) {
+        console.error('Failed to sync auth password from PIN:', syncError);
+        // Do not block login if password sync fails; frontend will still try variants
+      }
+    }
 
     // Clear failed attempts
     await supabaseAdmin
