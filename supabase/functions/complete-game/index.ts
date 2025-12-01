@@ -185,29 +185,22 @@ Deno.serve(async (req) => {
     // Ranks are now computed every 5 minutes by materialized view refresh
     // This removes the O(N log N) bottleneck from the critical game completion path
     try {
-      const currentDate = new Date().toISOString().split('T')[0];
-      
-      // Upsert aggregate stats (no rank calculation)
-      const { error: dailyRankError } = await supabaseAdmin
-        .from('daily_rankings')
-        .upsert({
-          user_id: user.id,
-          category: 'mixed',
-          day_date: currentDate,
-          total_correct_answers: body.correctAnswers,
-          average_response_time: body.averageResponseTime,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,category,day_date',
-          ignoreDuplicates: false
-        });
+      // Delegate aggregation to optimized PostgreSQL RPC
+      const { error: dailyRankError } = await supabaseAdmin.rpc(
+        'upsert_daily_ranking_aggregate',
+        {
+          p_user_id: user.id,
+          p_correct_answers: body.correctAnswers,
+          p_average_response_time: body.averageResponseTime,
+        },
+      );
 
       if (dailyRankError) {
-        console.error('[complete-game] Daily ranking upsert error:', dailyRankError);
+        console.error('[complete-game] Daily ranking aggregate RPC error:', dailyRankError);
         // Not critical, continue
+      } else {
+        console.log(`[complete-game] Daily ranking aggregated via RPC for user ${user.id} (rank computed in background)`);
       }
-      
-      console.log(`[complete-game] Daily ranking aggregated for user ${user.id} (rank computed in background)`);
     } catch (rankErr) {
       console.error('[complete-game] Daily ranking exception:', rankErr);
     }
