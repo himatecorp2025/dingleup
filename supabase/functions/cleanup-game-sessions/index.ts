@@ -1,5 +1,11 @@
 // PHASE 2 OPTIMIZATION: Cleanup old game sessions
 // Runs every hour to prevent game_sessions table bloat
+//
+// TODO FUTURE CLEANUP JOBS (NOT IMPLEMENTED YET):
+// - Add cron job for cleanup_expired_lootboxes() (expire old active_drop lootboxes)
+// - Add cron job for cleanup_expired_speed_tokens() (remove expired speed tokens)
+// - These cleanup functions exist but are not yet scheduled via Supabase cron
+// - Without scheduled cleanup, tables will accumulate expired records over time
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
 Deno.serve(async (req) => {

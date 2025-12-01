@@ -120,6 +120,11 @@ serve(async (req) => {
     // decision === 'open_now'
     // Generate rewards
     const rewards = generateLootboxRewards();
+    // CRITICAL IDEMPOTENCY KEY: "lootbox_open::<lootbox_id>"
+    // - lootbox_id ensures per-lootbox uniqueness (same lootbox cannot be opened twice)
+    // - This key MUST remain stable - changing format breaks duplicate detection
+    // - DO NOT add timestamps, user_id, or random values to this key
+    // - The RPC open_lootbox_transaction() enforces idempotency via this key
     const idempotencyKey = `lootbox_open::${lootboxId}`;
 
     console.log('Opening lootbox now:', { 

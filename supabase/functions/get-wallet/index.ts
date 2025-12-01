@@ -1,3 +1,13 @@
+// get-wallet: Fetches user wallet with inline life regeneration
+// Applies regeneration logic during read to provide accurate real-time life counts
+// Supports selective field fetching via ?fields= query parameter for payload optimization
+//
+// TODO FUTURE OPTIMIZATION (NOT IMPLEMENTED YET):
+// - High concurrency issue: inline regeneration causes UPDATE contention at scale (10k+ concurrent users)
+// - Consider moving to cron-only regeneration strategy (regenerate-lives-background only)
+// - If cron-only: get-wallet becomes read-only, nextLifeAt computed from profile data without UPDATE
+// - Trade-off: eliminates contention but introduces slight staleness (~1min cron interval)
+// - Current hybrid model (inline + background cron) works well for current scale but may need revision
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 

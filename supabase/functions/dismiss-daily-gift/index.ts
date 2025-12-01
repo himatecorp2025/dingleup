@@ -1,3 +1,12 @@
+// dismiss-daily-gift: Updates daily_gift_last_seen to mark gift popup as seen
+// This does NOT claim rewards, only dismisses the UI popup
+//
+// TODO FUTURE FEATURE (NOT IMPLEMENTED YET):
+// - Daily Gift streak reset behavior: Currently streak increases indefinitely
+//   without any reset mechanism. Documentation marks this as "NINCS IMPLEMENTÁLVA"
+// - Future implementation should reset streak to 0 if user misses a day
+// - Requires comparing daily_gift_last_seen with today's date and resetting if gap > 1 day
+// - Risk: must handle timezone edge cases carefully to avoid accidental resets
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
