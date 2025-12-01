@@ -4153,6 +4153,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      upsert_daily_ranking_aggregate: {
+        Args: {
+          p_average_response_time: number
+          p_correct_answers: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       use_help: { Args: { p_help_type: string }; Returns: Json }
       use_life: { Args: never; Returns: boolean }
     }
