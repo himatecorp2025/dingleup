@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useActiveLootbox } from '@/hooks/useActiveLootbox';
+import { useLootboxActivityTracker } from '@/hooks/useLootboxActivityTracker';
 import { GoldLootboxIcon } from './GoldLootboxIcon';
 import { LootboxDecisionDialog } from './LootboxDecisionDialog';
 import { LootboxIncomingNotification } from './LootboxIncomingNotification';
@@ -12,7 +12,13 @@ import type { User } from '@supabase/supabase-js';
 export const LootboxDropOverlay = () => {
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
-  const { activeLootbox, loading, refetch } = useActiveLootbox(user?.id);
+  
+  // Unified hook - combines heartbeat + active lootbox state
+  const { activeLootbox, loading, refetch } = useLootboxActivityTracker({
+    enabled: true,
+    heartbeatIntervalSeconds: 300 // 5 minutes
+  });
+  
   const { walletData } = useWallet(user?.id);
   
   const [isVisible, setIsVisible] = useState(false);
