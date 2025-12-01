@@ -1,0 +1,21 @@
+# Dockerfile for Supabase Edge Functions (Deno runtime)
+
+FROM denoland/deno:1.40.0
+
+WORKDIR /app
+
+# Copy edge functions
+COPY supabase/functions ./functions
+COPY supabase/config.toml ./config.toml
+
+# Cache dependencies
+RUN deno cache functions/**/*.ts
+
+# Expose port
+EXPOSE 8000
+
+# Health check endpoint
+RUN echo 'Deno.serve(() => new Response("OK"));' > /app/health.ts
+
+# Start edge functions server
+CMD ["deno", "run", "--allow-all", "--unstable", "functions/index.ts"]
