@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import { generateLootboxRewards } from "../_shared/lootboxRewards.ts";
+import { checkRateLimit, rateLimitExceeded } from '../_shared/rateLimit.ts';
+import { startMetrics, measureStage, incDbQuery, logSuccess, logError, shouldSampleSuccessLog } from '../_shared/metrics.ts';
 
 serve(async (req) => {
   const origin = req.headers.get('origin');
@@ -11,6 +13,7 @@ serve(async (req) => {
   }
 
   const corsHeaders = getCorsHeaders(origin);
+  const correlationId = crypto.randomUUID();
 
   try {
     const authHeader = req.headers.get('Authorization');
@@ -45,6 +48,18 @@ serve(async (req) => {
       );
     }
 
+    const ctx = startMetrics({ functionName: 'lootbox-open-stored', userId: user.id });
+    ctx.extra['correlation_id'] = correlationId;
+
+    // Rate limiting
+    const rateLimitResult = await measureStage(ctx, 'rate_limit', async () => {
+      return await checkRateLimit(supabaseClient, 'lootbox-open-stored', { maxRequests: 40, windowMinutes: 1 });
+    });
+    if (!rateLimitResult.allowed) {
+      logError(ctx, new Error('RATE_LIMIT_EXCEEDED'), { correlation_id: correlationId });
+      return rateLimitExceeded(corsHeaders);
+    }
+
     const { lootboxId } = await req.json();
 
     // Validate input
@@ -62,18 +77,21 @@ serve(async (req) => {
     );
 
     // Verify lootbox exists and belongs to user with status = 'stored'
-    const { data: lootbox, error: lootboxError } = await supabaseService
-      .from('lootbox_instances')
-      .select('*')
-      .eq('id', lootboxId)
-      .eq('user_id', user.id)
-      .eq('status', 'stored')
-      .single();
+    const { data: lootbox, error: lootboxError } = await measureStage(ctx, 'lootbox_lookup', async () => {
+      incDbQuery(ctx);
+      return await supabaseService
+        .from('lootbox_instances')
+        .select('*')
+        .eq('id', lootboxId)
+        .eq('user_id', user.id)
+        .eq('status', 'stored')
+        .single();
+    });
 
     if (lootboxError || !lootbox) {
-      console.log('Stored lootbox not found:', { lootboxId, userId: user.id, error: lootboxError });
+      logError(ctx, lootboxError || new Error('NOT_FOUND'), { correlation_id: correlationId, lootboxId });
       return new Response(
-        JSON.stringify({ error: 'Stored lootbox not found or already opened' }),
+        JSON.stringify({ error: 'Stored lootbox not found or already opened', correlation_id: correlationId }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -104,47 +122,49 @@ serve(async (req) => {
     });
 
     // Call PostgreSQL transaction function
-    const { data: result, error: txError } = await supabaseService.rpc(
-      'open_lootbox_transaction',
-      {
-        p_lootbox_id: lootboxId,
-        p_user_id: user.id,
-        p_tier: rewards.tier,
-        p_gold_reward: rewards.gold,
-        p_life_reward: rewards.life,
-        p_idempotency_key: idempotencyKey,
-        p_open_cost: openCost,
-      }
-    );
+    const { data: result, error: txError } = await measureStage(ctx, 'open_transaction', async () => {
+      incDbQuery(ctx);
+      return await supabaseService.rpc(
+        'open_lootbox_transaction',
+        {
+          p_lootbox_id: lootboxId,
+          p_user_id: user.id,
+          p_tier: rewards.tier,
+          p_gold_reward: rewards.gold,
+          p_life_reward: rewards.life,
+          p_idempotency_key: idempotencyKey,
+          p_open_cost: openCost,
+        }
+      );
+    });
 
     if (txError) {
-      console.error('Transaction error:', txError);
+      logError(ctx, txError, { correlation_id: correlationId, lootboxId, tier: rewards.tier });
       return new Response(
-        JSON.stringify({ error: 'Failed to open lootbox', details: txError.message }),
+        JSON.stringify({ error: 'Failed to open lootbox', details: txError.message, correlation_id: correlationId }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (!result || !result.success) {
       const errorCode = result?.error || 'UNKNOWN_ERROR';
-      console.log('Stored lootbox opening failed:', { errorCode, result });
+      ctx.extra['error_code'] = errorCode;
+      logError(ctx, new Error(errorCode), { correlation_id: correlationId, required: result?.required, current: result?.current });
       
       return new Response(
         JSON.stringify({
           error: errorCode,
           required: result?.required,
           current: result?.current,
+          correlation_id: correlationId,
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Stored lootbox opened successfully:', { 
-      lootboxId, 
-      userId: user.id,
-      tier: rewards.tier,
-      newBalance: result.new_balance,
-    });
+    if (shouldSampleSuccessLog()) {
+      logSuccess(ctx, { correlation_id: correlationId, lootboxId, tier: rewards.tier, source: lootbox.source, open_cost: openCost });
+    }
 
     return new Response(
       JSON.stringify({
@@ -152,14 +172,20 @@ serve(async (req) => {
         lootbox: result.lootbox,
         rewards: result.rewards,
         new_balance: result.new_balance,
+        correlation_id: correlationId,
+        performance: {
+          elapsed_ms: Date.now() - ctx.startTime
+        }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (e) {
-    console.error('Unexpected error:', e);
+    const ctx = startMetrics({ functionName: 'lootbox-open-stored', userId: undefined });
+    logError(ctx, e, { correlation_id: correlationId });
+    
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', correlation_id: correlationId }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
