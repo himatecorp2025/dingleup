@@ -96,21 +96,26 @@ serve(async (req) => {
       });
     }
 
-    // **IDEMPOTENCY CHECK** - prevent duplicate lootbox crediting on page refresh
+    // **WEBHOOK-FIRST IDEMPOTENCY CHECK** - check if webhook already processed
     const { data: existingLootboxes } = await supabaseAdmin
       .from('lootbox_instances')
       .select('id')
-      .eq('user_id', userId)
-      .eq('source', 'purchase')
-      .eq('metadata->>session_id', sessionId)
+      .eq('iap_transaction_id', sessionId)
       .limit(1);
 
     if (existingLootboxes && existingLootboxes.length > 0) {
-      console.log('[verify-lootbox-payment] Already processed session:', sessionId);
+      console.log('[verify-lootbox-payment] Already processed by webhook:', sessionId);
+      
+      // Count how many boxes were credited
+      const { count } = await supabaseAdmin
+        .from('lootbox_instances')
+        .select('*', { count: 'exact', head: true })
+        .eq('iap_transaction_id', sessionId);
+      
       return new Response(JSON.stringify({ 
         success: true,
         already_processed: true,
-        boxes_credited: boxes,
+        boxes_credited: count || boxes,
         message: 'Lootboxes already credited for this session'
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -118,32 +123,28 @@ serve(async (req) => {
       });
     }
 
-    // Credit stored lootboxes to user
-    const insertPromises = [];
-    for (let i = 0; i < boxes; i++) {
-      insertPromises.push(
-        supabaseAdmin
-          .from('lootbox_instances')
-          .insert({
-            user_id: userId,
-            status: 'stored',
-            source: 'purchase',
-            open_cost_gold: 150,
-            metadata: {
-              session_id: sessionId,
-              purchased_at: new Date().toISOString()
-            }
-          })
-      );
+    // ============================================================
+    // FALLBACK: Webhook hasn't processed yet → call atomic RPC
+    // ============================================================
+    console.log('[verify-lootbox-payment] Webhook not processed, calling RPC fallback');
+    
+    const { data: result, error: rpcError } = await supabaseAdmin
+      .rpc('apply_lootbox_purchase_from_stripe', {
+        p_user_id: userId,
+        p_session_id: sessionId,
+        p_boxes: boxes
+      });
+
+    if (rpcError) {
+      console.error('[verify-lootbox-payment] RPC error:', rpcError);
+      throw rpcError;
     }
 
-    await Promise.all(insertPromises);
-
-    console.log('[verify-lootbox-payment] Credited', boxes, 'boxes to user:', userId);
+    console.log('[verify-lootbox-payment] RPC success:', result);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      boxes_credited: boxes 
+      boxes_credited: result?.boxes_credited || boxes 
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
