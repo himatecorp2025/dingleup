@@ -2,6 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 import { validateInteger, validateEnum, validateString } from '../_shared/validation.ts';
+import { startMetrics, measureStage, incDbQuery, logSuccess, logError, shouldSampleSuccessLog } from '../_shared/metrics.ts';
 
 interface GameCompletion {
   category: string;
@@ -18,6 +19,7 @@ Deno.serve(async (req) => {
   }
   
   const corsHeaders = getCorsHeaders(origin);
+  const correlationId = crypto.randomUUID();
 
   try {
     const authHeader = req.headers.get('Authorization');
@@ -57,9 +59,15 @@ Deno.serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
+    const ctx = startMetrics({ functionName: 'complete-game', userId: user.id });
+    ctx.extra['correlation_id'] = correlationId;
+
     // SECURITY: Rate limiting check
-    const rateLimitResult = await checkRateLimit(supabaseAuth, 'complete-game', RATE_LIMITS.GAME);
+    const rateLimitResult = await measureStage(ctx, 'rate_limit', async () => {
+      return await checkRateLimit(supabaseAuth, 'complete-game', { maxRequests: 20, windowMinutes: 1 });
+    });
     if (!rateLimitResult.allowed) {
+      logError(ctx, new Error('RATE_LIMIT_EXCEEDED'), { correlation_id: correlationId });
       return rateLimitExceeded(corsHeaders);
     }
 
@@ -117,64 +125,77 @@ Deno.serve(async (req) => {
     const idempotencyKey = `game_complete:${user.id}:${Date.now()}`;
     
     // Check if game was already completed recently (within last 10 seconds) with same stats
-    const { data: recentCompletion } = await supabaseAdmin
-      .from('game_results')
-      .select('id, completed_at')
-      .eq('user_id', user.id)
-      .eq('correct_answers', body.correctAnswers)
-      .eq('total_questions', body.totalQuestions)
-      .gte('completed_at', new Date(Date.now() - 10000).toISOString())
-      .order('completed_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const { data: recentCompletion } = await measureStage(ctx, 'duplicate_check', async () => {
+      incDbQuery(ctx);
+      return await supabaseAdmin
+        .from('game_results')
+        .select('id, completed_at')
+        .eq('user_id', user.id)
+        .eq('correct_answers', body.correctAnswers)
+        .eq('total_questions', body.totalQuestions)
+        .gte('completed_at', new Date(Date.now() - 10000).toISOString())
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+    });
 
     if (recentCompletion) {
-      console.log(`[complete-game] Duplicate completion detected for user ${user.id}, returning cached result`);
+      if (shouldSampleSuccessLog()) {
+        logSuccess(ctx, { 
+          correlation_id: correlationId,
+          cached: true, 
+          correct_answers: body.correctAnswers 
+        });
+      }
       
-      // Return success without re-inserting
       return new Response(
         JSON.stringify({ 
           success: true, 
           coinsEarned,
           message: 'Game completed successfully!',
-          cached: true
+          cached: true,
+          correlation_id: correlationId
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Insert game result using ADMIN client (bypasses RLS) - TRANSACTION START
-    const { data: gameResult, error: insertError } = await supabaseAdmin
-      .from('game_results')
-      .insert({
-        user_id: user.id,
-        category: body.category,
-        correct_answers: body.correctAnswers,
-        total_questions: body.totalQuestions,
-        coins_earned: coinsEarned,
-        average_response_time: body.averageResponseTime,
-        completed: true,
-        completed_at: new Date().toISOString()
-      })
-      .select('id')
-      .single();
+    const { data: gameResult, error: insertError } = await measureStage(ctx, 'insert_result', async () => {
+      incDbQuery(ctx);
+      return await supabaseAdmin
+        .from('game_results')
+        .insert({
+          user_id: user.id,
+          category: body.category,
+          correct_answers: body.correctAnswers,
+          total_questions: body.totalQuestions,
+          coins_earned: coinsEarned,
+          average_response_time: body.averageResponseTime,
+          completed: true,
+          completed_at: new Date().toISOString()
+        })
+        .select('id')
+        .single();
+    });
 
     if (insertError) {
-      console.error('[complete-game] Insert game result error:', insertError);
+      logError(ctx, insertError, { correlation_id: correlationId, stage: 'insert_result' });
       throw new Error('Failed to save game result');
     }
-
-    console.log(`[complete-game] Game result ${gameResult.id} saved for user ${user.id}`);
 
     // NOTE: Rewards were already credited after each correct answer
     // by the credit-gameplay-reward edge function, so we do NOT credit again here
 
     // Get user profile for leaderboard display
-    const { data: userProfile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('username, avatar_url')
-      .eq('id', user.id)
-      .single();
+    const { data: userProfile, error: profileError } = await measureStage(ctx, 'profile_fetch', async () => {
+      incDbQuery(ctx);
+      return await supabaseAdmin
+        .from('profiles')
+        .select('username, avatar_url')
+        .eq('id', user.id)
+        .single();
+    });
 
     if (profileError) {
       console.error('[complete-game] Profile fetch error:', profileError);
@@ -183,71 +204,90 @@ Deno.serve(async (req) => {
 
     // PHASE 1 OPTIMIZATION: Update daily_rankings WITHOUT rank recalculation
     // Ranks are now computed every 5 minutes by materialized view refresh
-    // This removes the O(N log N) bottleneck from the critical game completion path
-    try {
-      // Delegate aggregation to optimized PostgreSQL RPC
-      const { error: dailyRankError } = await supabaseAdmin.rpc(
-        'upsert_daily_ranking_aggregate',
-        {
-          p_user_id: user.id,
-          p_correct_answers: body.correctAnswers,
-          p_average_response_time: body.averageResponseTime,
-        },
-      );
+    await measureStage(ctx, 'daily_ranking', async () => {
+      try {
+        incDbQuery(ctx);
+        const { error: dailyRankError } = await supabaseAdmin.rpc(
+          'upsert_daily_ranking_aggregate',
+          {
+            p_user_id: user.id,
+            p_correct_answers: body.correctAnswers,
+            p_average_response_time: body.averageResponseTime,
+          },
+        );
 
-      if (dailyRankError) {
-        console.error('[complete-game] Daily ranking aggregate RPC error:', dailyRankError);
-        // Not critical, continue
-      } else {
-        console.log(`[complete-game] Daily ranking aggregated via RPC for user ${user.id} (rank computed in background)`);
+        if (dailyRankError) {
+          console.error('[complete-game] Daily ranking aggregate RPC error:', dailyRankError);
+        }
+      } catch (rankErr) {
+        console.error('[complete-game] Daily ranking exception:', rankErr);
       }
-    } catch (rankErr) {
-      console.error('[complete-game] Daily ranking exception:', rankErr);
-    }
+    });
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
-    try {
-      const { data: existingGlobal } = await supabaseAdmin
-        .from('global_leaderboard')
-        .select('total_correct_answers, username')
-        .eq('user_id', user.id)
-        .maybeSingle();
+    await measureStage(ctx, 'global_leaderboard', async () => {
+      try {
+        incDbQuery(ctx, 2);
+        const { data: existingGlobal } = await supabaseAdmin
+          .from('global_leaderboard')
+          .select('total_correct_answers, username')
+          .eq('user_id', user.id)
+          .maybeSingle();
 
-      const newGlobalTotal = (existingGlobal?.total_correct_answers || 0) + body.correctAnswers;
+        const newGlobalTotal = (existingGlobal?.total_correct_answers || 0) + body.correctAnswers;
 
-      const { error: leaderboardError } = await supabaseAdmin
-        .from('global_leaderboard')
-        .upsert({
-          user_id: user.id,
-          username: userProfile?.username || existingGlobal?.username || 'Player',
-          total_correct_answers: newGlobalTotal,
-          avatar_url: userProfile?.avatar_url || null,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id',
-          ignoreDuplicates: false
-        });
+        const { error: leaderboardError } = await supabaseAdmin
+          .from('global_leaderboard')
+          .upsert({
+            user_id: user.id,
+            username: userProfile?.username || existingGlobal?.username || 'Player',
+            total_correct_answers: newGlobalTotal,
+            avatar_url: userProfile?.avatar_url || null,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id',
+            ignoreDuplicates: false
+          });
 
-      if (leaderboardError) {
-        console.error('[complete-game] Global leaderboard update error:', leaderboardError);
-        // Not critical, continue
+        if (leaderboardError) {
+          console.error('[complete-game] Global leaderboard update error:', leaderboardError);
+        }
+      } catch (globalErr) {
+        console.error('[complete-game] Global leaderboard exception:', globalErr);
       }
-    } catch (globalErr) {
-      console.error('[complete-game] Global leaderboard exception:', globalErr);
+    });
+
+    if (shouldSampleSuccessLog()) {
+      logSuccess(ctx, { 
+        correlation_id: correlationId,
+        correct_answers: body.correctAnswers,
+        coins_earned: coinsEarned
+      });
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         coinsEarned,
-        message: 'Game completed successfully!' 
+        message: 'Game completed successfully!',
+        correlation_id: correlationId,
+        performance: {
+          elapsed_ms: Date.now() - ctx.startTime,
+          db_queries: ctx.dbQueryCount
+        }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
+    const ctx = startMetrics({ functionName: 'complete-game', userId: undefined });
+    logError(ctx, error, { correlation_id: correlationId });
+    
     return new Response(
-      JSON.stringify({ error: error.message || 'Unknown error occurred' }),
+      JSON.stringify({ 
+        error: error.message || 'Unknown error occurred',
+        correlation_id: correlationId
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

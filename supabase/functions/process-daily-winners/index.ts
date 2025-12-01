@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
+import { startMetrics, measureStage, incDbQuery, logSuccess, logError } from '../_shared/metrics.ts';
 
 /**
  * Gets the current local time for a given timezone
@@ -58,6 +59,10 @@ function wasYesterdaySunday(timezone: string): boolean {
 }
 
 serve(async (req) => {
+  const correlationId = crypto.randomUUID();
+  const ctx = startMetrics({ functionName: 'process-daily-winners', userId: null });
+  ctx.extra['correlation_id'] = correlationId;
+
   const origin = req.headers.get('origin');
   
   if (req.method === 'OPTIONS') {
@@ -135,102 +140,91 @@ serve(async (req) => {
   );
 
   try {
-    console.log('[DAILY-WINNERS] Starting timezone-based daily winners processing...');
+    ctx.extra['authorized_via'] = hasValidCronSecret ? 'cron' : (isAdmin ? 'admin' : 'user');
+    ctx.extra['is_on_demand'] = !hasValidCronSecret;
     
-    // Check if this is an on-demand request (not cron)
-    const isOnDemandRequest = !hasValidCronSecret;
-    
-    if (isOnDemandRequest) {
-      console.log('[DAILY-WINNERS] On-demand processing requested - processing all timezones immediately');
-    }
-
     // Get all distinct user timezones
-    const { data: timezones, error: timezonesError } = await supabaseClient
-      .from('profiles')
-      .select('user_timezone')
-      .not('user_timezone', 'is', null);
+    const { data: timezones, error: timezonesError } = await measureStage(ctx, 'fetch_timezones', async () => {
+      incDbQuery(ctx);
+      return await supabaseClient
+        .from('profiles')
+        .select('user_timezone')
+        .not('user_timezone', 'is', null);
+    });
 
     if (timezonesError) throw timezonesError;
 
     const uniqueTimezones = [...new Set(timezones?.map(t => t.user_timezone).filter(Boolean))];
-    console.log(`[DAILY-WINNERS] Found ${uniqueTimezones.length} unique timezones to check`);
+    ctx.extra['total_timezones'] = uniqueTimezones.length;
 
     const processedTimezones: string[] = [];
     const skippedTimezones: string[] = [];
     let totalProcessedWinners = 0;
 
     // PERFORMANCE OPTIMIZATION: Use set-based RPC instead of N+1 loop pattern
-    // Process each timezone separately
     for (const timezone of uniqueTimezones) {
-      // For on-demand requests, skip time check - process immediately
-      // For cron requests, only process if time is 23:55-23:59 local time
+      const isOnDemandRequest = !hasValidCronSecret;
+      
       if (!isOnDemandRequest && !shouldProcessTimezone(timezone)) {
-        const localTime = getLocalTime(timezone);
-        console.log(`[DAILY-WINNERS] Not time yet for ${timezone} (local time: ${localTime.toLocaleTimeString()})`);
         skippedTimezones.push(timezone);
         continue;
       }
 
       const yesterdayDate = getYesterdayDate(timezone);
-      const localTime = getLocalTime(timezone);
-      console.log(`[DAILY-WINNERS] Processing ${timezone} - Local time: ${localTime.toLocaleString()}, Yesterday: ${yesterdayDate}`);
 
-      // Check if already processed for this date (idempotency check)
-      const { data: logCheck } = await supabaseClient
-        .from('daily_winner_processing_log')
-        .select('last_processed_date')
-        .eq('timezone', timezone)
-        .single();
+      // Idempotency check
+      const { data: logCheck } = await measureStage(ctx, `tz_${timezone}_check`, async () => {
+        incDbQuery(ctx);
+        return await supabaseClient
+          .from('daily_winner_processing_log')
+          .select('last_processed_date')
+          .eq('timezone', timezone)
+          .single();
+      });
 
       if (logCheck?.last_processed_date === yesterdayDate) {
-        console.log(`[DAILY-WINNERS] ${timezone} already processed for ${yesterdayDate}`);
         skippedTimezones.push(timezone);
         continue;
       }
 
-      // OPTIMIZED: Call set-based RPC for this date
-      // Replaces entire N+1 country/user loop with single window function query
-      const startProcess = Date.now();
-      const { data: processResult, error: processError } = await supabaseClient
-        .rpc('process_daily_winners_for_date', {
-          p_target_date: yesterdayDate
-        });
+      // Call set-based RPC
+      const { data: processResult, error: processError } = await measureStage(ctx, `tz_${timezone}_process`, async () => {
+        incDbQuery(ctx);
+        return await supabaseClient
+          .rpc('process_daily_winners_for_date', {
+            p_target_date: yesterdayDate
+          });
+      });
 
-      const processElapsed = Date.now() - startProcess;
-
-      if (processError) {
-        console.error(`[DAILY-WINNERS] RPC error for ${yesterdayDate}:`, processError);
+      if (processError || !processResult?.success) {
+        logError(ctx, processError || new Error('RPC_FAILED'), { timezone, date: yesterdayDate, result: processResult });
         skippedTimezones.push(timezone);
         continue;
       }
 
-      if (!processResult?.success) {
-        console.error(`[DAILY-WINNERS] Processing failed for ${yesterdayDate}:`, processResult);
-        skippedTimezones.push(timezone);
-        continue;
-      }
+      totalProcessedWinners += processResult.winners_inserted || 0;
 
-      // Log successful processing with metrics
-      const { winners_inserted, snapshots_inserted, is_sunday, top_limit } = processResult;
-      console.log(`[DAILY-WINNERS] ${timezone} (${yesterdayDate}): ${winners_inserted} winners, ${snapshots_inserted} snapshots (${is_sunday ? 'Sunday TOP25' : 'Daily TOP10'}) in ${processElapsed}ms`);
-      
-      totalProcessedWinners += winners_inserted || 0;
-
-      // Update processing log for this timezone
-      await supabaseClient
-        .from('daily_winner_processing_log')
-        .upsert({
-          timezone: timezone,
-          last_processed_date: yesterdayDate,
-          last_processed_at: new Date().toISOString()
-        }, {
-          onConflict: 'timezone'
-        });
+      // Update log
+      await measureStage(ctx, `tz_${timezone}_log_update`, async () => {
+        incDbQuery(ctx);
+        return await supabaseClient
+          .from('daily_winner_processing_log')
+          .upsert({
+            timezone,
+            last_processed_date: yesterdayDate,
+            last_processed_at: new Date().toISOString()
+          }, { onConflict: 'timezone' });
+      });
 
       processedTimezones.push(timezone);
     }
 
-    console.log(`[DAILY-WINNERS] Completed. Processed: ${processedTimezones.length}, Skipped: ${skippedTimezones.length}, Winners: ${totalProcessedWinners}`);
+    logSuccess(ctx, { 
+      correlation_id: correlationId,
+      processed_count: processedTimezones.length,
+      skipped_count: skippedTimezones.length,
+      total_winners: totalProcessedWinners
+    });
 
     return new Response(
       JSON.stringify({ 
@@ -238,15 +232,20 @@ serve(async (req) => {
         processedTimezones,
         skippedTimezones,
         totalTimezones: uniqueTimezones.length,
-        winnersProcessed: totalProcessedWinners
+        winnersProcessed: totalProcessedWinners,
+        correlation_id: correlationId,
+        performance: {
+          elapsed_ms: Date.now() - ctx.startTime,
+          db_queries: ctx.dbQueryCount
+        }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
-    console.error('[DAILY-WINNERS] Error:', error);
+    logError(ctx, error, { correlation_id: correlationId });
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message, correlation_id: correlationId }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500
