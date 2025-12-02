@@ -11,6 +11,23 @@
 -- SECTION 1: CUSTOM TYPES
 -- ============================================================================
 
+-- ----------------------------------------------------------------------------
+-- has_role: Check if user has specific role
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.has_role(p_user_id UUID, p_role app_role)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.user_roles
+    WHERE user_id = p_user_id AND role = p_role
+  );
+END;
+$$;
+
 CREATE TYPE app_role AS ENUM ('user', 'admin', 'moderator');
 
 -- ============================================================================
@@ -956,23 +973,6 @@ CREATE TABLE public.legal_documents (
 -- ============================================================================
 -- SECTION 15: POSTGRESQL RPC FUNCTIONS
 -- ============================================================================
-
--- ----------------------------------------------------------------------------
--- has_role: Check if user has specific role
--- ----------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.has_role(p_user_id UUID, p_role app_role)
-RETURNS BOOLEAN
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  RETURN EXISTS (
-    SELECT 1 FROM public.user_roles
-    WHERE user_id = p_user_id AND role = p_role
-  );
-END;
-$$;
 
 -- ----------------------------------------------------------------------------
 -- credit_wallet: Atomic wallet crediting with idempotency
