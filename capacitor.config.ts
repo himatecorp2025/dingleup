@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.1fe67fc55c88483eb2e59ea42baa3c0f',
+  appId: 'com.himate.dingleup',
   appName: 'DingleUP!',
   webDir: 'dist',
   server: {

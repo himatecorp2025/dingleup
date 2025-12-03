@@ -1,4 +1,4 @@
-project_id = "wdpxmwsxhckazwxufttk"
+project_id = "jxbojfedawbrgzeofmek"
 
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
